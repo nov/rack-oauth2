@@ -2,7 +2,7 @@ module Rack
   module OAuth2
     module Server
 
-      class Exception < StandardError
+      class Error < StandardError
         attr_accessor :code, :error, :description, :uri, :state
 
         def initialize(code, error, description, options = {})
@@ -13,29 +13,26 @@ module Rack
           @state = options[:state]
         end
 
-        def respond
-          [code, {'Content-Type' => 'application/json'}, as_json]
+        def finish
+          [code, {'Content-Type' => 'application/json'}, response.to_json]
         end
 
-        def as_json
-          {
-            :error => error,
-            :error_description => description,
-            :error_uri => uri,
-            :state => state
-          }.delete_if do |k, v|
-            v.nil?
-          end.to_json
+        def response
+          response = {:error => error}
+          response[:error_description] = description if description
+          response[:error_uri] = uri if uri
+          response[:state] = state if state
+          response
         end
       end
 
-      class Unauthorized < Exception
+      class Unauthorized < Error
         def initialize(error, description, options = {})
           super(401, error, description, options)
         end
       end
 
-      class BadRequest < Exception
+      class BadRequest < Error
         def initialize(error, description, options = {})
           super(400, error, description, options)
         end
