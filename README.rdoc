@@ -1,6 +1,7 @@
 = rack-oauth2
 
-Description goes here.
+Currently working on OAuth Authorization/Resource Server implementation based on draft v.10
+http://tools.ietf.org/html/draft-ietf-oauth-v2-10
 
 == Note on Patches/Pull Requests
  

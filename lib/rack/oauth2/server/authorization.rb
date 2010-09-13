@@ -20,11 +20,8 @@ module Rack
 
         def call(env)
           request = Request.new(env)
-          case request.profile
-          when :web_server
-            Profile::WebServer.new(@app, @realm, &@authenticator).call(env)
-          when :user_agent
-            Profile::UserAgent.new(@app, @realm, &@authenticator).call(env)
+          if request.profile
+            request.profile.new(@app, @realm, &@authenticator).call(env)
           else
             @app.call(env)
           end
@@ -35,13 +32,13 @@ module Rack
         class Request < Rack::Request
           def profile
             if self.params['code']
-              :web_server
+              Profile::WebServer::AccessToken
             else
               case self.params['response_type']
               when 'code'
-                :web_server
+                Profile::WebServer::Authorize
               when 'token'
-                :user_agent
+                Profile::UserAgent
               when 'token_and_code'
                 raise BadRequest.new(:unsupported_response_type, 'This profile is pending.')
               end
