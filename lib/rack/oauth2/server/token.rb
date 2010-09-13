@@ -2,23 +2,55 @@ module Rack
   module OAuth2
     module Server
       class Token < Abstract::Handler
-        attr_accessor :optional_authentication
+        attr_accessor :grant_type, :optional_authentication
 
         def call(env)
-          # TODO
+          request = Request.new(env)
+          request.profile.new(@app, @realm, &@authenticator).call(env).finish
+        rescue Error => e
+          e.finish
         end
 
         class Request < Abstract::Request
-          def profile(allow_no_profile = false)
-            # TODO
+          attr_accessor :client_id, :client_secret, :code, :redirect_uri, :scope
+
+          def initialize(env)
+            super
+            @client_id     = params['client_id']
+            @client_secret = params['client_secret']
+            @scope         = Array(params['scope'].to_s.split(' '))
           end
 
           def required_params
-            # TODO
+            [:grant_type, :client_id]
+          end
+
+          def profile(allow_no_profile = false)
+            case params['grant_type']
+            when 'authorization_code'
+              AuthorizationCode
+            when 'password'
+              Password
+            when 'assertion'
+              Assertion
+            when 'refresh_token'
+              RefreshToken
+            else
+              raise BadRequest.new(:unsupported_grant_type, "'#{params['invalid_grant']}' isn't supported.")
+            end
           end
         end
 
         class Response < Abstract::Response
+          attr_accessor :access_token, :expires_in, :refresh_token, :scope
+
+          def finish
+            response = {:access_token => access_token}
+            response[:expires_in] = expires_in if expires_in
+            response[:refresh_token] = refresh_token if refresh_token
+            response[:scope] = Array(scope).join(' ') if scope
+            [200, {'Content-Type' => "application/json"}, response.to_json]
+          end
         end
 
       end
@@ -26,4 +58,7 @@ module Rack
   end
 end
 
-require 'rack/oauth2/server/token/web_server'
+require 'rack/oauth2/server/token/authorization_code'
+require 'rack/oauth2/server/token/password'
+require 'rack/oauth2/server/token/assertion'
+require 'rack/oauth2/server/token/refresh_token'

@@ -4,7 +4,7 @@ module Rack
       module Abstract
         class Request < Rack::Request
           def initialize(env)
-            super(env)
+            super
             verify_required_params!
           end
 

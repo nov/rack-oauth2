@@ -11,23 +11,31 @@ module Rack
         end
 
         class Request < Abstract::Request
-          attr_accessor :response_type
+          attr_accessor :response_type, :client_id, :redirect_uri, :scope, :state
 
-          def profile
-            case params['response_type']
-            when 'code'
-              WebServer
-            when 'token'
-              UserAgent
-            when 'token_and_code'
-              raise BadRequest.new(:unsupported_response_type, 'This profile is pending.')
-            else
-              raise BadRequest.new(:unsupported_response_type, "'#{params['response_type']}' isn't supported.")
-            end
+          def initialize(env)
+            super
+            @client_id    = params['client_id']
+            @redirect_uri = URI.parse(params['redirect_uri']) rescue nil
+            @scope        = Array(params['scope'].to_s.split(' '))
+            @state        = params['state']
           end
 
           def required_params
             [:response_type, :client_id, :redirect_uri]
+          end
+
+          def profile
+            case params['response_type']
+            when 'code'
+              Code
+            when 'token'
+              Token
+            when 'token_and_code'
+              CodeAndToken
+            else
+              raise BadRequest.new(:unsupported_response_type, "'#{params['response_type']}' isn't supported.")
+            end
           end
         end
 
@@ -54,5 +62,5 @@ module Rack
   end
 end
 
-require 'rack/oauth2/server/authorization/web_server'
-require 'rack/oauth2/server/authorization/user_agent'
+require 'rack/oauth2/server/authorization/code'
+require 'rack/oauth2/server/authorization/token'

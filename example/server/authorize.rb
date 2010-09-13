@@ -1,17 +1,14 @@
-## OAuth 2.0 Web Server Flow
-
 require 'rubygems'
 require 'sinatra'
 
 use Rack::Session::Cookie
 
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '../../../lib'))
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '../../lib'))
 require 'rack/oauth2'
 
 get '/oauth/authorize' do
   authorization_endpoint = Rack::OAuth2::Server::Authorization.new(self)
   response = authorization_endpoint.call(env)
-  p response
   case response.first
   when 200
     request = env['rack.oauth2.request']
@@ -42,12 +39,11 @@ post '/oauth/authorize' do
     # allow everything
     params = env['rack.request.form_hash']
     if params['approved']
-      p response
       response.approve!
       case request
-      when Rack::OAuth2::Server::Authorization::WebServer::Request
+      when Rack::OAuth2::Server::Authorization::Code::Request
         response.code = 'code'
-      when Rack::OAuth2::Server::Authorization::UserAgent::Request
+      when Rack::OAuth2::Server::Authorization::Token::Request
         response.access_token = 'access_token'
         response.expires_in = 3600
       end
@@ -55,17 +51,5 @@ post '/oauth/authorize' do
       raise Rack::OAuth2::Server::Unauthorized.new(:access_denied, 'User rejected the requested access.')
     end
   end
-  response = authorization_endpoint.call(env)
-  p response
-  response
-end
-
-get '/oauth/token' do
-  token_endpoint = Rack::OAuth2::Server::Token.new(self)
-  token_endpoint.call(env)
-end
-
-post '/oauth/token' do
-  token_endpoint = Rack::OAuth2::Server::Token.new(self)
-  token_endpoint.call(env)
+  authorization_endpoint.call(env)
 end
