@@ -22,10 +22,13 @@ module Rack
 
             def finish
               if approved?
-                query_params = Array(redirect_uri.query)
-                query_params << "code=#{URI.encode code}"
-                query_params << "state=#{URI.encode state}" if state
-                redirect_uri.query = query_params.join('&')
+                params = {
+                  :code => code,
+                  :state => state
+                }.delete_if do |key, value|
+                  value.blank?
+                end
+                redirect_uri.query = [redirect_uri.query, params.to_query].join('&')
                 redirect redirect_uri.to_s
               end
               super

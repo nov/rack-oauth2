@@ -12,13 +12,12 @@ module Rack
         end
 
         class Request < Abstract::Request
-          attr_accessor :client_id, :client_secret, :code, :redirect_uri, :scope
+          attr_accessor :grant_type, :client_secret
 
           def initialize(env)
             super
-            @client_id     = params['client_id']
+            @grant_type    = params['grant_type']
             @client_secret = params['client_secret']
-            @scope         = Array(params['scope'].to_s.split(' '))
           end
 
           def required_params

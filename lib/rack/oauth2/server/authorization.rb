@@ -15,10 +15,11 @@ module Rack
 
           def initialize(env)
             super
-            @client_id    = params['client_id']
-            @redirect_uri = URI.parse(params['redirect_uri']) rescue nil
-            @scope        = Array(params['scope'].to_s.split(' '))
+            @redirect_uri = URI.parse(params['redirect_uri'])
             @state        = params['state']
+          rescue URI::InvalidURIError
+            # NOTE: can't redirect in this case.
+            raise BadRequest.new(:invalid_request, 'Invalid redirect_uri format.')
           end
 
           def required_params
@@ -34,7 +35,7 @@ module Rack
             when 'token_and_code'
               CodeAndToken
             else
-              raise BadRequest.new(:unsupported_response_type, "'#{params['response_type']}' isn't supported.")
+              raise BadRequest.new(:unsupported_response_type, "'#{params['response_type']}' isn't supported.", :state => state, :redirect_uri => redirect_uri)
             end
           end
         end

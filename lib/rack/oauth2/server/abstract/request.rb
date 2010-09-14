@@ -3,13 +3,17 @@ module Rack
     module Server
       module Abstract
         class Request < Rack::Request
+          attr_accessor :client_id
+
           def initialize(env)
             super
             verify_required_params!
+            @client_id = params['client_id']
+            @scope     = Array(params['scope'].to_s.split(' '))
           end
 
           def required_params
-            raise "Implement verify_required_params! in #{self.class}"
+            raise "Implement #{self.class}#verify_required_params!"
           end
 
           def verify_required_params!
@@ -17,8 +21,8 @@ module Rack
             required_params.each do |key|
               missing_params << key unless params[key.to_s]
             end
-            unless missing_params.empty?
-              raise BadRequest.new(:invalid_request, "'#{missing_params.join('\', \'')}' required")
+            unless missing_params.blank?
+              raise BadRequest.new(:invalid_request, "'#{missing_params.join('\', \'')}' required", :state => @state, :redirect_uri => @redirect_uri)
             end
           end
         end

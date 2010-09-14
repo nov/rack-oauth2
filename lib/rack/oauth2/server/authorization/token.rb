@@ -22,12 +22,15 @@ module Rack
 
             def finish
               if approved?
-                fragment = Array(redirect_uri.fragment)
-                fragment << "access_token=#{URI.encode access_token}"
-                fragment << "expires_in=#{URI.encode expires_in.to_s}" if expires_in
-                fragment << "scope=#{URI.encode Array(scope).join(' ')}" if scope
-                query_params << "state=#{URI.encode state}" if state
-                redirect_uri.fragment = fragment.join('&')
+                params = {
+                  :access_token => access_token,
+                  :expires_in => expires_in,
+                  :scope => Array(scope).join(' '),
+                  :state => state
+                }.delete_if do |key, value|
+                  value.blank?
+                end
+                redirect_uri.fragment = (Array(redirect_uri.fragment) + params.to_query).join('&')
                 redirect redirect_uri.to_s
               end
               super

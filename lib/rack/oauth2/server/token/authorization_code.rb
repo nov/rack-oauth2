@@ -11,14 +11,16 @@ module Rack
           end
 
           class Request < Token::Request
-            attr_accessor :client_id, :client_secret, :code, :redirect_uri, :scope
+            attr_accessor :code, :redirect_uri, :scope
 
             def initialize(env)
               super
               @grant_type   = 'authorization_code'
               @code         = params['code']
-              @redirect_uri = URI.parse(params['redirect_uri']) rescue nil
+              @redirect_uri = URI.parse(params['redirect_uri'])
               @scope        = Array(params['scope'].to_s.split(' '))
+            rescue URI::InvalidURIError
+              raise BadRequest.new(:invalid_request, 'Invalid redirect_uri format.')
             end
 
             def required_params
