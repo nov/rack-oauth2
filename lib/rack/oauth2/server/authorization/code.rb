@@ -28,7 +28,11 @@ module Rack
                 }.delete_if do |key, value|
                   value.blank?
                 end
-                redirect_uri.query = [redirect_uri.query, params.to_query].join('&')
+                redirect_uri.query = if redirect_uri.query
+                  [redirect_uri.query, params.to_query].join('&')
+                else
+                  params.to_query
+                end
                 redirect redirect_uri.to_s
               end
               super

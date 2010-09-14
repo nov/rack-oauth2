@@ -30,7 +30,11 @@ module Rack
                 }.delete_if do |key, value|
                   value.blank?
                 end
-                redirect_uri.fragment = (Array(redirect_uri.fragment) + params.to_query).join('&')
+                redirect_uri.fragment = if redirect_uri.fragment
+                  [redirect_uri.fragment, params.to_query].join('&')
+                else
+                  params.to_query
+                end
                 redirect redirect_uri.to_s
               end
               super
