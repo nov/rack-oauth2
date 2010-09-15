@@ -11,7 +11,7 @@ module Rack
         end
 
         class Request < Abstract::Request
-          attr_accessor :response_type, :client_id, :redirect_uri, :scope, :state
+          attr_accessor :response_type, :client_id, :redirect_uri, :state
 
           def initialize(env)
             super
@@ -23,7 +23,7 @@ module Rack
           end
 
           def required_params
-            [:response_type, :client_id, :redirect_uri]
+            super + [:response_type, :client_id, :redirect_uri]
           end
 
           def profile
@@ -32,7 +32,7 @@ module Rack
               Code
             when 'token'
               Token
-            when 'token_and_code'
+            when 'code_and_token'
               CodeAndToken
             else
               raise BadRequest.new(:unsupported_response_type, "'#{params['response_type']}' isn't supported.", :state => state, :redirect_uri => redirect_uri)
@@ -65,3 +65,4 @@ end
 
 require 'rack/oauth2/server/authorization/code'
 require 'rack/oauth2/server/authorization/token'
+require 'rack/oauth2/server/authorization/code_and_token'

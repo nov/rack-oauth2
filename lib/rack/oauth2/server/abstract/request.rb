@@ -3,7 +3,7 @@ module Rack
     module Server
       module Abstract
         class Request < Rack::Request
-          attr_accessor :client_id
+          attr_accessor :client_id, :scope
 
           def initialize(env)
             super
@@ -13,7 +13,7 @@ module Rack
           end
 
           def required_params
-            raise "Implement #{self.class}#verify_required_params!"
+            [:client_id]
           end
 
           def verify_required_params!

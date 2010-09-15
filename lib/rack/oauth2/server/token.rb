@@ -21,7 +21,7 @@ module Rack
           end
 
           def required_params
-            [:grant_type, :client_id]
+            super + [:grant_type]
           end
 
           def profile(allow_no_profile = false)
@@ -35,7 +35,7 @@ module Rack
             when 'refresh_token'
               RefreshToken
             else
-              raise BadRequest.new(:unsupported_grant_type, "'#{params['invalid_grant']}' isn't supported.")
+              raise BadRequest.new(:unsupported_grant_type, "'#{params['grant_type']}' isn't supported.")
             end
           end
         end
@@ -48,7 +48,9 @@ module Rack
             response[:expires_in] = expires_in if expires_in
             response[:refresh_token] = refresh_token if refresh_token
             response[:scope] = Array(scope).join(' ') if scope
-            [200, {'Content-Type' => "application/json"}, response.to_json]
+            write response.to_json
+            header['Content-Type'] = "application/json"
+            super
           end
         end
 

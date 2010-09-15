@@ -11,12 +11,16 @@ module Rack
           end
 
           class Request < Token::Request
+            attr_reader :refresh_token
+
             def initialize(env)
-              # TODO
+              super
+              @grant_type    = 'refresh_token'
+              @refresh_token = params['refresh_token']
             end
 
             def required_params
-              # TODO
+              super + [:refresh_token]
             end
           end
 
