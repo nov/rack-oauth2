@@ -9,7 +9,7 @@ module Rack
             super
             verify_required_params!
             @client_id = params['client_id']
-            @scope     = Array(params['scope'].to_s.split(' '))
+            @scope = Array(params['scope'].to_s.split(' '))
           end
 
           def required_params
@@ -18,6 +18,7 @@ module Rack
 
           def verify_required_params!
             missing_params = []
+            p required_params
             required_params.each do |key|
               missing_params << key unless params[key.to_s]
             end

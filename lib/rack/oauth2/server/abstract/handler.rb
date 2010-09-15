@@ -1,14 +1,13 @@
-require 'rack/auth/abstract/handler'
-
 module Rack
   module OAuth2
     module Server
       module Abstract
-        class Handler < Rack::Auth::AbstractHandler
-          attr_accessor :request, :response
+        class Handler
+          attr_accessor :realm, :authenticator, :request, :response
 
           def initialize(realm = '', &authenticator)
-            super(nil, realm, &authenticator)
+            @realm = realm
+            @authenticator = authenticator
           end
 
           def call(env)

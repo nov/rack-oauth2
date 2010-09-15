@@ -17,9 +17,6 @@ module Rack
             super
             @redirect_uri = Util.parse_uri(params['redirect_uri']) if params['redirect_uri']
             @state        = params['state']
-          rescue URI::InvalidURIError
-            # NOTE: can't redirect in this case.
-            raise BadRequest.new(:invalid_request, 'Invalid redirect_uri format.')
           end
 
           def required_params
