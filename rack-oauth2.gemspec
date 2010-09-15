@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rack-oauth2}
-  s.version = "0.0.4"
+  s.version = "0.0.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nov matake"]
@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "example/server/authorize.rb",
+     "example/server/oauth2_controller.rb",
      "example/server/token.rb",
      "lib/rack/oauth2.rb",
      "lib/rack/oauth2/server.rb",
