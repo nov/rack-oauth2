@@ -2,7 +2,6 @@ module Rack
   module OAuth2
     module Server
       class Token < Abstract::Handler
-        attr_accessor :grant_type, :optional_authentication
 
         def call(env)
           request = Request.new(env)
