@@ -43,6 +43,10 @@ module Rack
         class Response < Abstract::Response
           attr_accessor :access_token, :expires_in, :refresh_token, :scope
 
+          def required_params
+            super + [:access_token]
+          end
+
           def finish
             response = {:access_token => access_token}
             response[:expires_in] = expires_in if expires_in

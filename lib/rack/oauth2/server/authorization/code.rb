@@ -20,6 +20,10 @@ module Rack
           class Response < Authorization::Response
             attr_accessor :code
 
+            def required_params
+              super + [:code]
+            end
+
             def finish
               if approved?
                 params = {

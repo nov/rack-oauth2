@@ -20,6 +20,10 @@ module Rack
           class Response < Authorization::Response
             attr_accessor :code, :access_token, :expires_in, :scope
 
+            def required_params
+              super + [:code, :access_token]
+            end
+
             def finish
               if approved?
                 # append query params

@@ -20,6 +20,10 @@ module Rack
           class Response < Authorization::Response
             attr_accessor :access_token, :expires_in, :scope
 
+            def required_params
+              super + [:access_token]
+            end
+
             def finish
               if approved?
                 params = {

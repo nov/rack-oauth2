@@ -15,7 +15,7 @@ module Rack
 
           def initialize(env)
             super
-            @redirect_uri = URI.parse(params['redirect_uri'])
+            @redirect_uri = Util.parse_uri(params['redirect_uri']) if params['redirect_uri']
             @state        = params['state']
           rescue URI::InvalidURIError
             # NOTE: can't redirect in this case.
@@ -23,7 +23,7 @@ module Rack
           end
 
           def required_params
-            super + [:response_type, :client_id, :redirect_uri]
+            super + [:response_type, :client_id]
           end
 
           def profile
@@ -44,8 +44,8 @@ module Rack
           attr_accessor :redirect_uri, :state, :approved
 
           def initialize(request)
-            @redirect_uri = request.redirect_uri
-            @state = request.state
+            @redirect_uri = Util.parse_uri(request.redirect_uri) if request.redirect_uri
+            @state        = request.state
             super
           end
 

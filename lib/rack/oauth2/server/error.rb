@@ -11,7 +11,7 @@ module Rack
           @description  = description
           @uri          = options[:uri]
           @state        = options[:state]
-          @redirect_uri = options[:redirect_uri]
+          @redirect_uri = Util.parse_uri(options[:redirect_uri]) if options[:redirect_uri]
         end
 
         def finish
@@ -24,21 +24,13 @@ module Rack
             value.blank?
           end
           if redirect_uri
-            _redirect_uri_ = case redirect_uri
-            when URI::Generic
-              redirect_uri
-            when String
-              URI.parse(redirect_uri)
-            else
-              raise "Invalid redirect_uri is given. String or URI::Generic is require."
-            end
-            _redirect_uri_.query = if _redirect_uri_.query
-              [_redirect_uri_.query, params.to_query].join('&')
+            redirect_uri.query = if redirect_uri.query
+              [redirect_uri.query, params.to_query].join('&')
             else
               params.to_query
             end
             response = Rack::Response.new
-            response.redirect _redirect_uri_.to_s
+            response.redirect redirect_uri.to_s
             response.finish
           else
             [code, {'Content-Type' => 'application/json'}, params.to_json]
