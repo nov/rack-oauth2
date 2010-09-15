@@ -5,7 +5,7 @@ module Rack
 
         def call(env)
           request = Request.new(env)
-          request.profile.new(@app, @realm, &@authenticator).call(env).finish
+          request.profile.new(@realm, &@authenticator).call(env).finish
         rescue Error => e
           e.finish
         end

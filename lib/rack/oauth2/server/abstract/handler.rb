@@ -7,6 +7,10 @@ module Rack
         class Handler < Rack::Auth::AbstractHandler
           attr_accessor :request, :response
 
+          def initialize(realm = '', &authenticator)
+            super(nil, realm, &authenticator)
+          end
+
           def call(env)
             @authenticator.call(@request, @response) if @authenticator
             env['rack.oauth2.request'] = @request

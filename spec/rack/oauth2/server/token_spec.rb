@@ -2,7 +2,7 @@ require 'spec_helper.rb'
 
 describe Rack::OAuth2::Server::Token do
   it "should support realm" do
-    app = Rack::OAuth2::Server::Token.new(simple_app, "server.example.com")
+    app = Rack::OAuth2::Server::Token.new("server.example.com")
     app.realm.should == "server.example.com"
   end
 end
@@ -10,7 +10,7 @@ end
 describe Rack::OAuth2::Server::Token::Request do
 
   before do
-    @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
+    @app = Rack::OAuth2::Server::Token.new do |request, response|
       response.access_token = "access_token"
     end
     @request = Rack::MockRequest.new @app
@@ -67,7 +67,7 @@ describe Rack::OAuth2::Server::Token::Response do
   context "when required response params are missing" do
 
     before do
-      @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
+      @app = Rack::OAuth2::Server::Token.new do |request, response|
         # access_token is missing
       end
       @request = Rack::MockRequest.new @app
@@ -84,7 +84,7 @@ describe Rack::OAuth2::Server::Token::Response do
   context "when required response params are given" do
 
     before do
-      @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
+      @app = Rack::OAuth2::Server::Token.new do |request, response|
         response.access_token = "access_token"
       end
       @request = Rack::MockRequest.new @app

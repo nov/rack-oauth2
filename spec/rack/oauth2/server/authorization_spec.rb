@@ -2,7 +2,7 @@ require 'spec_helper.rb'
 
 describe Rack::OAuth2::Server::Authorization do
   it "should support realm" do
-    app = Rack::OAuth2::Server::Authorization.new(simple_app, "server.example.com")
+    app = Rack::OAuth2::Server::Authorization.new("server.example.com")
     app.realm.should == "server.example.com"
   end
 end
