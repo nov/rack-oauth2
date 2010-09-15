@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rack-oauth2}
-  s.version = "0.0.3"
+  s.version = "0.0.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nov matake"]
-  s.date = %q{2010-09-15}
+  s.date = %q{2010-09-16}
   s.description = %q{Rack Middleware for OAuth2 Client & Server, currently working on server code first.}
   s.email = %q{nov@matake.jp}
   s.extra_rdoc_files = [
@@ -41,6 +41,7 @@ Gem::Specification.new do |s|
      "lib/rack/oauth2/server/token/authorization_code.rb",
      "lib/rack/oauth2/server/token/password.rb",
      "lib/rack/oauth2/server/token/refresh_token.rb",
+     "lib/rack/oauth2/server/util.rb",
      "rack-oauth2.gemspec",
      "spec/rack/oauth2/server/authorization/code_and_token_spec.rb",
      "spec/rack/oauth2/server/authorization/code_spec.rb",
