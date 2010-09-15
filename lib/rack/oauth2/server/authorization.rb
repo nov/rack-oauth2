@@ -11,16 +11,16 @@ module Rack
         end
 
         class Request < Abstract::Request
-          attr_accessor :response_type, :client_id, :redirect_uri, :state
+          attr_accessor :response_type, :redirect_uri, :state
 
           def initialize(env)
             super
+            @state = params['state']
             @redirect_uri = Util.parse_uri(params['redirect_uri']) if params['redirect_uri']
-            @state        = params['state']
           end
 
           def required_params
-            super + [:response_type, :client_id]
+            super + [:response_type]
           end
 
           def profile
@@ -41,8 +41,8 @@ module Rack
           attr_accessor :redirect_uri, :state, :approved
 
           def initialize(request)
+            @state = request.state
             @redirect_uri = Util.parse_uri(request.redirect_uri) if request.redirect_uri
-            @state        = request.state
             super
           end
 

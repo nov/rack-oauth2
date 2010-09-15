@@ -18,7 +18,6 @@ module Rack
 
           def verify_required_params!
             missing_params = []
-            p required_params
             required_params.each do |key|
               missing_params << key unless params[key.to_s]
             end
