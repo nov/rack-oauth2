@@ -11,12 +11,17 @@ module Rack
           end
 
           class Request < Token::Request
+            attr_accessor :assertion_type, :assertion
+
             def initialize(env)
-              # TODO
+              super
+              @grant_type     = 'assertion'
+              @assertion_type = params['assertion_type']
+              @assertion      = params['assertion']
             end
 
             def required_params
-              # TODO
+              super + [:assertion_type, :assertion]
             end
           end
 
