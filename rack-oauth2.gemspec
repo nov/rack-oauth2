@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rack-oauth2}
-  s.version = "0.0.7"
+  s.version = "0.0.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nov matake"]
@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
      "lib/rack/oauth2/server/authorize/code_and_token.rb",
      "lib/rack/oauth2/server/authorize/token.rb",
      "lib/rack/oauth2/server/error.rb",
+     "lib/rack/oauth2/server/resource.rb",
      "lib/rack/oauth2/server/token.rb",
      "lib/rack/oauth2/server/token/assertion.rb",
      "lib/rack/oauth2/server/token/authorization_code.rb",
@@ -49,6 +50,7 @@ Gem::Specification.new do |s|
      "spec/rack/oauth2/server/authorize/token_spec.rb",
      "spec/rack/oauth2/server/authorize_spec.rb",
      "spec/rack/oauth2/server/error_spec.rb",
+     "spec/rack/oauth2/server/resource_spec.rb",
      "spec/rack/oauth2/server/token/assertion_spec.rb",
      "spec/rack/oauth2/server/token/authorization_code_spec.rb",
      "spec/rack/oauth2/server/token/password_spec.rb",
@@ -68,6 +70,7 @@ Gem::Specification.new do |s|
      "spec/rack/oauth2/server/authorize/token_spec.rb",
      "spec/rack/oauth2/server/authorize_spec.rb",
      "spec/rack/oauth2/server/error_spec.rb",
+     "spec/rack/oauth2/server/resource_spec.rb",
      "spec/rack/oauth2/server/token/assertion_spec.rb",
      "spec/rack/oauth2/server/token/authorization_code_spec.rb",
      "spec/rack/oauth2/server/token/password_spec.rb",
