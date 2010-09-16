@@ -40,7 +40,12 @@ module Rack
 
       class Unauthorized < Error
         def initialize(error, description = "", options = {})
-          super(401, error, description, options)
+          status = if options[:payload] == :header
+            401
+          else
+            400
+          end
+          super(status, error, description, options)
         end
       end
 

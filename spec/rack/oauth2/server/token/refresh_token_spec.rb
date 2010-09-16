@@ -13,7 +13,11 @@ describe Rack::OAuth2::Server::Token::RefreshToken do
     end
 
     it "should return access_token as json response body" do
-      response = @request.get("/?grant_type=refresh_token&client_id=valid_client&refresh_token=valid_refresh_token")
+      response = @request.post("/", :params => {
+        :grant_type => "refresh_token",
+        :client_id => "valid_client",
+        :refresh_token => "valid_refresh_token"
+      })
       response.status.should == 200
       response.content_type.should == "application/json"
       response.body.should == "{\"access_token\":\"access_token\"}"
@@ -32,8 +36,12 @@ describe Rack::OAuth2::Server::Token::RefreshToken do
     end
 
     it "should return error message as json response body" do
-      response = @request.get("/?grant_type=refresh_token&client_id=valid_client&refresh_token=invalid_refresh_token")
-      response.status.should == 401
+      response = @request.post("/", :params => {
+        :grant_type => "refresh_token",
+        :client_id => "valid_client",
+        :refresh_token => "invalid_refresh_token"
+      })
+      response.status.should == 400
       response.content_type.should == "application/json"
       response.body.should == "{\"error_description\":\"Invalid refresh_token.\",\"error\":\"invalid_grant\"}"
     end

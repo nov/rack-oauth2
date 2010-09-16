@@ -53,8 +53,17 @@ describe Rack::OAuth2::Server::BadRequest do
 end
 
 describe Rack::OAuth2::Server::Unauthorized do
-  it "should use 401 as status" do
-    error = Rack::OAuth2::Server::Unauthorized.new(:invalid_client)
-    error.code.should == 401
+  context "when payload is header" do
+    it "should use 401 as status" do
+      error = Rack::OAuth2::Server::Unauthorized.new(:invalid_client, '', :payload => :header)
+      error.code.should == 401
+    end
+  end
+
+  context "when payload isn't header" do
+    it "should use 400 as status" do
+      error = Rack::OAuth2::Server::Unauthorized.new(:invalid_request)
+      error.code.should == 400
+    end
   end
 end

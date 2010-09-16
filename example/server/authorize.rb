@@ -48,7 +48,7 @@ post '/oauth/authorize' do
         response.expires_in = 3600
       end
     else
-      raise Rack::OAuth2::Server::BadRequest.new(:access_denied, 'User rejected the requested access.', :redirect_uri => request.redirect_uri, :state => request.state)
+      raise Rack::OAuth2::Server::Unauthorized.new(:access_denied, 'User rejected the requested access.', :redirect_uri => request.redirect_uri, :state => request.state)
     end
   end
   authorization_endpoint.call(env)

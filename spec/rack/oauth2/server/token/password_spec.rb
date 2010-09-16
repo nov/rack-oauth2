@@ -13,7 +13,12 @@ describe Rack::OAuth2::Server::Token::Password do
     end
 
     it "should return access_token as json response body" do
-      response = @request.get("/?grant_type=password&client_id=valid_client&username=nov&password=valid_pass")
+      response = @request.post("/", :params => {
+        :grant_type => "password",
+        :client_id => "valid_client",
+        :username => "nov",
+        :password => "valid_pass"
+      })
       response.status.should == 200
       response.content_type.should == "application/json"
       response.body.should == "{\"access_token\":\"access_token\"}"
@@ -32,8 +37,13 @@ describe Rack::OAuth2::Server::Token::Password do
     end
 
     it "should return error message as json response body" do
-      response = @request.get("/?grant_type=password&client_id=valid_client&username=nov&password=invalid_pass")
-      response.status.should == 401
+      response = @request.post("/", :params => {
+        :grant_type => "password",
+        :client_id => "valid_client",
+        :username => "nov",
+        :password => "invalid_pass"
+      })
+      response.status.should == 400
       response.content_type.should == "application/json"
       response.body.should == "{\"error_description\":\"Invalid resource owner credentials.\",\"error\":\"invalid_grant\"}"
     end
