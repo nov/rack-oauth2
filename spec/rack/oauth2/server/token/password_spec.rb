@@ -43,7 +43,7 @@ describe Rack::OAuth2::Server::Token::Password do
         :username => "nov",
         :password => "invalid_pass"
       })
-      response.status.should == 400
+      response.status.should == 401
       response.content_type.should == "application/json"
       response.body.should == "{\"error_description\":\"Invalid resource owner credentials.\",\"error\":\"invalid_grant\"}"
     end

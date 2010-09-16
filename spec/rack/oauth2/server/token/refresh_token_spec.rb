@@ -41,7 +41,7 @@ describe Rack::OAuth2::Server::Token::RefreshToken do
         :client_id => "valid_client",
         :refresh_token => "invalid_refresh_token"
       })
-      response.status.should == 400
+      response.status.should == 401
       response.content_type.should == "application/json"
       response.body.should == "{\"error_description\":\"Invalid refresh_token.\",\"error\":\"invalid_grant\"}"
     end

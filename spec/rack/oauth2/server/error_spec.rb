@@ -70,10 +70,8 @@ describe Rack::OAuth2::Server::BadRequest do
 end
 
 describe Rack::OAuth2::Server::Unauthorized do
-  # NOTE
-  # for some reason, OAuth 2.0 document says to use 400, not 401.
   it "should use 400 as status" do
     error = Rack::OAuth2::Server::Unauthorized.new(:invalid_request)
-    error.code.should == 400
+    error.code.should == 401
   end
 end

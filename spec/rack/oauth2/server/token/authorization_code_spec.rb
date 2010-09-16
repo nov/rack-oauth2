@@ -43,7 +43,7 @@ describe Rack::OAuth2::Server::Token::AuthorizationCode do
         :code => "invalid_authorization_code",
         :redirect_uri => "http://client.example.com/callback"
       })
-      response.status.should == 400
+      response.status.should == 401
       response.content_type.should == "application/json"
       response.body.should == "{\"error_description\":\"Invalid authorization code.\",\"error\":\"invalid_grant\"}"
     end
@@ -67,7 +67,7 @@ describe Rack::OAuth2::Server::Token::AuthorizationCode do
         :code => "valid_authorization_code",
         :redirect_uri => "http://client.example.com/callback"
       })
-      response.status.should == 400
+      response.status.should == 401
       response.content_type.should == "application/json"
       response.body.should == "{\"error_description\":\"Invalid client identifier.\",\"error\":\"invalid_client\"}"
     end

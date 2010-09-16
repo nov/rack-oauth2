@@ -5,6 +5,6 @@ require 'rack/oauth2/server'
 
 module Rack
   module OAuth2
-    OAUTH_TOKEN = "rack.oauth2.oauth_token"
+    ACCESS_TOKEN = "rack.oauth2.oauth_token"
   end
 end

@@ -43,7 +43,7 @@ describe Rack::OAuth2::Server::Token::Assertion do
         :assertion => "invalid_assertion",
         :assertion_type => "something"
       })
-      response.status.should == 400
+      response.status.should == 401
       response.content_type.should == "application/json"
       response.body.should == "{\"error_description\":\"Invalid assertion.\",\"error\":\"invalid_grant\"}"
     end

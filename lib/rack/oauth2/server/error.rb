@@ -57,7 +57,7 @@ module Rack
 
       class Unauthorized < Error
         def initialize(error, description = "", options = {})
-          super(400, error, description, options)
+          super(401, error, description, options)
         end
       end
 

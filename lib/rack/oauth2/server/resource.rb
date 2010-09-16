@@ -14,7 +14,7 @@ module Rack
           request = Request.new(env)
           if request.oauth2?
             authenticate!(request)
-            env[OAUTH_TOKEN] = request.oauth_token
+            env[ACCESS_TOKEN] = request.access_token
           end
           @app.call(env)
         rescue Error => e
@@ -36,23 +36,23 @@ module Rack
           end
 
           def oauth2?
-            oauth_token.present?
+            access_token.present?
           end
 
-          def oauth_token
-            @oauth_token ||= case
-            when oauth_token_in_haeder.present? && oauth_token_in_payload.blank?
-              oauth_token_in_haeder
-            when oauth_token_in_haeder.blank? && oauth_token_in_payload.present?
-              oauth_token_in_payload
-            when oauth_token_in_haeder.present? && oauth_token_in_payload.present?
+          def access_token
+            @access_token ||= case
+            when access_token_in_haeder.present? && access_token_in_payload.blank?
+              access_token_in_haeder
+            when access_token_in_haeder.blank? && access_token_in_payload.present?
+              access_token_in_payload
+            when access_token_in_haeder.present? && access_token_in_payload.present?
               raise BadRequest.new(:invalid_request, 'Both Authorization header and payload includes oauth_token.', :www_authenticate => true)
             else
               nil
             end
           end
 
-          def oauth_token_in_haeder
+          def access_token_in_haeder
             if @auth_header.provided? && @auth_header.scheme == :oauth && @auth_header.params !~ /oauth_signature_method/
               @auth_header.params
             else
@@ -60,9 +60,9 @@ module Rack
             end
           end
 
-          def oauth_token_in_payload
-            if params['access_token'] && !params['oauth_signature_method']
-              params['access_token']
+          def access_token_in_payload
+            if params['oauth_token'] && !params['oauth_signature_method']
+              params['oauth_token']
             else
               nil # This is OAuth1 request
             end
