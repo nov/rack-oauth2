@@ -5,7 +5,7 @@ module Rack
         class Handler
           attr_accessor :realm, :authenticator, :request, :response
 
-          def initialize(realm = '', &authenticator)
+          def initialize(realm = nil, &authenticator)
             @realm = realm
             @authenticator = authenticator
           end

@@ -28,7 +28,23 @@ describe Rack::OAuth2::Server::Error, '#finish' do
     end
   end
 
-  context "when redirect_uri isn't given" do
+  context "when www_authenticate isn given" do
+    before do
+      @params = {
+        :error => :invalid_request,
+        :error_description => "Something invalid!!"
+      }
+      @error = Rack::OAuth2::Server::Error.new(401, @params[:error], @params[:error_description], :www_authenticate => true)
+    end
+
+    it "should return failure response with error message in WWW-Authenticate header" do
+      status, header, body = @error.finish
+      status.should === 401
+      header['WWW-Authenticate'].should == "OAuth realm=\"\" error_description=\"Something%20invalid!!\" error=\"invalid_request\""
+    end
+  end
+
+  context "when either redirect_uri nor www_authenticate isn't given" do
     before do
       @params = {
         :error => :invalid_request,
@@ -39,6 +55,7 @@ describe Rack::OAuth2::Server::Error, '#finish' do
 
     it "should return failure response with error message in json body" do
       status, header, body = @error.finish
+      status.should === 400
       body.should == @params.to_json
     end
   end
@@ -53,17 +70,10 @@ describe Rack::OAuth2::Server::BadRequest do
 end
 
 describe Rack::OAuth2::Server::Unauthorized do
-  context "when payload is header" do
-    it "should use 401 as status" do
-      error = Rack::OAuth2::Server::Unauthorized.new(:invalid_client, '', :payload => :header)
-      error.code.should == 401
-    end
-  end
-
-  context "when payload isn't header" do
-    it "should use 400 as status" do
-      error = Rack::OAuth2::Server::Unauthorized.new(:invalid_request)
-      error.code.should == 400
-    end
+  # NOTE
+  # for some reason, OAuth 2.0 document says to use 400, not 401.
+  it "should use 400 as status" do
+    error = Rack::OAuth2::Server::Unauthorized.new(:invalid_request)
+    error.code.should == 400
   end
 end
