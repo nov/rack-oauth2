@@ -7,7 +7,7 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '../../lib'))
 require 'rack/oauth2'
 
 get '/oauth/authorize' do
-  authorization_endpoint = Rack::OAuth2::Server::Authorization.new(self)
+  authorization_endpoint = Rack::OAuth2::Server::Authorize.new(self)
   response = authorization_endpoint.call(env)
   case response.first
   when 200
@@ -35,7 +35,7 @@ get '/oauth/authorize' do
 end
 
 post '/oauth/authorize' do
-  authorization_endpoint = Rack::OAuth2::Server::Authorization.new(self) do |request, response|
+  authorization_endpoint = Rack::OAuth2::Server::Authorize.new(self) do |request, response|
     # allow everything
     params = env['rack.request.form_hash']
     if params['approved']
@@ -48,7 +48,7 @@ post '/oauth/authorize' do
         response.expires_in = 3600
       end
     else
-      raise Rack::OAuth2::Server::Unauthorized.new(:access_denied, 'User rejected the requested access.', :redirect_uri => request.redirect_uri, :state => request.state)
+      raise Rack::OAuth2::Server::BadRequest.new(:access_denied, 'User rejected the requested access.', :redirect_uri => request.redirect_uri, :state => request.state)
     end
   end
   authorization_endpoint.call(env)

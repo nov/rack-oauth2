@@ -54,7 +54,7 @@ end
 
 describe Rack::OAuth2::Server::Unauthorized do
   it "should use 401 as status" do
-    error = Rack::OAuth2::Server::Unauthorized.new(:unauthorized_client)
+    error = Rack::OAuth2::Server::Unauthorized.new(:invalid_client)
     error.code.should == 401
   end
 end

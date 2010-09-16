@@ -47,11 +47,14 @@ module Rack
           end
 
           def finish
-            response = {:access_token => access_token}
-            response[:expires_in] = expires_in if expires_in
-            response[:refresh_token] = refresh_token if refresh_token
-            response[:scope] = Array(scope).join(' ') if scope
-            write response.to_json
+            params = {
+              :access_token => access_token,
+              :expires_in => expires_in,
+              :scope => Array(scope).join(' ')
+            }.delete_if do |key, value|
+              value.blank?
+            end
+            write params.to_json
             header['Content-Type'] = "application/json"
             super
           end

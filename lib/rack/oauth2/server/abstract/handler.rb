@@ -12,8 +12,6 @@ module Rack
 
           def call(env)
             @authenticator.call(@request, @response) if @authenticator
-            env['rack.oauth2.request'] = @request
-            env['rack.oauth2.response'] = @response
             @response
           end
         end

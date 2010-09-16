@@ -26,14 +26,14 @@ describe Rack::OAuth2::Server::Token::AuthorizationCode do
     before do
       # NOTE: for some reason, test fails when called Rack::OAuth2::Server::Authorization::Code directly
       @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
-        raise Rack::OAuth2::Server::Unauthorized.new(:invalid_grant, 'Invalid authorization code.')
+        raise Rack::OAuth2::Server::BadRequest.new(:invalid_grant, 'Invalid authorization code.')
       end
       @request = Rack::MockRequest.new @app
     end
 
     it "should return error message as json response body" do
       response = @request.get("/?grant_type=authorization_code&client_id=valid_client&code=invalid_authorization_code&redirect_uri=http://client.example.com/callback")
-      response.status.should == 401
+      response.status.should == 400
       response.content_type.should == "application/json"
       response.body.should == "{\"error_description\":\"Invalid authorization code.\",\"error\":\"invalid_grant\"}"
     end
