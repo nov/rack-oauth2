@@ -25,9 +25,6 @@ module Rack
             end
           end
 
-          class Response < Token::Response
-          end
-
         end
       end
     end
