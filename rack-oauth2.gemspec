@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rack-oauth2}
-  s.version = "0.0.6"
+  s.version = "0.0.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nov matake"]
@@ -32,10 +32,10 @@ Gem::Specification.new do |s|
      "lib/rack/oauth2/server/abstract/handler.rb",
      "lib/rack/oauth2/server/abstract/request.rb",
      "lib/rack/oauth2/server/abstract/response.rb",
-     "lib/rack/oauth2/server/authorization.rb",
-     "lib/rack/oauth2/server/authorization/code.rb",
-     "lib/rack/oauth2/server/authorization/code_and_token.rb",
-     "lib/rack/oauth2/server/authorization/token.rb",
+     "lib/rack/oauth2/server/authorize.rb",
+     "lib/rack/oauth2/server/authorize/code.rb",
+     "lib/rack/oauth2/server/authorize/code_and_token.rb",
+     "lib/rack/oauth2/server/authorize/token.rb",
      "lib/rack/oauth2/server/error.rb",
      "lib/rack/oauth2/server/token.rb",
      "lib/rack/oauth2/server/token/assertion.rb",
@@ -44,10 +44,10 @@ Gem::Specification.new do |s|
      "lib/rack/oauth2/server/token/refresh_token.rb",
      "lib/rack/oauth2/server/util.rb",
      "rack-oauth2.gemspec",
-     "spec/rack/oauth2/server/authorization/code_and_token_spec.rb",
-     "spec/rack/oauth2/server/authorization/code_spec.rb",
-     "spec/rack/oauth2/server/authorization/token_spec.rb",
-     "spec/rack/oauth2/server/authorization_spec.rb",
+     "spec/rack/oauth2/server/authorize/code_and_token_spec.rb",
+     "spec/rack/oauth2/server/authorize/code_spec.rb",
+     "spec/rack/oauth2/server/authorize/token_spec.rb",
+     "spec/rack/oauth2/server/authorize_spec.rb",
      "spec/rack/oauth2/server/error_spec.rb",
      "spec/rack/oauth2/server/token/assertion_spec.rb",
      "spec/rack/oauth2/server/token/authorization_code_spec.rb",
@@ -63,10 +63,10 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Rack Middleware for OAuth2 Client & Server}
   s.test_files = [
-    "spec/rack/oauth2/server/authorization/code_and_token_spec.rb",
-     "spec/rack/oauth2/server/authorization/code_spec.rb",
-     "spec/rack/oauth2/server/authorization/token_spec.rb",
-     "spec/rack/oauth2/server/authorization_spec.rb",
+    "spec/rack/oauth2/server/authorize/code_and_token_spec.rb",
+     "spec/rack/oauth2/server/authorize/code_spec.rb",
+     "spec/rack/oauth2/server/authorize/token_spec.rb",
+     "spec/rack/oauth2/server/authorize_spec.rb",
      "spec/rack/oauth2/server/error_spec.rb",
      "spec/rack/oauth2/server/token/assertion_spec.rb",
      "spec/rack/oauth2/server/token/authorization_code_spec.rb",
