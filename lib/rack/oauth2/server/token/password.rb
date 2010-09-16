@@ -15,7 +15,7 @@ module Rack
 
             def initialize(env)
               super
-              @grant_type = 'password'
+              @grant_type = :password
               @username   = params['username']
               @password   = params['password']
             end

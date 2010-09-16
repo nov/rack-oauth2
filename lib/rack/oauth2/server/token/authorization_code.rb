@@ -15,7 +15,7 @@ module Rack
 
             def initialize(env)
               super
-              @grant_type = 'authorization_code'
+              @grant_type = :authorization_code
               @code       = params['code']
             end
 

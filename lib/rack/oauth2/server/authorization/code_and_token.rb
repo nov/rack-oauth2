@@ -13,7 +13,7 @@ module Rack
           class Request < Authorization::Request
             def initialize(env)
               super
-              @response_type = 'code_and_token'
+              @response_type = :code_and_token
             end
           end
 
