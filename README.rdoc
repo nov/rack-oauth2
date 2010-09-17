@@ -21,21 +21,21 @@ http://tools.ietf.org/html/draft-ietf-oauth-v2-10
 
 ==== Resource Owner Authorization & Token Endpoint
 
-:include:example/server/oauth2_controller.rb
+  https://gist.github.com/65a830d5d7588a3b2e31
 
-==== Protected Resource Endpoint
+==== Protected Resource Middleware Setting
 
-  :include:example/server/protected_resource_rails.rb
+  http://gist.github.com/584565
 
 === Sinatra
 
 ==== Resource Owner Authorization Endpoint
 
-  :include:example/server/authorize.rb
+  https://gist.github.com/8005ba7e4ddf44620c4a
 
 ==== Token Endpoint
 
-  :include:example/server/token.rb
+  http://gist.github.com/584574
 
 == Note on Patches/Pull Requests
  
