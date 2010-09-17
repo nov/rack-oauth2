@@ -34,24 +34,27 @@ module Rack
           }.delete_if do |key, value|
             value.blank?
           end
+          response = Rack::Response.new
           case @channel
           when :www_authenticate
             params = params.collect do |key, value|
-              "#{key}=\"#{URI.encode value.to_s}\""
+              "#{key}='#{value.to_s}'"
             end
-            [code, {'WWW-Authenticate' => "OAuth realm=\"#{realm}\" #{params.join(" ")}"}, []]
+            response.write params.to_json
+            response['WWW-Authenticate'] = "OAuth realm='#{realm}' #{params.join(" ")}"
           when :query_string
             redirect_uri.query = if redirect_uri.query
               [redirect_uri.query, params.to_query].join('&')
             else
               params.to_query
             end
-            response = Rack::Response.new
             response.redirect redirect_uri.to_s
-            response.finish
           when :json_body
-            [code, {'Content-Type' => 'application/json'}, params.to_json]
+            response = Rack::Response.new
+            response.write params.to_json
+            response['Content-Type'] = 'application/json'
           end
+          response.finish
         end
       end
 
