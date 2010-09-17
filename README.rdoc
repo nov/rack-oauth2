@@ -7,7 +7,7 @@ http://tools.ietf.org/html/draft-ietf-oauth-v2-10
 
 == Installation
 
-  gem install fb_graph
+  gem install rack-oauth2
 
 == Resources
 
