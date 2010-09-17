@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rack-oauth2}
-  s.version = "0.0.8"
+  s.version = "0.0.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nov matake"]
-  s.date = %q{2010-09-16}
+  s.date = %q{2010-09-17}
   s.description = %q{Rack Middleware for OAuth2 Client & Server, currently working on server code first.}
   s.email = %q{nov@matake.jp}
   s.extra_rdoc_files = [
