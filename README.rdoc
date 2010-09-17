@@ -17,23 +17,27 @@ http://tools.ietf.org/html/draft-ietf-oauth-v2-10
 
 == Usage
 
-See examples
+=== Rails
 
-=== End User Authorization Endpoint
+==== Resource Owner Authorization & Token Endpoint
 
-* example/server/oauth2_controller.rb (Rails)
-* example/server/authorize.rb (Sinatra)
+  :include:example/server/oauth2_controller.rb
 
-=== Token Endpoint
+==== Protected Resource Endpoint
 
-* example/server/oauth2_controller.rb (Rails)
-* example/server/token.rb (Sinatra)
+  :include:example/server/protected_resource_rails.rb
 
-=== Protected Resource Endpoint
+=== Sinatra
 
-TODO:
+==== Resource Owner Authorization Endpoint
 
-=== Note on Patches/Pull Requests
+  :include:example/server/authorize.rb
+
+==== Token Endpoint
+
+  :include:example/server/token.rb
+
+== Note on Patches/Pull Requests
  
 * Fork the project.
 * Make your feature addition or bug fix.
