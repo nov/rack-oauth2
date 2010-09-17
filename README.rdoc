@@ -21,7 +21,7 @@ http://tools.ietf.org/html/draft-ietf-oauth-v2-10
 
 ==== Resource Owner Authorization & Token Endpoint
 
-  :include:example/server/oauth2_controller.rb
+:include:example/server/oauth2_controller.rb
 
 ==== Protected Resource Endpoint
 
