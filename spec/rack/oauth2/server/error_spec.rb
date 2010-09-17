@@ -5,8 +5,8 @@ describe Rack::OAuth2::Server::Error, '#finish' do
   context "when state is given" do
     it "should return state as error response" do
       error = Rack::OAuth2::Server::Error.new(400, :invalid_request, "Something Invalid!!", :state => "anything")
-      status, header, body = error.finish
-      body.should match("\"state\":\"anything\"")
+      status, header, response = error.finish
+      response.body.to_s.should match("\"state\":\"anything\"")
     end
   end
 
@@ -21,7 +21,7 @@ describe Rack::OAuth2::Server::Error, '#finish' do
     end
 
     it "should redirect to redirect_uri with error message in query string" do
-      status, header, body = @error.finish
+      status, header, response = @error.finish
       status.should == 302
       header['Content-Type'].should == "text/html"
       header['Location'].should == "#{@params.delete(:redirect_uri)}?#{@params.to_query}"
@@ -38,9 +38,9 @@ describe Rack::OAuth2::Server::Error, '#finish' do
     end
 
     it "should return failure response with error message in WWW-Authenticate header" do
-      status, header, body = @error.finish
+      status, header, response = @error.finish
       status.should === 401
-      header['WWW-Authenticate'].should == "OAuth realm=\"\" error_description=\"Something%20invalid!!\" error=\"invalid_request\""
+      header['WWW-Authenticate'].should == "OAuth realm='' error_description='Something invalid!!' error='invalid_request'"
     end
   end
 
@@ -54,9 +54,9 @@ describe Rack::OAuth2::Server::Error, '#finish' do
     end
 
     it "should return failure response with error message in json body" do
-      status, header, body = @error.finish
+      status, header, response = @error.finish
       status.should === 400
-      body.should == @params.to_json
+      response.body.to_s.should == @params.to_json
     end
   end
 
@@ -65,13 +65,13 @@ end
 describe Rack::OAuth2::Server::BadRequest do
   it "should use 400 as status" do
     error = Rack::OAuth2::Server::BadRequest.new(:invalid_request)
-    error.code.should == 400
+    error.status.should == 400
   end
 end
 
 describe Rack::OAuth2::Server::Unauthorized do
   it "should use 400 as status" do
     error = Rack::OAuth2::Server::Unauthorized.new(:invalid_request)
-    error.code.should == 401
+    error.status.should == 401
   end
 end

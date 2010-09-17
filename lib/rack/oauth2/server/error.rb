@@ -3,10 +3,10 @@ module Rack
     module Server
 
       class Error < StandardError
-        attr_accessor :code, :error, :description, :uri, :state, :scope, :redirect_uri, :realm
+        attr_accessor :status, :error, :description, :uri, :state, :scope, :redirect_uri, :realm
 
-        def initialize(code, error, description = "", options = {})
-          @code         = code
+        def initialize(status, error, description = "", options = {})
+          @status       = status
           @error        = error
           @description  = description
           @uri          = options[:uri]
@@ -37,11 +37,9 @@ module Rack
           response = Rack::Response.new
           case @channel
           when :www_authenticate
-            params = params.collect do |key, value|
-              "#{key}='#{value.to_s}'"
-            end
+            response.status = status
+            response.header['WWW-Authenticate'] = "OAuth realm='#{realm}' #{params.collect { |key, value| "#{key}='#{value.to_s}'" }.join(' ')}"
             response.write params.to_json
-            response['WWW-Authenticate'] = "OAuth realm='#{realm}' #{params.join(" ")}"
           when :query_string
             redirect_uri.query = if redirect_uri.query
               [redirect_uri.query, params.to_query].join('&')
@@ -50,9 +48,9 @@ module Rack
             end
             response.redirect redirect_uri.to_s
           when :json_body
-            response = Rack::Response.new
+            response.status = status
+            response.header['Content-Type'] = 'application/json'
             response.write params.to_json
-            response['Content-Type'] = 'application/json'
           end
           response.finish
         end

@@ -28,7 +28,7 @@ describe Rack::OAuth2::Server::Resource, '#call' do
   context "when no access token is given" do
     it "should skip OAuth 2.0 authentication" do
       env = Rack::MockRequest.env_for("/protected_resource")
-      status, header, body = @app.call(env)
+      status, header, response = @app.call(env)
       status.should == 200
       env[Rack::OAuth2::ACCESS_TOKEN].should be_nil
     end
@@ -51,7 +51,7 @@ describe Rack::OAuth2::Server::Resource, '#call' do
     it "should fail with expired_token error" do
       response = @request.get("/protected_resource?oauth_token=expired_token")
       response.status.should == 401
-      response.headers["WWW-Authenticate"].should == "OAuth realm=\"server.example.com\" error_description=\"Given%20access%20token%20has%20been%20expired.\" error=\"expired_token\""
+      response.headers["WWW-Authenticate"].should == "OAuth realm='server.example.com' error_description='Given access token has been expired.' error='expired_token'"
     end
 
     it "should not store access token in env" do
@@ -65,7 +65,7 @@ describe Rack::OAuth2::Server::Resource, '#call' do
     it "should fail with invalid_token error" do
       response = @request.get("/protected_resource?oauth_token=invalid_token")
       response.status.should == 401
-      response.headers["WWW-Authenticate"].should == "OAuth realm=\"server.example.com\" error_description=\"Given%20access%20token%20is%20invalid.\" error=\"invalid_token\""
+      response.headers["WWW-Authenticate"].should == "OAuth realm='server.example.com' error_description='Given access token is invalid.' error='invalid_token'"
     end
 
     it "should not store access token in env" do
@@ -79,13 +79,13 @@ describe Rack::OAuth2::Server::Resource, '#call' do
     it "should fail with invalid_request error" do
       response = @request.get("/protected_resource?oauth_token=invalid_token", "HTTP_AUTHORIZATION" => "OAuth valid_token")
       response.status.should == 400
-      response.headers["WWW-Authenticate"].should == "OAuth realm=\"server.example.com\" error_description=\"Both%20Authorization%20header%20and%20payload%20includes%20oauth_token.\" error=\"invalid_request\""
+      response.headers["WWW-Authenticate"].should == "OAuth realm='server.example.com' error_description='Both Authorization header and payload includes oauth_token.' error='invalid_request'"
     end
   end
 
   context "when OAuth 1.0 Authorization header is given" do
     it "should ignore the OAuth params" do
-      env = Rack::MockRequest.env_for("/protected_resource", "HTTP_AUTHORIZATION" => "OAuth realm=\"server.example.com\" oauth_consumer_key=\"key\" oauth_token=\"token\" oauth_signature_method=\"HMAC-SHA1\" oauth_signature=\"sig\" oauth_timestamp=\"123456789\" oauth_nonce=\"nonce\"")
+      env = Rack::MockRequest.env_for("/protected_resource", "HTTP_AUTHORIZATION" => "OAuth realm='server.example.com' oauth_consumer_key='key' oauth_token='token' oauth_signature_method='HMAC-SHA1' oauth_signature='sig' oauth_timestamp='123456789' oauth_nonce='nonce'")
       status, header, body = @app.call(env)
       status.should == 200
       env[Rack::OAuth2::ACCESS_TOKEN].should be_nil
