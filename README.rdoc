@@ -21,7 +21,7 @@ http://tools.ietf.org/html/draft-ietf-oauth-v2-10
 
 ==== Resource Owner Authorization & Token Endpoint
 
-https://gist.github.com/65a830d5d7588a3b2e31
+http://gist.github.com/584594
 
 ==== Protected Resource Middleware Setting
 
@@ -31,7 +31,7 @@ http://gist.github.com/584565
 
 ==== Resource Owner Authorization Endpoint
 
-https://gist.github.com/8005ba7e4ddf44620c4a
+http://gist.github.com/584595
 
 ==== Token Endpoint
 
