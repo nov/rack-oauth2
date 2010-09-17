@@ -6,7 +6,7 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = 'rack-oauth2'
     gem.summary = %Q{Rack Middleware for OAuth2 Client & Server}
-    gem.description = %Q{Rack Middleware for OAuth2 Client & Server, currently working on server code first.}
+    gem.description = %Q{Rack Middleware for OAuth2. Currently support only Server/Provider, not Client/Consumer.}
     gem.email = 'nov@matake.jp'
     gem.homepage = 'http://github.com/nov/rack-oauth2'
     gem.authors = ['nov matake']

@@ -1,9 +1,39 @@
 = rack-oauth2
 
-Currently working on OAuth Authorization/Resource Server implementation based on draft v.10
+Rack Middleware for OAuth2. Currently support only Server/Provider, not Client/Consumer.
+
+This gem is based on OAuth 2.0 draft v.10
 http://tools.ietf.org/html/draft-ietf-oauth-v2-10
 
-== Note on Patches/Pull Requests
+== Installation
+
+  gem install fb_graph
+
+== Resources
+
+* View RDoc on RDoc.info (http://rdoc.info/github/nov/rack-oauth2)
+* View Source on GitHub (http://github.com/nov/rack-oauth2)
+* Report Issues on GitHub (http://github.com/nov/rack-oauth2/issues)
+
+== Usage
+
+See examples
+
+=== End User Authorization Endpoint
+
+* example/server/oauth2_controller.rb (Rails)
+* example/server/authorize.rb (Sinatra)
+
+=== Token Endpoint
+
+* example/server/oauth2_controller.rb (Rails)
+* example/server/token.rb (Sinatra)
+
+=== Protected Resource Endpoint
+
+TODO:
+
+=== Note on Patches/Pull Requests
  
 * Fork the project.
 * Make your feature addition or bug fix.

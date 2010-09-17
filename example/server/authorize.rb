@@ -7,7 +7,8 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '../../lib'))
 require 'rack/oauth2'
 
 get '/oauth/authorize' do
-  authorization_endpoint = Rack::OAuth2::Server::Authorize.new(self)
+  # set realm as server.example.com
+  authorization_endpoint = Rack::OAuth2::Server::Authorize.new("server.example.com")
   response = authorization_endpoint.call(env)
   case response.first
   when 200
@@ -30,20 +31,21 @@ get '/oauth/authorize' do
     </form>
     HTML
   else
+    # redirect response with error message
     response
   end
 end
 
 post '/oauth/authorize' do
-  authorization_endpoint = Rack::OAuth2::Server::Authorize.new(self) do |request, response|
-    # allow everything
+  # set realm as server.example.com
+  authorization_endpoint = Rack::OAuth2::Server::Authorize.new("server.example.com") do |request, response|
     params = env['rack.request.form_hash']
     if params['approved']
       response.approve!
-      case request
-      when Rack::OAuth2::Server::Authorization::Code::Request
+      case request.response_type
+      when :code
         response.code = 'code'
-      when Rack::OAuth2::Server::Authorization::Token::Request
+      when :token
         response.access_token = 'access_token'
         response.expires_in = 3600
       end
