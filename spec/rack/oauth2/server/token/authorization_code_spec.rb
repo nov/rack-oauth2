@@ -21,7 +21,9 @@ describe Rack::OAuth2::Server::Token::AuthorizationCode do
       })
       response.status.should == 200
       response.content_type.should == "application/json"
-      response.body.should == "{\"access_token\":\"access_token\"}"
+      response.body.should == {
+        :access_token => "access_token"
+      }.to_json
     end
 
   end
@@ -45,7 +47,10 @@ describe Rack::OAuth2::Server::Token::AuthorizationCode do
       })
       response.status.should == 401
       response.content_type.should == "application/json"
-      response.body.should == "{\"error_description\":\"Invalid authorization code.\",\"error\":\"invalid_grant\"}"
+      response.body.should == {
+        :error => :invalid_grant,
+        :error_description => "Invalid authorization code."
+      }.to_json
     end
 
   end
@@ -69,7 +74,10 @@ describe Rack::OAuth2::Server::Token::AuthorizationCode do
       })
       response.status.should == 401
       response.content_type.should == "application/json"
-      response.body.should == "{\"error_description\":\"Invalid client identifier.\",\"error\":\"invalid_client\"}"
+      response.body.should == {
+        :error => :invalid_client,
+        :error_description => "Invalid client identifier."
+      }.to_json
     end
 
   end

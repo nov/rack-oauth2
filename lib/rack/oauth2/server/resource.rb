@@ -40,15 +40,14 @@ module Rack
           end
 
           def access_token
-            @access_token ||= case
-            when access_token_in_haeder.present? && access_token_in_payload.blank?
-              access_token_in_haeder
-            when access_token_in_haeder.blank? && access_token_in_payload.present?
-              access_token_in_payload
-            when access_token_in_haeder.present? && access_token_in_payload.present?
-              raise BadRequest.new(:invalid_request, 'Both Authorization header and payload includes oauth_token.', :www_authenticate => true)
-            else
+            tokens = [access_token_in_haeder, access_token_in_payload].compact
+            case Array(tokens).size
+            when 0
               nil
+            when 1
+              tokens.first
+            else
+              raise BadRequest.new(:invalid_request, 'Both Authorization header and payload includes oauth_token.', :www_authenticate => true)
             end
           end
 

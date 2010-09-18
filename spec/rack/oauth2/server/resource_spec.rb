@@ -45,13 +45,35 @@ describe Rack::OAuth2::Server::Resource, '#call' do
       @app.call(env)
       env[Rack::OAuth2::ACCESS_TOKEN].should == "valid_token"
     end
+
+    context "when Authorization header is used" do
+      it "should be accepted" do
+        env = Rack::MockRequest.env_for("/protected_resource", "HTTP_AUTHORIZATION" => "OAuth valid_token")
+        status, header, response = @app.call(env)
+        status.should == 200
+        env[Rack::OAuth2::ACCESS_TOKEN].should == "valid_token"
+      end
+    end
+
+    context "when request body is used" do
+      it "should be accepted" do
+        env = Rack::MockRequest.env_for("/protected_resource", :params => {:oauth_token => "valid_token"})
+        status, header, response = @app.call(env)
+        status.should == 200
+        env[Rack::OAuth2::ACCESS_TOKEN].should == "valid_token"
+      end
+    end
   end
 
   context "when expired_token is given" do
     it "should fail with expired_token error" do
       response = @request.get("/protected_resource?oauth_token=expired_token")
       response.status.should == 401
-      response.headers["WWW-Authenticate"].should == "OAuth realm='server.example.com' error_description='Given access token has been expired.' error='expired_token'"
+      error_message = {
+        :error => :expired_token,
+        :error_description => "Given access token has been expired."
+      }
+      response.headers["WWW-Authenticate"].should == "OAuth realm='server.example.com' #{error_message.collect {|k,v| "#{k}='#{v}'"}.join(' ')}"
     end
 
     it "should not store access token in env" do
@@ -65,7 +87,11 @@ describe Rack::OAuth2::Server::Resource, '#call' do
     it "should fail with invalid_token error" do
       response = @request.get("/protected_resource?oauth_token=invalid_token")
       response.status.should == 401
-      response.headers["WWW-Authenticate"].should == "OAuth realm='server.example.com' error_description='Given access token is invalid.' error='invalid_token'"
+      error_message = {
+        :error => :invalid_token,
+        :error_description => "Given access token is invalid."
+      }
+      response.headers["WWW-Authenticate"].should == "OAuth realm='server.example.com' #{error_message.collect {|k,v| "#{k}='#{v}'"}.join(' ')}"
     end
 
     it "should not store access token in env" do
@@ -79,7 +105,11 @@ describe Rack::OAuth2::Server::Resource, '#call' do
     it "should fail with invalid_request error" do
       response = @request.get("/protected_resource?oauth_token=invalid_token", "HTTP_AUTHORIZATION" => "OAuth valid_token")
       response.status.should == 400
-      response.headers["WWW-Authenticate"].should == "OAuth realm='server.example.com' error_description='Both Authorization header and payload includes oauth_token.' error='invalid_request'"
+      error_message = {
+        :error => :invalid_request,
+        :error_description => "Both Authorization header and payload includes oauth_token."
+      }
+      response.headers["WWW-Authenticate"].should == "OAuth realm='server.example.com' #{error_message.collect {|k,v| "#{k}='#{v}'"}.join(' ')}"
     end
   end
 

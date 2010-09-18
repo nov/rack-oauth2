@@ -21,7 +21,9 @@ describe Rack::OAuth2::Server::Token::Assertion do
       })
       response.status.should == 200
       response.content_type.should == "application/json"
-      response.body.should == "{\"access_token\":\"access_token\"}"
+      response.body.should == {
+        :access_token => "access_token"
+      }.to_json
     end
 
   end
@@ -45,7 +47,10 @@ describe Rack::OAuth2::Server::Token::Assertion do
       })
       response.status.should == 401
       response.content_type.should == "application/json"
-      response.body.should == "{\"error_description\":\"Invalid assertion.\",\"error\":\"invalid_grant\"}"
+      response.body.should == {
+        :error => :invalid_grant,
+        :error_description => "Invalid assertion."
+      }.to_json
     end
 
   end

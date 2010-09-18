@@ -19,6 +19,14 @@ describe Rack::OAuth2::Server::Authorize::Token do
       response.location.should == "http://client.example.com/callback#access_token=access_token"
     end
 
+    context "when redirect_uri already includes fragment" do
+      it "should keep original fragment" do
+        response = @request.get("/?response_type=token&client_id=client&redirect_uri=http://client.example.com/callback%23fragment")
+        response.status.should == 302
+        response.location.should == "http://client.example.com/callback#fragment&access_token=access_token"
+      end
+    end
+
   end
 
   context "when denied" do
@@ -34,7 +42,11 @@ describe Rack::OAuth2::Server::Authorize::Token do
     it "should redirect to redirect_uri with error message" do
       response = @request.get("/?response_type=token&client_id=client&redirect_uri=http://client.example.com/callback")
       response.status.should == 302
-      response.location.should == "http://client.example.com/callback?error_description=User+rejected+the+requested+access.&error=access_denied"
+      error_message = {
+        :error => :access_denied,
+        :error_description => "User rejected the requested access."
+      }
+      response.location.should == "http://client.example.com/callback?#{error_message.to_query}"
     end
 
   end

@@ -26,6 +26,24 @@ describe Rack::OAuth2::Server::Error, '#finish' do
       header['Content-Type'].should == "text/html"
       header['Location'].should == "#{@params.delete(:redirect_uri)}?#{@params.to_query}"
     end
+
+    context "when redirect_uri already includes query" do
+      before do
+        @params = {
+          :error => :invalid_request,
+          :error_description => "Something invalid!!",
+          :redirect_uri => "http://client.example.com?k=v"
+        }
+        @error = Rack::OAuth2::Server::Error.new(400, @params[:error], @params[:error_description], :redirect_uri => @params[:redirect_uri])
+      end
+
+      it "should keep original query" do
+        status, header, response = @error.finish
+        status.should == 302
+        header['Content-Type'].should == "text/html"
+        header['Location'].should == "#{@params.delete(:redirect_uri)}&#{@params.to_query}"
+      end
+    end
   end
 
   context "when www_authenticate isn given" do
@@ -40,7 +58,11 @@ describe Rack::OAuth2::Server::Error, '#finish' do
     it "should return failure response with error message in WWW-Authenticate header" do
       status, header, response = @error.finish
       status.should === 401
-      header['WWW-Authenticate'].should == "OAuth realm='' error_description='Something invalid!!' error='invalid_request'"
+      error_message = {
+        :error => "invalid_request",
+        :error_description => "Something invalid!!"
+      }
+      header['WWW-Authenticate'].should == "OAuth realm='' #{error_message.collect {|k,v| "#{k}='#{v}'"}.join(' ')}"
     end
   end
 
@@ -58,6 +80,7 @@ describe Rack::OAuth2::Server::Error, '#finish' do
       status.should === 400
       response.body.to_s.should == @params.to_json
     end
+    
   end
 
 end
