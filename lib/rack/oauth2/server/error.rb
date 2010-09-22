@@ -14,14 +14,7 @@ module Rack
           @realm        = options[:realm]
           @scope        = Array(options[:scope])
           @redirect_uri = Util.parse_uri(options[:redirect_uri]) if options[:redirect_uri]
-          @www_authenticate = 
-          @channel = if options[:www_authenticate].present?
-            :www_authenticate
-          elsif @redirect_uri.present?
-            :query_string
-          else
-            :json_body
-          end
+          @www_authenticate = options[:www_authenticate].present?
         end
 
         def finish
@@ -35,21 +28,19 @@ module Rack
             value.blank?
           end
           response = Rack::Response.new
-          case @channel
-          when :www_authenticate
-            response.status = status
-            response.header['WWW-Authenticate'] = "OAuth realm='#{realm}' #{params.collect { |key, value| "#{key}='#{value.to_s}'" }.join(' ')}"
-            response.write params.to_json
-          when :query_string
+          if @redirect_uri.present?
             redirect_uri.query = if redirect_uri.query
               [redirect_uri.query, params.to_query].join('&')
             else
               params.to_query
             end
             response.redirect redirect_uri.to_s
-          when :json_body
+          else
             response.status = status
             response.header['Content-Type'] = 'application/json'
+            if @www_authenticate
+              response.header['WWW-Authenticate'] = "OAuth realm='#{realm}' #{params.collect { |key, value| "#{key}='#{value.to_s}'" }.join(' ')}"
+            end
             response.write params.to_json
           end
           response.finish

@@ -5,7 +5,6 @@ describe Rack::OAuth2::Server::Token::Password do
   context "when valid resource owner credentials are given" do
 
     before do
-      # NOTE: for some reason, test fails when called Rack::OAuth2::Server::Authorization::Token directly
       @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
         response.access_token = "access_token"
       end
@@ -31,9 +30,8 @@ describe Rack::OAuth2::Server::Token::Password do
   context "when invalid resource owner credentials are given" do
 
     before do
-      # NOTE: for some reason, test fails when called Rack::OAuth2::Server::Authorization::Code directly
       @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
-        raise Rack::OAuth2::Server::Unauthorized.new(:invalid_grant, 'Invalid resource owner credentials.')
+        raise Rack::OAuth2::Server::BadRequest.new(:invalid_grant, 'Invalid resource owner credentials.')
       end
       @request = Rack::MockRequest.new @app
     end
@@ -45,7 +43,7 @@ describe Rack::OAuth2::Server::Token::Password do
         :username => "nov",
         :password => "invalid_pass"
       })
-      response.status.should == 401
+      response.status.should == 400
       response.content_type.should == "application/json"
       response.body.should == {
         :error => :invalid_grant,

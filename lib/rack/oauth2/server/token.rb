@@ -1,3 +1,5 @@
+require 'rack/auth/basic'
+
 module Rack
   module OAuth2
     module Server
@@ -11,12 +13,18 @@ module Rack
         end
 
         class Request < Abstract::Request
-          attr_accessor :grant_type, :client_secret
+          attr_accessor :grant_type, :client_secret, :via_authorization_header
 
           def initialize(env)
             super
-            @grant_type    = params['grant_type']
-            @client_secret = params['client_secret']
+            @grant_type = params['grant_type']
+            auth = Rack::Auth::Basic::Request.new(env)
+            if auth.provided? && auth.basic?
+              @client_id, @client_secret = auth.credentials
+              @via_authorization_header = true
+            else
+              @client_secret = params['client_secret']
+            end
           end
 
           def required_params

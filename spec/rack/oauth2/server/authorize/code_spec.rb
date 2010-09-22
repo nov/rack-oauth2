@@ -5,7 +5,6 @@ describe Rack::OAuth2::Server::Authorize::Code do
   context "when authorized" do
 
     before do
-      # NOTE: for some reason, test fails when called Rack::OAuth2::Server::Authorization::Code directly
       @app = Rack::OAuth2::Server::Authorize.new(simple_app) do |request, response|
         response.approve!
         response.code = "authorization_code"
@@ -32,7 +31,6 @@ describe Rack::OAuth2::Server::Authorize::Code do
   context "when denied" do
 
     before do
-      # NOTE: for some reason, test fails when called Rack::OAuth2::Server::Authorization::Code directly
       @app = Rack::OAuth2::Server::Authorize.new(simple_app) do |request, response|
         raise Rack::OAuth2::Server::Unauthorized.new(:access_denied, 'User rejected the requested access.', :redirect_uri => request.redirect_uri)
       end

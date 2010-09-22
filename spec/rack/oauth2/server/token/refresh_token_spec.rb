@@ -5,7 +5,6 @@ describe Rack::OAuth2::Server::Token::RefreshToken do
   context "when valid refresh_token is given" do
 
     before do
-      # NOTE: for some reason, test fails when called Rack::OAuth2::Server::Authorization::Token directly
       @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
         response.access_token = "access_token"
       end
@@ -30,9 +29,8 @@ describe Rack::OAuth2::Server::Token::RefreshToken do
   context "when invalid refresh_token is given" do
 
     before do
-      # NOTE: for some reason, test fails when called Rack::OAuth2::Server::Authorization::Code directly
       @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
-        raise Rack::OAuth2::Server::Unauthorized.new(:invalid_grant, 'Invalid refresh_token.')
+        raise Rack::OAuth2::Server::BadRequest.new(:invalid_grant, 'Invalid refresh_token.')
       end
       @request = Rack::MockRequest.new @app
     end
@@ -43,7 +41,7 @@ describe Rack::OAuth2::Server::Token::RefreshToken do
         :client_id => "valid_client",
         :refresh_token => "invalid_refresh_token"
       })
-      response.status.should == 401
+      response.status.should == 400
       response.content_type.should == "application/json"
       response.body.should == {
         :error => :invalid_grant,
