@@ -32,7 +32,7 @@ describe Rack::OAuth2::Server::Authorize::Token do
 
     before do
       @app = Rack::OAuth2::Server::Authorize.new do |request, response|
-        raise Rack::OAuth2::Server::Unauthorized.new(:access_denied, 'User rejected the requested access.', :redirect_uri => request.redirect_uri)
+        request.access_denied! 'User rejected the requested access.'
       end
       @request = Rack::MockRequest.new @app
     end

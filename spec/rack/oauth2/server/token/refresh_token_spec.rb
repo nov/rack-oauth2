@@ -30,7 +30,7 @@ describe Rack::OAuth2::Server::Token::RefreshToken do
 
     before do
       @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
-        raise Rack::OAuth2::Server::BadRequest.new(:invalid_grant, 'Invalid refresh_token.')
+        request.invalid_grant! 'Invalid refresh_token.'
       end
       @request = Rack::MockRequest.new @app
     end

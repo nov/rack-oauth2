@@ -31,7 +31,7 @@ describe Rack::OAuth2::Server::Token::Assertion do
 
     before do
       @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
-        raise Rack::OAuth2::Server::BadRequest.new(:invalid_grant, 'Invalid assertion.')
+        request.invalid_grant! 'Invalid assertion.'
       end
       @request = Rack::MockRequest.new @app
     end

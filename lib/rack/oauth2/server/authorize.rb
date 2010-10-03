@@ -11,6 +11,7 @@ module Rack
         end
 
         class Request < Abstract::Request
+          include Error::Authorize
           attr_accessor :response_type, :redirect_uri, :state
 
           def initialize(env)
@@ -32,9 +33,10 @@ module Rack
             when 'code_and_token'
               CodeAndToken
             else
-              raise BadRequest.new(:unsupported_response_type, "'#{params['response_type']}' isn't supported.", :state => state, :redirect_uri => redirect_uri)
+              unsupported_response_type!("'#{params['response_type']}' isn't supported.")
             end
           end
+
         end
 
         class Response < Abstract::Response

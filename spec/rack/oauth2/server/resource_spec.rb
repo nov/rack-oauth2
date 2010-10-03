@@ -15,11 +15,11 @@ describe Rack::OAuth2::Server::Resource, '#call' do
       when "valid_token"
         # nothing to do
       when "insufficient_scope_token"
-        raise Rack::OAuth2::Server::Unauthorized.new(:insufficient_scope, "More scope is required.", :www_authenticate => true)
+        request.insufficient_scope!("More scope is required.")
       when "expired_token"
-        raise Rack::OAuth2::Server::Unauthorized.new(:expired_token, "Given access token has been expired.", :www_authenticate => true)
+        request.expired_token!("Given access token has been expired.")
       else
-        raise Rack::OAuth2::Server::Unauthorized.new(:invalid_token, "Given access token is invalid.", :www_authenticate => true)
+        request.invalid_token!("Given access token is invalid.")
       end
     end
     @request = Rack::MockRequest.new @app

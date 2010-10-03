@@ -13,18 +13,21 @@ module Rack
         end
 
         class Request < Abstract::Request
+          include Error::Token
+
           attr_accessor :grant_type, :client_secret, :via_authorization_header
 
           def initialize(env)
-            super
-            @grant_type = params['grant_type']
             auth = Rack::Auth::Basic::Request.new(env)
             if auth.provided? && auth.basic?
               @client_id, @client_secret = auth.credentials
               @via_authorization_header = true
+              super
             else
+              super
               @client_secret = params['client_secret']
             end
+            @grant_type = params['grant_type']
           end
 
           def required_params
@@ -42,7 +45,7 @@ module Rack
             when 'refresh_token'
               RefreshToken
             else
-              raise BadRequest.new(:unsupported_grant_type, "'#{params['grant_type']}' isn't supported.")
+              unsupported_grant_type!("'#{params['grant_type']}' isn't supported.")
             end
           end
 

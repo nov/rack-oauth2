@@ -14,7 +14,6 @@ module Rack
           @realm        = options[:realm]
           @scope        = Array(options[:scope])
           @redirect_uri = Util.parse_uri(options[:redirect_uri]) if options[:redirect_uri]
-          @www_authenticate = options[:www_authenticate].present?
         end
 
         def finish
@@ -38,18 +37,12 @@ module Rack
           else
             response.status = status
             response.header['Content-Type'] = 'application/json'
-            if @www_authenticate
+            if realm.present?
               response.header['WWW-Authenticate'] = "OAuth realm='#{realm}' #{params.collect { |key, value| "#{key}='#{value.to_s}'" }.join(' ')}"
             end
             response.write params.to_json
           end
           response.finish
-        end
-      end
-
-      class Unauthorized < Error
-        def initialize(error, description = "", options = {})
-          super(401, error, description, options)
         end
       end
 
@@ -59,6 +52,22 @@ module Rack
         end
       end
 
+      class Unauthorized < Error
+        def initialize(error, description = "", options = {})
+          super(401, error, description, options)
+        end
+      end
+
+      class Forbidden < Error
+        def initialize(error, description = "", options = {})
+          super(403, error, description, options)
+        end
+      end
+
     end
   end
 end
+
+require 'rack/oauth2/server/error/authorize'
+require 'rack/oauth2/server/error/token'
+require 'rack/oauth2/server/error/resource'

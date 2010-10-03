@@ -31,7 +31,7 @@ describe Rack::OAuth2::Server::Token::Password do
 
     before do
       @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
-        raise Rack::OAuth2::Server::BadRequest.new(:invalid_grant, 'Invalid resource owner credentials.')
+        request.invalid_grant! 'Invalid resource owner credentials.'
       end
       @request = Rack::MockRequest.new @app
     end

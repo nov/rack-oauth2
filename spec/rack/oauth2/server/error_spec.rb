@@ -46,13 +46,13 @@ describe Rack::OAuth2::Server::Error, '#finish' do
     end
   end
 
-  context "when www_authenticate isn given" do
+  context "when realm is given" do
     before do
       @params = {
         :error => :invalid_request,
         :error_description => "Something invalid!!"
       }
-      @error = Rack::OAuth2::Server::Error.new(401, @params[:error], @params[:error_description], :www_authenticate => true)
+      @error = Rack::OAuth2::Server::Error.new(401, @params[:error], @params[:error_description], :realm => "server.example.com")
     end
 
     it "should return failure response with error message in WWW-Authenticate header" do
@@ -62,11 +62,11 @@ describe Rack::OAuth2::Server::Error, '#finish' do
         :error => "invalid_request",
         :error_description => "Something invalid!!"
       }
-      header['WWW-Authenticate'].should == "OAuth realm='' #{error_message.collect {|k,v| "#{k}='#{v}'"}.join(' ')}"
+      header['WWW-Authenticate'].should == "OAuth realm='server.example.com' #{error_message.collect {|k,v| "#{k}='#{v}'"}.join(' ')}"
     end
   end
 
-  context "when either redirect_uri nor www_authenticate isn't given" do
+  context "when either redirect_uri nor realm isn't given" do
     before do
       @params = {
         :error => :invalid_request,
@@ -93,8 +93,15 @@ describe Rack::OAuth2::Server::BadRequest do
 end
 
 describe Rack::OAuth2::Server::Unauthorized do
-  it "should use 400 as status" do
+  it "should use 401 as status" do
     error = Rack::OAuth2::Server::Unauthorized.new(:invalid_request)
     error.status.should == 401
+  end
+end
+
+describe Rack::OAuth2::Server::Forbidden do
+  it "should use 403 as status" do
+    error = Rack::OAuth2::Server::Forbidden.new(:invalid_request)
+    error.status.should == 403
   end
 end
