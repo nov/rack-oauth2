@@ -33,7 +33,7 @@ module Rack
 
           attr_accessor :realm
 
-          def initialize(env, realm)
+          def initialize(env, realm = nil)
             @env = env
             @realm = realm
             @auth_header = Rack::Auth::AbstractRequest.new(env)
