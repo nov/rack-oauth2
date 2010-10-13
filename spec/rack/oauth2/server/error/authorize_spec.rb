@@ -82,7 +82,6 @@ describe Rack::OAuth2::Server::Authorize::Request do
       lambda do
         @request.unsupported_response_type!
       end.should raise_error(Rack::OAuth2::Server::BadRequest) { |e|
-        p e
         e.error.should == :unsupported_response_type
         e.description.should == Rack::OAuth2::Server::Error::Authorize::DEFAULT_DESCRIPTION[:unsupported_response_type]
       }

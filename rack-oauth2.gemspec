@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nov matake"]
-  s.date = %q{2010-10-04}
+  s.date = %q{2010-10-13}
   s.description = %q{Rack Middleware for OAuth2. Currently support only Server/Provider, not Client/Consumer.}
   s.email = %q{nov@matake.jp}
   s.extra_rdoc_files = [
@@ -94,16 +94,16 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<json>, [">= 0"])
       s.add_runtime_dependency(%q<activesupport>, [">= 0"])
-      s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_development_dependency(%q<rspec>, [">= 2"])
     else
       s.add_dependency(%q<json>, [">= 0"])
       s.add_dependency(%q<activesupport>, [">= 0"])
-      s.add_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_dependency(%q<rspec>, [">= 2"])
     end
   else
     s.add_dependency(%q<json>, [">= 0"])
     s.add_dependency(%q<activesupport>, [">= 0"])
-    s.add_dependency(%q<rspec>, [">= 1.2.9"])
+    s.add_dependency(%q<rspec>, [">= 2"])
   end
 end
 
