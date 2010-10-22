@@ -30,7 +30,7 @@ module Rack
           def invalid_request!(description = nil, options = {})
             error!(:invalid_request, description, options)
           end
-      
+
           def invalid_token!(description = nil, options = {})
             error!(:invalid_token, description, options)
           end

@@ -66,7 +66,7 @@ describe Rack::OAuth2::Server::Error, '#finish' do
     end
   end
 
-  context "when either redirect_uri nor realm isn't given" do
+  context "when neither redirect_uri nor realm isn't given" do
     before do
       @params = {
         :error => :invalid_request,

@@ -27,7 +27,7 @@ module Rack
           def invalid_request!(description = nil, options = {})
             error!(:invalid_request, description, options)
           end
-      
+
           def invalid_client!(description = nil, options = {})
             error!(:invalid_client, description, options.merge(:unauthorized => via_authorization_header))
           end
