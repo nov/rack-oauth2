@@ -1,3 +1,5 @@
+require 'spec_helper.rb'
+
 describe Rack::OAuth2::Server::Util, ".parse_uri" do
 
   context "when String is given" do
