@@ -11,16 +11,12 @@ module Rack
           end
 
           class Request < Token::Request
-            attr_accessor :code
+            attr_required :code
 
             def initialize(env)
               super
               @grant_type = :authorization_code
               @code       = params['code']
-            end
-
-            def required_params
-              super + [:code]
             end
           end
 

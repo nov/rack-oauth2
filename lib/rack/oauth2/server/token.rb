@@ -15,7 +15,8 @@ module Rack
         class Request < Abstract::Request
           include Error::Token
 
-          attr_accessor :grant_type, :client_secret, :via_authorization_header
+          attr_required :grant_type
+          attr_accessor :client_secret, :via_authorization_header
 
           def initialize(env)
             auth = Rack::Auth::Basic::Request.new(env)
@@ -28,10 +29,6 @@ module Rack
               @client_secret = params['client_secret']
             end
             @grant_type = params['grant_type']
-          end
-
-          def required_params
-            super + [:grant_type]
           end
 
           def profile(allow_no_profile = false)
@@ -52,11 +49,8 @@ module Rack
         end
 
         class Response < Abstract::Response
-          attr_accessor :access_token, :expires_in, :refresh_token, :scope
-
-          def required_params
-            super + [:access_token]
-          end
+          attr_required :access_token
+          attr_accessor :expires_in, :refresh_token, :scope
 
           def finish
             params = {

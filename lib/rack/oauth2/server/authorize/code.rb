@@ -14,15 +14,13 @@ module Rack
             def initialize(env)
               super
               @response_type = :code
+              p self
+              verify_required_params!
             end
           end
 
           class Response < Authorize::Response
-            attr_accessor :code
-
-            def required_params
-              super + [:code]
-            end
+            attr_required :code
 
             def finish
               if approved?

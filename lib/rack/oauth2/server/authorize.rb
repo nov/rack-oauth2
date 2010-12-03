@@ -12,26 +12,25 @@ module Rack
 
         class Request < Abstract::Request
           include Error::Authorize
-          attr_accessor :response_type, :redirect_uri, :state
+          attr_required :response_type
+          attr_accessor :redirect_uri, :state
 
           def initialize(env)
             super
-            @state = params['state']
             @redirect_uri = Util.parse_uri(params['redirect_uri']) if params['redirect_uri']
-          end
-
-          def required_params
-            super + [:response_type]
+            @state = params['state']
           end
 
           def profile
-            case params['response_type']
+            case params['response_type'].to_s
             when 'code'
               Code
             when 'token'
               Token
             when 'code_and_token'
               CodeAndToken
+            when ''
+              verify_required_params!
             else
               unsupported_response_type!("'#{params['response_type']}' isn't supported.")
             end
