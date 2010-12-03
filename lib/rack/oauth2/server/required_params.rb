@@ -8,25 +8,31 @@ module Rack
           class << klass
 
             def attr_required(*keys)
-              @required_params = if superclass.respond_to?(:"#{type}_params")
-                superclass.send(:"#{type}_params")
-              else
-                []
-              end
+              @required_params ||= []
               @required_params += Array(keys)
               attr_accessor *keys
             end
 
             def required_params
-              @required_params || []
+              @required_params
+            end
+
+            def inherited(subclass)
+              if required_params.present?
+                subclass.attr_required *required_params
+              end
             end
 
           end
         end
 
+        def required_params
+          self.class.required_params
+        end
+
         def missing_params
-          self.class.required_params.select do |key|
-            self.send(key).blank?
+          Array(required_params).select do |key|
+            send(key).blank?
           end
         end
 

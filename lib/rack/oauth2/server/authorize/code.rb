@@ -14,7 +14,6 @@ module Rack
             def initialize(env)
               super
               @response_type = :code
-              p self
               verify_required_params!
             end
           end
