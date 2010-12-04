@@ -8,11 +8,12 @@ describe Rack::OAuth2::Server::Authorize::Token do
       @app = Rack::OAuth2::Server::Authorize.new do |request, response|
         response.approve!
         response.access_token = "access_token"
+        response.token_type = "bearer"
       end
       @request = Rack::MockRequest.new @app
     end
 
-    it "should redirect to redirect_uri with authorization code" do
+    it "should redirect to redirect_uri with authorization code in fragment" do
       response = @request.get("/?response_type=token&client_id=client&redirect_uri=http://client.example.com/callback")
       response.status.should == 302
       response.location.should == "http://client.example.com/callback#access_token=access_token"

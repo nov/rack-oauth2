@@ -9,21 +9,22 @@ describe Rack::OAuth2::Server::Authorize::CodeAndToken do
         response.approve!
         response.code = "authorization_code"
         response.access_token = "access_token"
+        response.token_type = "bearer"
       end
       @request = Rack::MockRequest.new @app
     end
 
-    it "should redirect to redirect_uri with authorization code" do
+    it "should redirect to redirect_uri with authorization code and access token in fragment" do
       response = @request.get("/?response_type=code_and_token&client_id=client&redirect_uri=http://client.example.com/callback")
       response.status.should == 302
-      response.location.should == "http://client.example.com/callback?code=authorization_code#access_token=access_token"
+      response.location.should == "http://client.example.com/callback#access_token=access_token&code=authorization_code"
     end
 
     context "when redirect_uri already includes query and fragment" do
       it "should keep original query and fragment" do
         response = @request.get("/?response_type=code_and_token&client_id=client&redirect_uri=http://client.example.com/callback?k=v%23fragment")
         response.status.should == 302
-        response.location.should == "http://client.example.com/callback?k=v&code=authorization_code#fragment&access_token=access_token"
+        response.location.should == "http://client.example.com/callback?k=v#fragment&access_token=access_token&code=authorization_code"
       end
     end
 

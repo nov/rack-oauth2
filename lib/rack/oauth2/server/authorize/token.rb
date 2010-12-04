@@ -19,27 +19,19 @@ module Rack
           end
 
           class Response < Authorize::Response
-            attr_required :access_token
+            attr_required :access_token, :token_type
             attr_optional :expires_in, :scope
 
-            def finish
-              if approved?
-                params = {
-                  :access_token => access_token,
-                  :expires_in => expires_in,
-                  :scope => Array(scope).join(' '),
-                  :state => state
-                }.delete_if do |key, value|
-                  value.blank?
-                end
-                redirect_uri.fragment = if redirect_uri.fragment
-                  [redirect_uri.fragment, params.to_query].join('&')
-                else
-                  params.to_query
-                end
-                redirect redirect_uri.to_s
-              end
-              super
+            def protocol_params
+              super.merge(
+                :access_token => access_token,
+                :expires_in => expires_in,
+                :scope => Array(scope).join(' ')
+              )
+            end
+
+            def protocol_params_location
+              :fragment
             end
           end
 

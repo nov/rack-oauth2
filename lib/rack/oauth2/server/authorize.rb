@@ -40,7 +40,7 @@ module Rack
 
         class Response < Abstract::Response
           attr_required :redirect_uri
-          attr_optional :state, :approved
+          attr_optional :state, :approval
 
           def initialize(request)
             @state = request.state
@@ -49,11 +49,33 @@ module Rack
           end
 
           def approved?
-            @approved
+            @approval
           end
 
           def approve!
-            @approved = true
+            @approval = true
+          end
+
+          def protocol_params
+            {:state => state}
+          end
+
+          def protocol_params_location
+            raise 'Define me!'
+          end
+
+          def finish
+            if approved?
+              _protocol_params_ = protocol_params.reject do |key, value|
+                value.blank?
+              end
+              redirect_uri.send "#{protocol_params_location}=", [
+                redirect_uri.send(protocol_params_location),
+                _protocol_params_.to_query
+              ].compact.join('&')
+              redirect redirect_uri.to_s
+            end
+            super
           end
         end
 

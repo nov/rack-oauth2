@@ -21,22 +21,12 @@ module Rack
           class Response < Authorize::Response
             attr_required :code
 
-            def finish
-              if approved?
-                params = {
-                  :code => code,
-                  :state => state
-                }.delete_if do |key, value|
-                  value.blank?
-                end
-                redirect_uri.query = if redirect_uri.query
-                  [redirect_uri.query, params.to_query].join('&')
-                else
-                  params.to_query
-                end
-                redirect redirect_uri.to_s
-              end
-              super
+            def protocol_params
+              super.merge(:code => code)
+            end
+
+            def protocol_params_location
+              :query
             end
           end
 
