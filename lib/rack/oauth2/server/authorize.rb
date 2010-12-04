@@ -61,7 +61,7 @@ module Rack
           end
 
           def protocol_params_location
-            raise 'Define me!'
+            :query
           end
 
           def finish
@@ -69,10 +69,10 @@ module Rack
               _protocol_params_ = protocol_params.reject do |key, value|
                 value.blank?
               end
-              redirect_uri.send "#{protocol_params_location}=", [
-                redirect_uri.send(protocol_params_location),
-                _protocol_params_.to_query
-              ].compact.join('&')
+              redirect_uri.send(
+                "#{protocol_params_location}=",
+                [redirect_uri.send(protocol_params_location), _protocol_params_.to_query].compact.join('&')
+              )
               redirect redirect_uri.to_s
             end
             super
