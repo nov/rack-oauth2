@@ -15,7 +15,7 @@ module Rack
 
             def initialize(env)
               super
-              @grant_type     = 'assertion'
+              @grant_type     = :assertion
               @assertion_type = params['assertion_type']
               @assertion      = params['assertion']
               attr_missing!

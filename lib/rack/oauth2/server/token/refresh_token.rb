@@ -15,7 +15,7 @@ module Rack
 
             def initialize(env)
               super
-              @grant_type    = 'refresh_token'
+              @grant_type    = :refresh_token
               @refresh_token = params['refresh_token']
               attr_missing!
             end

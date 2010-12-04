@@ -55,15 +55,19 @@ module Rack
           attr_required :access_token
           attr_optional :expires_in, :refresh_token, :scope
 
-          def finish
-            params = {
+          def protocol_params
+            {
               :access_token => access_token,
               :expires_in => expires_in,
               :scope => Array(scope).join(' ')
-            }.delete_if do |key, value|
+            }
+          end
+
+          def finish
+            _protocol_params_ = protocol_params.reject do |key, value|
               value.blank?
             end
-            write params.to_json
+            write _protocol_params_.to_json
             header['Content-Type'] = "application/json"
             super
           end
