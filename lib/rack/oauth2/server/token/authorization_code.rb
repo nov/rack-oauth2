@@ -17,6 +17,7 @@ module Rack
               super
               @grant_type = :authorization_code
               @code       = params['code']
+              attr_missing!
             end
           end
 

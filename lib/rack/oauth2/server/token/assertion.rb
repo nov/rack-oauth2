@@ -18,6 +18,7 @@ module Rack
               @grant_type     = 'assertion'
               @assertion_type = params['assertion_type']
               @assertion      = params['assertion']
+              attr_missing!
             end
           end
 

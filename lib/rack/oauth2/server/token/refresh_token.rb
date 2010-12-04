@@ -17,6 +17,7 @@ module Rack
               super
               @grant_type    = 'refresh_token'
               @refresh_token = params['refresh_token']
+              attr_missing!
             end
           end
 

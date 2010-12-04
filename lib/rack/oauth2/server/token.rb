@@ -16,7 +16,8 @@ module Rack
           include Error::Token
 
           attr_required :grant_type
-          attr_accessor :client_secret, :via_authorization_header
+          attr_optional :client_secret
+          attr_accessor :via_authorization_header
 
           def initialize(env)
             auth = Rack::Auth::Basic::Request.new(env)
@@ -32,7 +33,7 @@ module Rack
           end
 
           def profile(allow_no_profile = false)
-            case params['grant_type']
+            case params['grant_type'].to_s
             when 'authorization_code'
               AuthorizationCode
             when 'password'
@@ -41,6 +42,8 @@ module Rack
               Assertion
             when 'refresh_token'
               RefreshToken
+            when ''
+              attr_missing!
             else
               unsupported_grant_type!("'#{params['grant_type']}' isn't supported.")
             end
@@ -50,7 +53,7 @@ module Rack
 
         class Response < Abstract::Response
           attr_required :access_token
-          attr_accessor :expires_in, :refresh_token, :scope
+          attr_optional :expires_in, :refresh_token, :scope
 
           def finish
             params = {

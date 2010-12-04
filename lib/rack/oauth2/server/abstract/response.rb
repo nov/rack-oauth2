@@ -3,14 +3,14 @@ module Rack
     module Server
       module Abstract
         class Response < Rack::Response
-          include RequiredParams
+          include AttrRequired, AttrOptional
 
           def initialize(request)
             super([], 200, {})
           end
 
           def finish
-            verify_required_params!
+            attr_missing!
             super
           end
         end

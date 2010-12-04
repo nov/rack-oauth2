@@ -14,13 +14,13 @@ module Rack
             def initialize(env)
               super
               @response_type = :token
-              verify_required_params!
+              attr_missing!
             end
           end
 
           class Response < Authorize::Response
             attr_required :access_token
-            attr_accessor :expires_in, :scope
+            attr_optional :expires_in, :scope
 
             def finish
               if approved?

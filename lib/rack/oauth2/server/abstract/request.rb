@@ -3,9 +3,9 @@ module Rack
     module Server
       module Abstract
         class Request < Rack::Request
-          include RequiredParams
+          include AttrRequired, AttrOptional
           attr_required :client_id
-          attr_accessor :scope
+          attr_optional :scope
 
           def initialize(env)
             super
@@ -13,15 +13,15 @@ module Rack
             @scope = Array(params['scope'].to_s.split(' '))
           end
 
-          def verify_required_params_with_error_handling!
+          def attr_missing_with_error_handling!
             if params['client_id'].present? && @client_id != params['client_id']
               invalid_client!("Multiple client credentials are provided.")
             end
-            verify_required_params_without_error_handling!
-          rescue ParameterMissing => e
+            attr_missing_without_error_handling!
+          rescue AttrRequired::AttrMissing => e
             invalid_request!(e.message, :state => @state, :redirect_uri => @redirect_uri)
           end
-          alias_method_chain :verify_required_params!, :error_handling
+          alias_method_chain :attr_missing!, :error_handling
 
         end
       end

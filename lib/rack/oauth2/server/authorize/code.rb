@@ -14,7 +14,7 @@ module Rack
             def initialize(env)
               super
               @response_type = :code
-              verify_required_params!
+              attr_missing!
             end
           end
 

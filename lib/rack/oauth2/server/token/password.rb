@@ -18,6 +18,7 @@ module Rack
               @grant_type = :password
               @username   = params['username']
               @password   = params['password']
+              attr_missing!
             end
           end
 

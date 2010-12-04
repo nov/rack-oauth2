@@ -13,7 +13,7 @@ module Rack
         class Request < Abstract::Request
           include Error::Authorize
           attr_required :response_type
-          attr_accessor :redirect_uri, :state
+          attr_optional :redirect_uri, :state
 
           def initialize(env)
             super
@@ -30,7 +30,7 @@ module Rack
             when 'code_and_token'
               CodeAndToken
             when ''
-              verify_required_params!
+              attr_missing!
             else
               unsupported_response_type!("'#{params['response_type']}' isn't supported.")
             end
@@ -39,7 +39,7 @@ module Rack
         end
 
         class Response < Abstract::Response
-          attr_accessor :redirect_uri, :state, :approved
+          attr_optional :redirect_uri, :state, :approved
 
           def initialize(request)
             @state = request.state
