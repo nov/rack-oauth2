@@ -7,7 +7,7 @@ module Rack
 
         def call(env)
           request = Request.new(env)
-          request.profile.new(@realm, &@authenticator).call(env).finish
+          request.profile.new(&@authenticator).call(env).finish
         rescue Error => e
           e.finish
         end
@@ -32,7 +32,7 @@ module Rack
             @grant_type = params['grant_type']
           end
 
-          def profile(allow_no_profile = false)
+          def profile
             case params['grant_type'].to_s
             when 'authorization_code'
               AuthorizationCode

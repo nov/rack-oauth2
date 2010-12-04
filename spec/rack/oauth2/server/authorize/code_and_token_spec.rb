@@ -5,7 +5,7 @@ describe Rack::OAuth2::Server::Authorize::CodeAndToken do
   context "when authorized" do
 
     before do
-      @app = Rack::OAuth2::Server::Authorize.new(simple_app) do |request, response|
+      @app = Rack::OAuth2::Server::Authorize.new do |request, response|
         response.approve!
         response.code = "authorization_code"
         response.access_token = "access_token"
@@ -33,7 +33,7 @@ describe Rack::OAuth2::Server::Authorize::CodeAndToken do
   context "when denied" do
 
     before do
-      @app = Rack::OAuth2::Server::Authorize.new(simple_app) do |request, response|
+      @app = Rack::OAuth2::Server::Authorize.new do |request, response|
         request.access_denied! 'User rejected the requested access.'
       end
       @request = Rack::MockRequest.new @app
