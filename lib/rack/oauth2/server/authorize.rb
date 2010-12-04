@@ -39,7 +39,8 @@ module Rack
         end
 
         class Response < Abstract::Response
-          attr_optional :redirect_uri, :state, :approved
+          attr_required :redirect_uri
+          attr_optional :state, :approved
 
           def initialize(request)
             @state = request.state

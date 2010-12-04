@@ -12,6 +12,7 @@ describe Rack::OAuth2::Server::Authorize::Request do
   before do
     @app = Rack::OAuth2::Server::Authorize.new(simple_app) do |request, response|
       response.code = "authorization_code"
+      response.redirect_uri ||= "http://client.example.com/callback/pre-registered"
     end
     @request = Rack::MockRequest.new @app
   end
