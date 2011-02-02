@@ -13,7 +13,6 @@ module Rack
 
           def error!(error, description = nil, options = {})
             description ||= DEFAULT_DESCRIPTION[error]
-            options[:realm] = realm
             exception = case error
             when :invalid_token, :expired_token
               Unauthorized

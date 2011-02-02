@@ -3,10 +3,9 @@ module Rack
     module Server
       module Abstract
         class Handler
-          attr_accessor :realm, :authenticator, :request, :response
+          attr_accessor :authenticator, :request, :response
 
-          def initialize(realm = nil, &authenticator)
-            @realm = realm
+          def initialize(&authenticator)
             @authenticator = authenticator
           end
 

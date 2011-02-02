@@ -14,32 +14,15 @@ module Rack
             def initialize(env)
               super
               @response_type = :code
+              attr_missing!
             end
           end
 
           class Response < Authorize::Response
-            attr_accessor :code
+            attr_required :code
 
-            def required_params
-              super + [:code]
-            end
-
-            def finish
-              if approved?
-                params = {
-                  :code => code,
-                  :state => state
-                }.delete_if do |key, value|
-                  value.blank?
-                end
-                redirect_uri.query = if redirect_uri.query
-                  [redirect_uri.query, params.to_query].join('&')
-                else
-                  params.to_query
-                end
-                redirect redirect_uri.to_s
-              end
-              super
+            def protocol_params
+              super.merge(:code => code)
             end
           end
 

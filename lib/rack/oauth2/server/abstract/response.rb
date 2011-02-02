@@ -3,26 +3,14 @@ module Rack
     module Server
       module Abstract
         class Response < Rack::Response
+          include AttrRequired, AttrOptional
+
           def initialize(request)
             super([], 200, {})
           end
 
-          def required_params
-            []
-          end
-
-          def verify_required_params!
-            missing_params = []
-            required_params.each do |key|
-              missing_params << key unless self.send(key)
-            end
-            unless missing_params.blank?
-              raise "Setup '#{missing_params.join('\', \'')}' first!"
-            end
-          end
-
           def finish
-            verify_required_params!
+            attr_missing!
             super
           end
         end

@@ -5,14 +5,14 @@ describe Rack::OAuth2::Server::Authorize::Code do
   context "when authorized" do
 
     before do
-      @app = Rack::OAuth2::Server::Authorize.new(simple_app) do |request, response|
+      @app = Rack::OAuth2::Server::Authorize.new do |request, response|
         response.approve!
         response.code = "authorization_code"
       end
       @request = Rack::MockRequest.new @app
     end
 
-    it "should redirect to redirect_uri with authorization code" do
+    it "should redirect to redirect_uri with authorization code in query" do
       response = @request.get("/?response_type=code&client_id=client&redirect_uri=http://client.example.com/callback")
       response.status.should == 302
       response.location.should == "http://client.example.com/callback?code=authorization_code"
@@ -31,7 +31,7 @@ describe Rack::OAuth2::Server::Authorize::Code do
   context "when denied" do
 
     before do
-      @app = Rack::OAuth2::Server::Authorize.new(simple_app) do |request, response|
+      @app = Rack::OAuth2::Server::Authorize.new do |request, response|
         request.access_denied! 'User rejected the requested access.'
       end
       @request = Rack::MockRequest.new @app

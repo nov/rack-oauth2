@@ -1,6 +1,8 @@
 require 'rack'
 require 'json'
 require 'active_support/core_ext'
+require 'attr_required'
+require 'attr_optional'
 require 'rack/oauth2/server'
 
 module Rack

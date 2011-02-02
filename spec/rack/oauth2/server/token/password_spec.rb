@@ -5,7 +5,7 @@ describe Rack::OAuth2::Server::Token::Password do
   context "when valid resource owner credentials are given" do
 
     before do
-      @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
+      @app = Rack::OAuth2::Server::Token.new do |request, response|
         response.access_token = "access_token"
       end
       @request = Rack::MockRequest.new @app
@@ -30,7 +30,7 @@ describe Rack::OAuth2::Server::Token::Password do
   context "when invalid resource owner credentials are given" do
 
     before do
-      @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
+      @app = Rack::OAuth2::Server::Token.new do |request, response|
         request.invalid_grant! 'Invalid resource owner credentials.'
       end
       @request = Rack::MockRequest.new @app

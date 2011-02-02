@@ -1,17 +1,11 @@
 require 'spec_helper.rb'
 
-describe Rack::OAuth2::Server::Authorize do
-  it "should support realm" do
-    app = Rack::OAuth2::Server::Authorize.new("server.example.com")
-    app.realm.should == "server.example.com"
-  end
-end
-
 describe Rack::OAuth2::Server::Authorize::Request do
 
   before do
-    @app = Rack::OAuth2::Server::Authorize.new(simple_app) do |request, response|
+    @app = Rack::OAuth2::Server::Authorize.new do |request, response|
       response.code = "authorization_code"
+      response.redirect_uri ||= "http://client.example.com/callback/pre-registered"
     end
     @request = Rack::MockRequest.new @app
   end
@@ -52,7 +46,7 @@ describe Rack::OAuth2::Server::Authorize::Response do
   context "when required response params are missing" do
 
     before do
-      @app = Rack::OAuth2::Server::Authorize.new(simple_app) do |request, response|
+      @app = Rack::OAuth2::Server::Authorize.new do |request, response|
         response.approve!
         # code is missing
       end
@@ -70,7 +64,7 @@ describe Rack::OAuth2::Server::Authorize::Response do
   context "when required response params are given" do
 
     before do
-      @app = Rack::OAuth2::Server::Authorize.new(simple_app) do |request, response|
+      @app = Rack::OAuth2::Server::Authorize.new do |request, response|
         response.approve!
         response.code = "authorization_code"
       end

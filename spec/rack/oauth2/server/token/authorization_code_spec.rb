@@ -5,7 +5,7 @@ describe Rack::OAuth2::Server::Token::AuthorizationCode do
   context "when valid code is given" do
 
     before do
-      @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
+      @app = Rack::OAuth2::Server::Token.new do |request, response|
         response.access_token = "access_token"
       end
       @request = Rack::MockRequest.new @app
@@ -30,7 +30,7 @@ describe Rack::OAuth2::Server::Token::AuthorizationCode do
   context "when invalid code is given" do
 
     before do
-      @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
+      @app = Rack::OAuth2::Server::Token.new do |request, response|
         request.invalid_grant!('Invalid authorization code.')
       end
       @request = Rack::MockRequest.new @app
@@ -56,7 +56,7 @@ describe Rack::OAuth2::Server::Token::AuthorizationCode do
   context "when invalid client_id is given" do
 
     before do
-      @app = Rack::OAuth2::Server::Token.new(simple_app) do |request, response|
+      @app = Rack::OAuth2::Server::Token.new do |request, response|
         request.invalid_client!('Invalid client identifier.')
       end
       @request = Rack::MockRequest.new @app

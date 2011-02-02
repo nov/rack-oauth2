@@ -6,7 +6,7 @@ describe Rack::OAuth2::Server::Resource::Request do
     @request = Rack::OAuth2::Server::Resource::Request.new(
       Rack::MockRequest.env_for("/resource", :params => {
         :oauth_token => "oauth_token"
-      }), "server.example.com"
+      })
     )
   end
 

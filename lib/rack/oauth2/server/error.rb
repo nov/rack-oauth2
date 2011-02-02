@@ -3,7 +3,7 @@ module Rack
     module Server
 
       class Error < StandardError
-        attr_accessor :status, :error, :description, :uri, :state, :scope, :redirect_uri, :realm
+        attr_accessor :status, :error, :description, :uri, :state, :scope, :redirect_uri
 
         def initialize(status, error, description = "", options = {})
           @status       = status
@@ -11,37 +11,44 @@ module Rack
           @description  = description
           @uri          = options[:uri]
           @state        = options[:state]
-          @realm        = options[:realm]
           @scope        = Array(options[:scope])
           @redirect_uri = Util.parse_uri(options[:redirect_uri]) if options[:redirect_uri]
         end
 
-        def finish
-          params = {
+        def protocol_params
+          {
             :error             => error,
             :error_description => description,
             :error_uri         => uri,
             :state             => state,
             :scope             => scope.join(' ')
-          }.delete_if do |key, value|
+          }
+        end
+
+        def finish
+          _protocol_params_ = protocol_params.delete_if do |key, value|
             value.blank?
           end
-          response = Rack::Response.new
           if @redirect_uri.present?
-            redirect_uri.query = if redirect_uri.query
-              [redirect_uri.query, params.to_query].join('&')
-            else
-              params.to_query
-            end
-            response.redirect redirect_uri.to_s
+            finish_with_redirect _protocol_params_
           else
-            response.status = status
-            response.header['Content-Type'] = 'application/json'
-            if realm.present?
-              response.header['WWW-Authenticate'] = "OAuth realm='#{realm}' #{params.collect { |key, value| "#{key}='#{value.to_s}'" }.join(' ')}"
-            end
-            response.write params.to_json
+            finish_with_response_body _protocol_params_
           end
+        end
+
+        def finish_with_redirect(_protocol_params_)
+          response = Rack::Response.new
+          redirect_uri.query = [redirect_uri.query, _protocol_params_.to_query].compact.join('&')
+          response.redirect redirect_uri.to_s
+          response.finish
+        end
+
+        def finish_with_response_body(_protocol_params_)
+          response = Rack::Response.new
+          response.status = status
+          response.header['Content-Type'] = 'application/json'
+          response.header['WWW-Authenticate'] = "OAuth2 #{_protocol_params_.collect { |key, value| "#{key}='#{value.to_s}'" }.join(' ')}"
+          response.write _protocol_params_.to_json
           response.finish
         end
       end

@@ -5,20 +5,19 @@ module Rack
     module Server
       class Resource < Abstract::Handler
 
-        def initialize(app, realm = nil, &authenticator)
+        def initialize(app, &authenticator)
           @app = app
-          super(realm, &authenticator)
+          super(&authenticator)
         end
 
         def call(env)
-          request = Request.new(env, realm)
+          request = Request.new(env)
           if request.oauth2?
             authenticate!(request)
             env[ACCESS_TOKEN] = request.access_token
           end
           @app.call(env)
         rescue Error => e
-          e.realm = realm
           e.finish
         end
 
@@ -31,11 +30,8 @@ module Rack
         class Request < Rack::Request
           include Error::Resource
 
-          attr_accessor :realm
-
-          def initialize(env, realm = nil)
+          def initialize(env)
             @env = env
-            @realm = realm
             @auth_header = Rack::Auth::AbstractRequest.new(env)
           end
 
@@ -51,12 +47,12 @@ module Rack
             when 1
               tokens.first
             else
-              invalid_request!('Both Authorization header and payload includes oauth_token.', :realm => realm)
+              invalid_request!('Both Authorization header and payload includes oauth_token.')
             end
           end
 
           def access_token_in_haeder
-            if @auth_header.provided? && @auth_header.scheme == :oauth && @auth_header.params !~ /oauth_signature_method/
+            if @auth_header.provided? && @auth_header.scheme == :oauth2
               @auth_header.params
             else
               nil

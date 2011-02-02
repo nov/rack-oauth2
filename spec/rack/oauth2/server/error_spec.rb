@@ -62,7 +62,7 @@ describe Rack::OAuth2::Server::Error, '#finish' do
         :error => "invalid_request",
         :error_description => "Something invalid!!"
       }
-      header['WWW-Authenticate'].should == "OAuth realm='server.example.com' #{error_message.collect {|k,v| "#{k}='#{v}'"}.join(' ')}"
+      header['WWW-Authenticate'].should == "OAuth2 #{error_message.collect {|k,v| "#{k}='#{v}'"}.join(' ')}"
     end
   end
 
