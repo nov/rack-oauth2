@@ -47,7 +47,7 @@ module Rack
           response = Rack::Response.new
           response.status = status
           response.header['Content-Type'] = 'application/json'
-          response.header['WWW-Authenticate'] = "OAuth2 #{_protocol_params_.collect { |key, value| "#{key}='#{value.to_s}'" }.join(' ')}"
+          response.header['WWW-Authenticate'] = "OAuth2 #{_protocol_params_.collect { |key, value| "#{key}='#{CGI.escape value.to_s}'" }.join(' ')}"
           response.write _protocol_params_.to_json
           response.finish
         end

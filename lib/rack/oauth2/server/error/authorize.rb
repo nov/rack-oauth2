@@ -32,6 +32,7 @@ module Rack
           end
 
           def redirect_uri_mismatch!(description = nil, options = {})
+            no_redirect!
             error!(:redirect_uri_mismatch, description, options)
           end
 
@@ -45,6 +46,12 @@ module Rack
 
           def invalid_scope!(description = nil, options = {})
             error!(:invalid_scope, description, options)
+          end
+
+          private
+
+          def no_redirect!
+            self.redirect_uri = nil
           end
 
         end

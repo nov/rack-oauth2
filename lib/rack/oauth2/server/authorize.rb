@@ -44,7 +44,6 @@ module Rack
 
           def initialize(request)
             @state = request.state
-            @redirect_uri = Util.parse_uri(request.redirect_uri) if request.redirect_uri
             super
           end
 
@@ -69,13 +68,14 @@ module Rack
               _protocol_params_ = protocol_params.reject do |key, value|
                 value.blank?
               end
+              self.redirect_uri = Util.parse_uri(redirect_uri) if redirect_uri.present?
               redirect_uri.send(
                 "#{protocol_params_location}=",
                 [redirect_uri.send(protocol_params_location), _protocol_params_.to_query].compact.join('&')
               )
               redirect redirect_uri.to_s
             end
-            super
+            super !approved?
           end
         end
 

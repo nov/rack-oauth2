@@ -3,10 +3,7 @@ require 'spec_helper.rb'
 describe Rack::OAuth2::Server::Authorize::Request do
 
   before do
-    @app = Rack::OAuth2::Server::Authorize.new do |request, response|
-      response.code = "authorization_code"
-      response.redirect_uri ||= "http://client.example.com/callback/pre-registered"
-    end
+    @app = Rack::OAuth2::Server::Authorize.new
     @request = Rack::MockRequest.new @app
   end
 
