@@ -14,6 +14,7 @@ http://tools.ietf.org/html/draft-ietf-oauth-v2-10
 * View RDoc on RDoc.info (http://rdoc.info/github/nov/rack-oauth2)
 * View Source on GitHub (http://github.com/nov/rack-oauth2)
 * Report Issues on GitHub (http://github.com/nov/rack-oauth2/issues)
+* Facebook Page (http://www.facebook.com/pages/RackOAuth2/141477809244105)
 
 == Usage
 
