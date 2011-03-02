@@ -13,8 +13,6 @@ module Rack
         end
 
         class Request < Abstract::Request
-          include Error
-
           attr_required :grant_type
           attr_optional :client_secret
           attr_accessor :via_authorization_header

@@ -33,9 +33,26 @@ describe Rack::OAuth2::Server::Util do
   describe ".verify_redirect_uri" do
     context "when exactry matches" do
       it "should be true" do
-        util.verify_redirect_uri
-        uri = Rack::OAuth2::Server::Util.parse_uri "http://client.example.com"
-        uri.should be_a_kind_of(URI::Generic)
+        util.verify_redirect_uri("http://client.example.com/callback", "http://client.example.com/callback").should be_true
+      end
+    end
+
+    context "when path prefix matches" do
+      it "should be true" do
+        util.verify_redirect_uri("http://client.example.com", "http://client.example.com/callback").should be_true
+      end
+    end
+
+    context "when path prefix didn't matches" do
+      it "should be false" do
+        util.verify_redirect_uri("http://client.example.com/callback", "http://client.example.com/other").should be_false
+      end
+    end
+
+    context "when invalid URI given" do
+      it "should be false" do
+        util.verify_redirect_uri(nil, "http://client.example.com/other").should be_false
+        util.verify_redirect_uri("http://client.example.com/other", nil).should be_false
       end
     end
   end

@@ -11,7 +11,6 @@ module Rack
         end
 
         class Request < Abstract::Request
-          include Error
           attr_required :response_type
           attr_optional :redirect_uri, :state
 
@@ -27,8 +26,6 @@ module Rack
               Code
             when 'token'
               Token
-            when 'code_and_token'
-              CodeAndToken
             when ''
               attr_missing!
             else
@@ -60,7 +57,7 @@ module Rack
           end
 
           def protocol_params_location
-            :query
+            raise 'Define me in subclasses'
           end
 
           def finish
@@ -86,4 +83,4 @@ end
 
 require 'rack/oauth2/server/authorize/code'
 require 'rack/oauth2/server/authorize/token'
-require 'rack/oauth2/server/authorize/code_and_token'
+require 'rack/oauth2/server/authorize/error'

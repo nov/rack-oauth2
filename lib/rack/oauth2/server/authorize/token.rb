@@ -20,12 +20,13 @@ module Rack
 
           class Response < Authorize::Response
             attr_required :access_token, :token_type
-            attr_optional :expires_in, :scope
+            attr_optional :refresh_token, :expires_in, :scope
 
             def protocol_params
               super.merge(
                 :access_token => access_token,
                 :expires_in => expires_in,
+                :refresh_token => refresh_token,
                 :scope => Array(scope).join(' ')
               )
             end

@@ -27,6 +27,10 @@ module Rack
               end
               super.merge(:code => code)
             end
+
+            def protocol_params_location
+              :query
+            end
           end
 
         end
