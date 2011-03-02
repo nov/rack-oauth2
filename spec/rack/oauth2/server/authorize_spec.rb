@@ -1,6 +1,10 @@
 require 'spec_helper.rb'
 
 describe Rack::OAuth2::Server::Authorize do
+  let :app do
+    Rack::OAuth2::Server::Authorize.new
+  end
+
   let :request do
     Rack::MockRequest.new app
   end
@@ -10,10 +14,6 @@ describe Rack::OAuth2::Server::Authorize do
   end
 
   describe Rack::OAuth2::Server::Authorize::Request do
-    let :app do
-      Rack::OAuth2::Server::Authorize.new
-    end
-
     let :bad_request do
       Rack::OAuth2::Server::Authorize::BadRequest
     end
@@ -72,54 +72,63 @@ describe Rack::OAuth2::Server::Authorize do
   end
 
   describe Rack::OAuth2::Server::Authorize::Response do
+    context 'when not approved yet' do
+      it 'should success' do
+        response = request.get "/?response_type=code&client_id=client&redirect_uri=#{redirect_uri}"
+        response.status.should == 200
+      end
+    end
+
     context 'when response_type = :code' do
       let :authorization_code do
         'authorization_code'
       end
 
-      context 'when code is missing' do
-        let :app do
-          Rack::OAuth2::Server::Authorize.new do |request, response|
-            response.redirect_uri = redirect_uri
-            response.approve!
+      context 'when approved' do
+        context 'when code is missing' do
+          let :app do
+            Rack::OAuth2::Server::Authorize.new do |request, response|
+              response.redirect_uri = redirect_uri
+              response.approve!
+            end
+          end
+
+          it "should raise AttrRequired::AttrMissing" do
+            lambda do
+              request.get '/?response_type=code&client_id=client'
+            end.should raise_error AttrRequired::AttrMissing
           end
         end
 
-        it "should raise AttrRequired::AttrMissing" do
-          lambda do
-            request.get "/?response_type=code&client_id=client"
-          end.should raise_error AttrRequired::AttrMissing
-        end
-      end
+        context 'when redirect_uri is missing' do
+          let :app do
+            Rack::OAuth2::Server::Authorize.new do |request, response|
+              response.code = authorization_code
+              response.approve!
+            end
+          end
 
-      context 'when redirect_uri is missing' do
-        let :app do
-          Rack::OAuth2::Server::Authorize.new do |request, response|
-            response.code = authorization_code
-            response.approve!
+          it "should raise AttrRequired::AttrMissing" do
+            lambda do
+              request.get '/?response_type=code&client_id=client'
+            end.should raise_error AttrRequired::AttrMissing
           end
         end
 
-        it "should raise AttrRequired::AttrMissing" do
-          lambda do
-            request.get "/?response_type=code&client_id=client"
-          end.should raise_error AttrRequired::AttrMissing
-        end
-      end
-
-      context 'when both redirect_uri and code are given' do
-        let :app do
-          Rack::OAuth2::Server::Authorize.new do |request, response|
-            response.redirect_uri = redirect_uri
-            response.code = authorization_code
-            response.approve!
+        context 'when both redirect_uri and code are given' do
+          let :app do
+            Rack::OAuth2::Server::Authorize.new do |request, response|
+              response.redirect_uri = redirect_uri
+              response.code = authorization_code
+              response.approve!
+            end
           end
-        end
 
-        it 'should redirect with authorization code in query' do
-          response = request.get "/?response_type=code&client_id=client&redirect_uri=#{redirect_uri}"
-          response.status.should == 302
-          response.headers['Location'].should == "#{redirect_uri}?code=#{authorization_code}"
+          it 'should redirect with authorization code in query' do
+            response = request.get "/?response_type=code&client_id=client&redirect_uri=#{redirect_uri}"
+            response.status.should == 302
+            response.headers['Location'].should == "#{redirect_uri}?code=#{authorization_code}"
+          end
         end
       end
     end
