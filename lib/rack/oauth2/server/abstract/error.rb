@@ -44,7 +44,6 @@ module Rack
             super(403, error, description, options)
           end
         end
-
       end
     end
   end

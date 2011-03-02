@@ -37,10 +37,15 @@ module Rack
             :invalid_scope => "The requested scope is invalid, unknown, or malformed."
           }
 
-          def bad_request!(error, description = nil, options = {})
+          def bad_request!(error = :bad_request, description = nil, options = {})
             description ||= DEFAULT_DESCRIPTION[error]
             exception = BadRequest.new(error, description, options)
-            exception.protocol_params_location = protocol_params_location
+            exception.protocol_params_location = case response_type
+            when :code
+              :query
+            when :token
+              :fragment
+            end
             exception.state = state
             exception.redirect_uri = redirect_uri if options[:redirect]
             raise exception

@@ -6,7 +6,7 @@ module Rack
         def call(env)
           request = Request.new(env)
           request.profile.new(&@authenticator).call(env).finish
-        rescue Error => e
+        rescue Abstract::Error => e
           e.finish
         end
 
@@ -32,7 +32,6 @@ module Rack
               unsupported_response_type!("'#{params['response_type']}' isn't supported.")
             end
           end
-
         end
 
         class Response < Abstract::Response
@@ -62,20 +61,22 @@ module Rack
 
           def finish
             if approved?
+              attr_missing!
               _protocol_params_ = protocol_params.reject do |key, value|
                 value.blank?
               end
-              self.redirect_uri = Util.parse_uri(redirect_uri) if redirect_uri.present?
-              redirect_uri.send(
-                "#{protocol_params_location}=",
-                [redirect_uri.send(protocol_params_location), _protocol_params_.to_query].compact.join('&')
-              )
-              redirect redirect_uri.to_s
+              _redirect_uri_ = Util.parse_uri(redirect_uri) if redirect_uri.present?
+              case protocol_params_location
+              when :query
+                _redirect_uri_.query = [_redirect_uri_.query, _protocol_params_.to_query].compact.join('&')
+              when :fragment
+                _redirect_uri_.fragment = _protocol_params_.to_query
+              end
+              redirect _redirect_uri_.to_s
             end
-            super !approved?
+            super
           end
         end
-
       end
     end
   end

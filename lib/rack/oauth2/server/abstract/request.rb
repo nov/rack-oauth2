@@ -22,7 +22,6 @@ module Rack
             invalid_request!(e.message, :state => @state, :redirect_uri => @redirect_uri)
           end
           alias_method_chain :attr_missing!, :error_handling
-
         end
       end
     end

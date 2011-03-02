@@ -1,52 +1,91 @@
 require 'spec_helper.rb'
 
 describe Rack::OAuth2::Server::Authorize::Code do
-
-  context "when authorized" do
-
-    before do
-      @app = Rack::OAuth2::Server::Authorize.new do |request, response|
-        response.approve!
-        response.code = "authorization_code"
-      end
-      @request = Rack::MockRequest.new @app
-    end
-
-    it "should redirect to redirect_uri with authorization code in query" do
-      response = @request.get("/?response_type=code&client_id=client&redirect_uri=http://client.example.com/callback")
-      response.status.should == 302
-      response.location.should == "http://client.example.com/callback?code=authorization_code"
-    end
-
-    context "when redirect_uri already includes query" do
-      it "should keep original query" do
-        response = @request.get("/?response_type=code&client_id=client&redirect_uri=http://client.example.com/callback?k=v")
-        response.status.should == 302
-        response.location.should == "http://client.example.com/callback?k=v&code=authorization_code"
-      end
-    end
-
+  let :request do
+    Rack::MockRequest.new app
   end
 
-  context "when denied" do
+  let :redirect_uri do
+    'http://client.example.com/callback'
+  end
 
-    before do
-      @app = Rack::OAuth2::Server::Authorize.new do |request, response|
-        request.access_denied! 'User rejected the requested access.'
+  let :authorization_code do
+    'authorization_code'
+  end
+
+  context 'when approved' do
+    let :app do
+      Rack::OAuth2::Server::Authorize.new do |request, response|
+        response.redirect_uri = redirect_uri
+        response.code = 'authorization_code'
+        response.approve!
       end
-      @request = Rack::MockRequest.new @app
     end
 
-    it "should redirect to redirect_uri with error message" do
-      response = @request.get("/?response_type=code&client_id=client&redirect_uri=http://client.example.com/callback")
+    it 'should redirect with authorization code in query' do
+      response = request.get "/?response_type=code&client_id=client&redirect_uri=#{redirect_uri}"
+      response.status.should == 302
+      response.location.should == "#{redirect_uri}?code=#{authorization_code}"
+    end
+
+    context 'when redirect_uri already includes query' do
+      let :redirect_uri do
+        'http://client.example.com/callback?k=v'
+      end
+
+      it 'should keep original query' do
+        response = request.get "/?response_type=code&client_id=client&redirect_uri=#{redirect_uri}"
+        response.status.should == 302
+        response.location.should == "#{redirect_uri}&code=#{authorization_code}"
+      end
+    end
+
+    context 'when redirect_uri is missing' do
+      let :app do
+        Rack::OAuth2::Server::Authorize.new do |request, response|
+          response.code = authorization_code
+          response.approve!
+        end
+      end
+
+      it 'should raise AttrRequired::AttrMissing' do
+        lambda do
+          request.get "/?response_type=code&client_id=client&redirect_uri=#{redirect_uri}"
+        end.should raise_error AttrRequired::AttrMissing
+      end
+    end
+
+    context 'when code is missing' do
+      let :app do
+        Rack::OAuth2::Server::Authorize.new do |request, response|
+          response.redirect_uri = redirect_uri
+          response.approve!
+        end
+      end
+
+      it 'should raise AttrRequired::AttrMissing' do
+        lambda do
+          request.get "/?response_type=code&client_id=client&redirect_uri=#{redirect_uri}"
+        end.should raise_error AttrRequired::AttrMissing
+      end
+    end
+  end
+
+  context 'when denied' do
+    let :app do
+      Rack::OAuth2::Server::Authorize.new do |request, response|
+        request.access_denied!
+      end
+    end
+  
+    it 'should redirect with error in query' do
+      response = request.get "/?response_type=code&client_id=client&redirect_uri=#{redirect_uri}"
       response.status.should == 302
       error_message = {
         :error => :access_denied,
-        :error_description => "User rejected the requested access."
+        :error_description => Rack::OAuth2::Server::Authorize::ErrorMethods::DEFAULT_DESCRIPTION[:access_denied]
       }
-      response.location.should == "http://client.example.com/callback?#{error_message.to_query}"
+      response.location.should == "#{redirect_uri}?#{error_message.to_query}"
     end
-
   end
-
 end

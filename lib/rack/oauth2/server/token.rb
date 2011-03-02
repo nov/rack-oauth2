@@ -67,6 +67,7 @@ module Rack
             end
             write _protocol_params_.to_json
             header['Content-Type'] = "application/json"
+            attr_missing!
             super
           end
         end

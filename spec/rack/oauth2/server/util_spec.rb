@@ -25,7 +25,7 @@ describe Rack::OAuth2::Server::Util do
       it "should raise error" do
         lambda do
           util.parse_uri 123
-        end.should raise_error(StandardError)
+        end.should raise_error StandardError
       end
     end
   end

@@ -32,7 +32,6 @@ module Rack
               :query
             end
           end
-
         end
       end
     end

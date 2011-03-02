@@ -35,7 +35,6 @@ module Rack
               :fragment
             end
           end
-
         end
       end
     end
