@@ -13,6 +13,18 @@ module Rack
               raise "Invalid format of URI is given."
             end
           end
+
+          def verify_redirect_uri(registered, given)
+            registered = parse_uri(registered)
+            given = parse_uri(given)
+            registered.path = '/' if registered.path.blank?
+            given.path = '/' if given.path.blank?
+            [:scheme, :host, :port].all? do |key|
+              registered.send(key) == given.send(key)
+            end && /^#{registered.path}/ =~ given.path
+          rescue
+            false
+          end
         end
       end
     end

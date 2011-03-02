@@ -11,7 +11,7 @@ module Rack
         end
 
         class Request < Abstract::Request
-          include Error::Authorize
+          include Error
           attr_required :response_type
           attr_optional :redirect_uri, :state
 
