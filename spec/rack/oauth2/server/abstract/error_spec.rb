@@ -21,7 +21,7 @@ describe Rack::OAuth2::Server::Abstract::Error do
     'http://server.example.com/error'
   end
 
-  context 'when full attributes given' do
+  context 'when full attributes are given' do
     let :error do
       klass.new status, error_code, error_description, :uri => error_uri
     end
@@ -46,7 +46,7 @@ describe Rack::OAuth2::Server::Abstract::Error do
     end
   end
 
-  context 'when optional attributes not given' do
+  context 'when optional attributes are not given' do
     let :error do
       klass.new status, error_code
     end

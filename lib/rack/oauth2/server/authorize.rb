@@ -6,7 +6,7 @@ module Rack
         def call(env)
           request = Request.new(env)
           request.profile.new(&@authenticator).call(env).finish
-        rescue Abstract::Error => e
+        rescue BadRequest => e
           e.finish
         end
 
@@ -29,7 +29,7 @@ module Rack
             when ''
               attr_missing!
             else
-              unsupported_response_type!("'#{params['response_type']}' isn't supported.")
+              unsupported_response_type! "#{CGI.escape params['response_type']} isn't supported."
             end
           end
         end

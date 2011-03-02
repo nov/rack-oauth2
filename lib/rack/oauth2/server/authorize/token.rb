@@ -5,8 +5,8 @@ module Rack
         class Token < Abstract::Handler
 
           def call(env)
-            @request  = Request.new(env)
-            @response = Response.new(request)
+            @request  = Request.new env
+            @response = Response.new request
             super
           end
 

@@ -29,7 +29,7 @@ describe Rack::OAuth2::Server::Authorize::BadRequest do
   end
 
   describe '#finish' do
-    context 'when both redirect_uri and protocol_params_location given' do
+    context 'when both redirect_uri and protocol_params_location are given' do
       context 'when protocol_params_location = :query' do
         it 'should redirect with error in query' do
           error.redirect_uri = redirect_uri
