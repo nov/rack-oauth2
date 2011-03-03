@@ -28,19 +28,19 @@ module Rack
         end
 
         class BadRequest < Error
-          def initialize(error, description = nil, options = {})
+          def initialize(error = :bad_request, description = nil, options = {})
             super 400, error, description, options
           end
         end
 
         class Unauthorized < Error
-          def initialize(error, description = nil, options = {})
+          def initialize(error = :unauthorized, description = nil, options = {})
             super 401, error, description, options
           end
         end
 
         class Forbidden < Error
-          def initialize(error, description = nil, options = {})
+          def initialize(error = :forbidden, description = nil, options = {})
             super 403, error, description, options
           end
         end

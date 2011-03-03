@@ -10,19 +10,9 @@ module Rack
           end
 
           def finish
-            _protocol_params_ = protocol_params.reject do |key, value|
-              value.blank?
-            end
             if redirect_uri.present? && protocol_params_location.present?
-              _redirect_uri_ = Util.parse_uri redirect_uri
-              case protocol_params_location
-              when :query
-                _redirect_uri_.query = [_redirect_uri_.query, _protocol_params_.to_query].compact.join('&')
-              when :fragment
-                _redirect_uri_.fragment = _protocol_params_.to_query
-              end
               super do |response|
-                response.redirect _redirect_uri_.to_s
+                response.redirect Util.redirect_uri(redirect_uri, protocol_params_location, protocol_params)
               end
             else
               raise self
@@ -49,24 +39,24 @@ module Rack
               :fragment
             end
             exception.state = state
-            exception.redirect_uri = redirect_uri if options[:redirect]
+            exception.redirect_uri = redirect_uri if DEFAULT_DESCRIPTION.keys.include?(error)
             raise exception
           end
 
           def invalid_request!(description = nil, options = {})
-            bad_request! :invalid_request, description, options.merge(:redirect => true)
+            bad_request! :invalid_request, description, options
           end
 
           def access_denied!(description = nil, options = {})
-            bad_request! :access_denied, description, options.merge(:redirect => true)
+            bad_request! :access_denied, description, options
           end
 
           def unsupported_response_type!(description = nil, options = {})
-            bad_request! :unsupported_response_type, description, options.merge(:redirect => true)
+            bad_request! :unsupported_response_type, description, options
           end
 
           def invalid_scope!(description = nil, options = {})
-            bad_request! :invalid_scope, description, options.merge(:redirect => true)
+            bad_request! :invalid_scope, description, options
           end
         end
 

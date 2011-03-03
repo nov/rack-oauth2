@@ -1,103 +1,51 @@
 require 'spec_helper.rb'
 
 describe Rack::OAuth2::Server::Abstract::Error do
-  let :klass do
-    Rack::OAuth2::Server::Abstract::Error
-  end
-
-  let :status do
-    400
-  end
-
-  let :error_code do
-    :invalid_request
-  end
-
-  let :error_description do
-    'Missing some required params'
-  end
-
-  let :error_uri do
-    'http://server.example.com/error'
-  end
 
   context 'when full attributes are given' do
-    let :error do
-      klass.new status, error_code, error_description, :uri => error_uri
+    subject do
+      Rack::OAuth2::Server::Abstract::Error.new 400, :invalid_request, 'Missing some required params', :uri => 'http://server.example.com/error'
     end
-
-    describe '.new' do
-      it 'should store all given params' do
-        error.status.should      == status
-        error.error.should       == error_code
-        error.description.should == error_description
-        error.uri.should         == error_uri
-      end
-    end
-
-    describe '#protocol_params' do
-      it 'should has all protocol params' do
-        error.protocol_params.should == {
-          :error             => error_code,
-          :error_description => error_description,
-          :error_uri         => error_uri
-        }
-      end
+    its(:status)      { should == 400 }
+    its(:error)       { should == :invalid_request }
+    its(:description) { should == 'Missing some required params' }
+    its(:uri)         { should == 'http://server.example.com/error' }
+    its(:protocol_params) do
+      should == {
+        :error             => :invalid_request,
+        :error_description => 'Missing some required params',
+        :error_uri         => 'http://server.example.com/error'
+      }
     end
   end
 
   context 'when optional attributes are not given' do
-    let :error do
-      klass.new status, error_code
+    subject do
+      Rack::OAuth2::Server::Abstract::Error.new 400, :invalid_request
     end
-
-    describe '.new' do
-      it 'should store given params' do
-        error.status.should      == status
-        error.error.should       == error_code
-        error.description.should be_nil
-        error.uri.should         be_nil
-      end
-    end
-
-    describe '#protocol_params' do
-      it 'should has all protocol params' do
-        error.protocol_params.should == {
-          :error             => error_code,
-          :error_description => nil,
-          :error_uri         => nil
-        }
-      end
+    its(:status)      { should == 400 }
+    its(:error)       { should == :invalid_request }
+    its(:description) { should be_nil }
+    its(:uri)         { should be_nil }
+    its(:protocol_params) do
+      should == {
+        :error             => :invalid_request,
+        :error_description => nil,
+        :error_uri         => nil
+      }
     end
   end
+
 end
 
 describe Rack::OAuth2::Server::Abstract::BadRequest do
-  let :klass do
-    Rack::OAuth2::Server::Abstract::BadRequest
-  end
-
-  it "should use 400 as status" do
-    klass.new(:invalid_request).status.should == 400
-  end
+  its(:status) { should == 400 }
 end
 
 describe Rack::OAuth2::Server::Abstract::Unauthorized do
-  let :klass do
-    Rack::OAuth2::Server::Abstract::Unauthorized
-  end
-
-  it "should use 401 as status" do
-    klass.new(:invalid_request).status.should == 401
-  end
+  its(:status) { should == 401 }
 end
 
 describe Rack::OAuth2::Server::Abstract::Forbidden do
-  let :klass do
-    Rack::OAuth2::Server::Abstract::Forbidden
-  end
-
-  it "should use 403 as status" do
-    klass.new(:invalid_request).status.should == 403
-  end
+  its(:status) { should == 403 }
 end

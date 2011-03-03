@@ -20,7 +20,7 @@ describe Rack::OAuth2::Server::Authorize do
 
     context 'when redirect_uri is missing' do
       it 'should raise Authorize::BadRequest' do
-        lambda do
+        expect do
           request.get '/'
         end.should raise_error bad_request
       end
@@ -29,7 +29,7 @@ describe Rack::OAuth2::Server::Authorize do
     context 'when redirect_uri is given' do
       context 'when client_id is missing' do
         it 'should raise Authorize::BadRequest' do
-          lambda do
+          expect do
             request.get "/?redirect_uri=#{redirect_uri}"
           end.should raise_error bad_request
         end
@@ -38,7 +38,7 @@ describe Rack::OAuth2::Server::Authorize do
       context 'when client_id is given' do
         context 'when response_type is missing' do
           it 'should raise Authorize::BadRequest' do
-            lambda do
+            expect do
               request.get "/?client_id=client&redirect_uri=#{redirect_uri}"
             end.should raise_error
           end
@@ -48,7 +48,7 @@ describe Rack::OAuth2::Server::Authorize do
 
     context 'when unknown response_type is given' do
       it 'should raise Authorize::BadRequest' do
-        lambda do
+        expect do
           request.get "/?response_type=unknown&client_id=client&redirect_uri=#{redirect_uri}"
         end.should raise_error
       end
@@ -94,7 +94,7 @@ describe Rack::OAuth2::Server::Authorize do
           end
 
           it "should raise AttrRequired::AttrMissing" do
-            lambda do
+            expect do
               request.get '/?response_type=code&client_id=client'
             end.should raise_error AttrRequired::AttrMissing
           end
@@ -109,7 +109,7 @@ describe Rack::OAuth2::Server::Authorize do
           end
 
           it "should raise AttrRequired::AttrMissing" do
-            lambda do
+            expect do
               request.get '/?response_type=code&client_id=client'
             end.should raise_error AttrRequired::AttrMissing
           end

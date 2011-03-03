@@ -49,7 +49,7 @@ describe Rack::OAuth2::Server::Authorize::Code do
       end
 
       it 'should raise AttrRequired::AttrMissing' do
-        lambda do
+        expect do
           request.get "/?response_type=code&client_id=client&redirect_uri=#{redirect_uri}"
         end.should raise_error AttrRequired::AttrMissing
       end
@@ -64,7 +64,7 @@ describe Rack::OAuth2::Server::Authorize::Code do
       end
 
       it 'should raise AttrRequired::AttrMissing' do
-        lambda do
+        expect do
           request.get "/?response_type=code&client_id=client&redirect_uri=#{redirect_uri}"
         end.should raise_error AttrRequired::AttrMissing
       end

@@ -53,7 +53,7 @@ describe Rack::OAuth2::Server::Authorize::BadRequest do
 
     context 'otherwise' do
       it 'should raise itself' do
-        lambda do
+        expect do
           error.finish
         end.should raise_error klass
       end
@@ -92,14 +92,14 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
 
   describe 'bad_request!' do
     it 'should raise Authorize::BadRequest' do
-      lambda do
+      expect do
         request.bad_request!
       end.should raise_error klass
     end
 
     context 'when response_type = :code' do
       it 'should set protocol_params_location = :query' do
-        lambda do
+        expect do
           request_for_code.bad_request!
         end.should raise_error(klass) { |error|
           error.protocol_params_location.should == :query
@@ -109,7 +109,7 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
 
     context 'when response_type = :token' do
       it 'should set protocol_params_location = :query' do
-        lambda do
+        expect do
           request_for_token.bad_request!
         end.should raise_error(klass) { |error|
           error.protocol_params_location.should == :fragment
@@ -120,7 +120,7 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
 
   describe 'invalid_request!' do
     it 'should raise Authorize::BadRequest with error = :invalid_request' do
-      lambda do
+      expect do
         request.invalid_request!
       end.should raise_error(klass) { |error|
         error.error.should       == :invalid_request
@@ -131,7 +131,7 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
 
   describe 'access_denied!' do
     it 'should raise Authorize::BadRequest with error = :access_denied' do
-      lambda do
+      expect do
         request.access_denied!
       end.should raise_error(klass) { |error|
         error.error.should       == :access_denied
@@ -142,7 +142,7 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
 
   describe 'unsupported_response_type!' do
     it 'should raise Authorize::BadRequest with error = :unsupported_response_type' do
-      lambda do
+      expect do
         request.unsupported_response_type!
       end.should raise_error(klass) { |error|
         error.error.should       == :unsupported_response_type
@@ -153,7 +153,7 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
 
   describe 'invalid_scope!' do
     it 'should raise Authorize::BadRequest with error = :invalid_scope' do
-      lambda do
+      expect do
         request.invalid_scope!
       end.should raise_error(klass) { |error|
         error.error.should       == :invalid_scope

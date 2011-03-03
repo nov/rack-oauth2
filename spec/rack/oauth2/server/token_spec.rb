@@ -99,7 +99,7 @@ describe Rack::OAuth2::Server::Token::Response do
     end
 
     it "should raise an error" do
-      lambda do
+      expect do
         @request.post('/', :params => {
           :grant_type => "authorization_code",
           :client_id => "client",

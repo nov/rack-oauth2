@@ -62,17 +62,7 @@ module Rack
           def finish
             if approved?
               attr_missing!
-              _protocol_params_ = protocol_params.reject do |key, value|
-                value.blank?
-              end
-              _redirect_uri_ = Util.parse_uri(redirect_uri) if redirect_uri.present?
-              case protocol_params_location
-              when :query
-                _redirect_uri_.query = [_redirect_uri_.query, _protocol_params_.to_query].compact.join('&')
-              when :fragment
-                _redirect_uri_.fragment = _protocol_params_.to_query
-              end
-              redirect _redirect_uri_.to_s
+              redirect Util.constract_uri(redirect_uri, protocol_params, protocol_params_location)
             end
             super
           end
