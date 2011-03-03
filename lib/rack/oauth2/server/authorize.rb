@@ -62,7 +62,7 @@ module Rack
           def finish
             if approved?
               attr_missing!
-              redirect Util.constract_uri(redirect_uri, protocol_params, protocol_params_location)
+              redirect Util.redirect_uri(redirect_uri, protocol_params_location, protocol_params)
             end
             super
           end

@@ -1,2 +1,1 @@
-require 'rack/auth/abstract/request'
-require 'rack/auth/resource/bearer'
+require 'rack/oauth2/server/resource/bearer'

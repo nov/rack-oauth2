@@ -6,7 +6,7 @@ module Rack
           def finish
             super do |response|
               response.header['Content-Type'] = 'application/json'
-              response.write _protocol_params_.to_json
+              response.write protocol_params.to_json
             end
           end
         end
@@ -16,7 +16,7 @@ module Rack
             super do |response|
               response.header['Content-Type'] = 'application/json'
               response.header['WWW-Authenticate'] = 'Basic realm="OAuth2 Token Endpoint"'
-              response.write _protocol_params_.to_json
+              response.write protocol_params.to_json
             end
           end
         end

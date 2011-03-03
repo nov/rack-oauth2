@@ -1,5 +1,3 @@
-require 'rack/auth/abstract/request'
-
 module Rack
   module OAuth2
     module Server

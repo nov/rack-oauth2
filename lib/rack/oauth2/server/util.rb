@@ -8,7 +8,7 @@ module Rack
               value.blank?
             end
             redirect_uri = parse_uri base_uri
-            case protocol_params_location
+            case location
             when :query
               redirect_uri.query = [redirect_uri.query, _params_.to_query].compact.join('&')
             when :fragment

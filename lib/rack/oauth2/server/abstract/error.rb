@@ -6,10 +6,10 @@ module Rack
           attr_accessor :status, :error, :description, :uri
 
           def initialize(status, error, description = nil, options = {})
-            @status       = status
-            @error        = error
-            @description  = description
-            @uri          = options[:uri]
+            @status      = status
+            @error       = error
+            @description = description
+            @uri         = options[:uri]
           end
 
           def protocol_params

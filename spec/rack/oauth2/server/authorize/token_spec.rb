@@ -1,21 +1,11 @@
 require 'spec_helper.rb'
 
 describe Rack::OAuth2::Server::Authorize::Token do
-  let :request do
-    Rack::MockRequest.new app
-  end
-
-  let :redirect_uri do
-    'http://client.example.com/callback'
-  end
-
-  let :access_token do
-    'access_token'
-  end
-
-  let :token_type do
-    'bearer'
-  end
+  let(:request)      { Rack::MockRequest.new app }
+  let(:redirect_uri) { 'http://client.example.com/callback' }
+  let(:access_token) { 'access_token' }
+  let(:token_type)   { 'bearer' }
+  let(:response)     { request.get("/?response_type=token&client_id=client&redirect_uri=#{redirect_uri}") }
 
   context "when approved" do
     let :app do
@@ -28,7 +18,6 @@ describe Rack::OAuth2::Server::Authorize::Token do
     end
 
     it 'should redirect with authorization code in fragment' do
-      response = request.get("/?response_type=token&client_id=client&redirect_uri=#{redirect_uri}")
       response.status.should == 302
       response.location.should == "#{redirect_uri}#access_token=#{access_token}"
     end
@@ -41,11 +30,8 @@ describe Rack::OAuth2::Server::Authorize::Token do
           response.approve!
         end
       end
-
-      it 'should raise AttrRequired::AttrMissing' do
-        expect do
-          request.get "/?response_type=token&client_id=client&redirect_uri=#{redirect_uri}"
-        end.should raise_error AttrRequired::AttrMissing
+      it do
+        expect { response }.should raise_error AttrRequired::AttrMissing
       end
     end
 
@@ -57,11 +43,8 @@ describe Rack::OAuth2::Server::Authorize::Token do
           response.approve!
         end
       end
-
-      it 'should raise AttrRequired::AttrMissing' do
-        expect do
-          request.get "/?response_type=token&client_id=client&redirect_uri=#{redirect_uri}"
-        end.should raise_error AttrRequired::AttrMissing
+      it do
+        expect { response }.should raise_error AttrRequired::AttrMissing
       end
     end
 
@@ -74,10 +57,8 @@ describe Rack::OAuth2::Server::Authorize::Token do
         end
       end
 
-      it 'should raise AttrRequired::AttrMissing' do
-        expect do
-          request.get "/?response_type=token&client_id=client&redirect_uri=#{redirect_uri}"
-        end.should raise_error AttrRequired::AttrMissing
+      it do
+        expect { response }.should raise_error AttrRequired::AttrMissing
       end
     end
   end
@@ -88,9 +69,7 @@ describe Rack::OAuth2::Server::Authorize::Token do
         request.access_denied!
       end
     end
-
     it 'should redirect with error in fragment' do
-      response = request.get("/?response_type=token&client_id=client&redirect_uri=#{redirect_uri}")
       response.status.should == 302
       error_message = {
         :error => :access_denied,
@@ -98,7 +77,5 @@ describe Rack::OAuth2::Server::Authorize::Token do
       }
       response.location.should == "#{redirect_uri}##{error_message.to_query}"
     end
-
   end
-
 end
