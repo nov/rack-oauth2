@@ -3,7 +3,6 @@ module Rack
     module Server
       class Authorize
         class Token < Abstract::Handler
-
           def call(env)
             @request  = Request.new env
             @response = Response.new request

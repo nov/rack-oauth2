@@ -3,20 +3,6 @@ module Rack
     module Server
       module Util
         class << self
-          def redirect_uri(base_uri, location, parmas)
-            _params_ = parmas.reject do |key, value|
-              value.blank?
-            end
-            redirect_uri = parse_uri base_uri
-            case location
-            when :query
-              redirect_uri.query = [redirect_uri.query, _params_.to_query].compact.join('&')
-            when :fragment
-              redirect_uri.fragment = _params_.to_query
-            end
-            redirect_uri.to_s
-          end
-
           def parse_uri(uri)
             case uri
             when URI::Generic
@@ -26,6 +12,17 @@ module Rack
             else
               raise "Invalid format of URI is given."
             end
+          end
+
+          def redirect_uri(base_uri, location, parmas)
+            redirect_uri = parse_uri base_uri
+            case location
+            when :query
+              redirect_uri.query = [redirect_uri.query, parmas.compact.to_query].compact.join('&')
+            when :fragment
+              redirect_uri.fragment = parmas.compact.to_query
+            end
+            redirect_uri.to_s
           end
 
           def verify_redirect_uri(registered, given)

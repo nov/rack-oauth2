@@ -4,11 +4,10 @@ module Rack
   module OAuth2
     module Server
       class Token < Abstract::Handler
-
         def call(env)
           request = Request.new(env)
           request.profile.new(&@authenticator).call(env).finish
-        rescue Error => e
+        rescue BadRequest, Unauthorized => e
           e.finish
         end
 
@@ -36,8 +35,6 @@ module Rack
               AuthorizationCode
             when 'password'
               Password
-            when 'assertion'
-              Assertion
             when 'refresh_token'
               RefreshToken
             when ''
@@ -62,22 +59,18 @@ module Rack
           end
 
           def finish
-            _protocol_params_ = protocol_params.reject do |key, value|
-              value.blank?
-            end
-            write _protocol_params_.to_json
+            write protocol_params.compact.to_json
             header['Content-Type'] = "application/json"
             attr_missing!
             super
           end
         end
-
       end
     end
   end
 end
 
+require 'rack/oauth2/server/token/error'
 require 'rack/oauth2/server/token/authorization_code'
 require 'rack/oauth2/server/token/password'
-require 'rack/oauth2/server/token/assertion'
 require 'rack/oauth2/server/token/refresh_token'

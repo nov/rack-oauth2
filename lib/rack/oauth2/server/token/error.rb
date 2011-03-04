@@ -1,12 +1,13 @@
 module Rack
   module OAuth2
     module Server
-      module Token
+      class Token
         class BadRequest < Abstract::BadRequest
           def finish
             super do |response|
+              response.status = status
               response.header['Content-Type'] = 'application/json'
-              response.write protocol_params.to_json
+              response.write protocol_params.compact.to_json
             end
           end
         end
@@ -14,9 +15,10 @@ module Rack
         class Unauthorized < Abstract::Unauthorized
           def finish
             super do |response|
+              response.status = status
               response.header['Content-Type'] = 'application/json'
               response.header['WWW-Authenticate'] = 'Basic realm="OAuth2 Token Endpoint"'
-              response.write protocol_params.to_json
+              response.write protocol_params.compact.to_json
             end
           end
         end
@@ -31,6 +33,21 @@ module Rack
             :invalid_scope => "The requested scope is invalid, unknown, malformed, or exceeds the previously granted scope."
           }
 
+          def self.included(klass)
+            DEFAULT_DESCRIPTION.each do |error, default_description|
+              status = if error == :invalid_client
+                :unauthorized!
+              else
+                :bad_request!
+              end
+              klass.class_eval <<-ERROR
+                def #{error}!(description = "#{default_description}", options = {})
+                  #{status} :#{error}, description, options
+                end
+              ERROR
+            end
+          end
+
           def bad_request!(error, description = nil, options = {})
             description ||= DEFAULT_DESCRIPTION[error]
             raise BadRequest.new(error, description, options)
@@ -39,30 +56,6 @@ module Rack
           def unauthorized!(error, description = nil, options = {})
             description ||= DEFAULT_DESCRIPTION[error]
             raise Unauthorized.new(error, description, options)
-          end
-
-          def invalid_request!(description = nil, options = {})
-            bad_request!(:invalid_request, description, options)
-          end
-
-          def invalid_client!(description = nil, options = {})
-            unauthorized!(:invalid_client, description, options)
-          end
-
-          def invalid_grant!(description = nil, options = {})
-            bad_request!(:invalid_grant, description, options)
-          end
-
-          def unauthorized_client!(description = nil, options = {})
-            bad_request!(:unauthorized_client, description, options)
-          end
-
-          def unsupported_grant_type!(description = nil, options = {})
-            bad_request!(:unsupported_grant_type, description, options)
-          end
-
-          def invalid_scope!(description = nil, options = {})
-            bad_request!(:invalid_scope, description, options)
           end
         end
 

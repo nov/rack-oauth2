@@ -2,7 +2,6 @@ module Rack
   module OAuth2
     module Server
       class Authorize < Abstract::Handler
-
         def call(env)
           request = Request.new(env)
           request.profile.new(&@authenticator).call(env).finish

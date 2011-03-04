@@ -29,8 +29,17 @@ module Rack
             :invalid_scope => "The requested scope is invalid, unknown, or malformed."
           }
 
+          def self.included(klass)
+            DEFAULT_DESCRIPTION.each do |error, default_description|
+              klass.class_eval <<-ERROR
+                def #{error}!(description = "#{default_description}", options = {})
+                  bad_request! :#{error}, description, options.merge(:redirect => true)
+                end
+              ERROR
+            end
+          end
+
           def bad_request!(error = :bad_request, description = nil, options = {})
-            description ||= DEFAULT_DESCRIPTION[error]
             exception = BadRequest.new error, description, options
             exception.protocol_params_location = case response_type
             when :code
@@ -39,24 +48,8 @@ module Rack
               :fragment
             end
             exception.state = state
-            exception.redirect_uri = redirect_uri if DEFAULT_DESCRIPTION.keys.include?(error)
+            exception.redirect_uri = redirect_uri if options[:redirect]
             raise exception
-          end
-
-          def invalid_request!(description = nil, options = {})
-            bad_request! :invalid_request, description, options
-          end
-
-          def access_denied!(description = nil, options = {})
-            bad_request! :access_denied, description, options
-          end
-
-          def unsupported_response_type!(description = nil, options = {})
-            bad_request! :unsupported_response_type, description, options
-          end
-
-          def invalid_scope!(description = nil, options = {})
-            bad_request! :invalid_scope, description, options
           end
         end
 

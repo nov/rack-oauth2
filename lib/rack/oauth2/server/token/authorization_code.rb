@@ -3,7 +3,6 @@ module Rack
     module Server
       class Token
         class AuthorizationCode < Abstract::Handler
-
           def call(env)
             @request  = Request.new(env)
             @response = Response.new(request)
@@ -20,7 +19,6 @@ module Rack
               attr_missing!
             end
           end
-
         end
       end
     end

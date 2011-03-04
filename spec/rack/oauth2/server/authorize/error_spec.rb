@@ -6,7 +6,6 @@ describe Rack::OAuth2::Server::Authorize::BadRequest do
   let(:redirect_uri) { 'http://client.example.com/callback' }
 
   subject { error }
-
   it { should be_a Rack::OAuth2::Server::Abstract::BadRequest }
   its(:protocol_params) do
     should == {
@@ -69,7 +68,7 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
   let(:request_for_token)   { Rack::OAuth2::Server::Authorize::Token::Request.new env }
 
   describe 'bad_request!' do
-    it 'should raise Authorize::BadRequest' do
+    it do
       expect { request.bad_request! }.should raise_error klass
     end
 
@@ -90,15 +89,10 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
     end
   end
 
-  [
-    :invalid_request,
-    :access_denied,
-    :unsupported_response_type,
-    :invalid_scope
-  ].each do |error_code|
+  Rack::OAuth2::Server::Authorize::ErrorMethods::DEFAULT_DESCRIPTION.keys.each do |error_code|
     method = "#{error_code}!"
     describe method do
-      it "should raise Authorize::BadRequest with error = :#{error_code}" do
+      it "should raise Rack::OAuth2::Server::Authorize::BadRequest with error = :#{error_code}" do
         expect { request.send method }.should raise_error(klass) { |error|
           error.error.should       == error_code
           error.description.should == default_description[error_code]
