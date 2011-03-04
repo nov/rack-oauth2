@@ -2,6 +2,11 @@ require 'spec_helper.rb'
 
 describe Rack::OAuth2::Server::Token::AuthorizationCode do
   let(:request) { Rack::MockRequest.new app }
+  let(:app) do
+    Rack::OAuth2::Server::Token.new do |request, response|
+      response.access_token = 'access_token'
+    end
+  end
   let(:params) do
     {
       :grant_type => 'authorization_code',
@@ -12,33 +17,20 @@ describe Rack::OAuth2::Server::Token::AuthorizationCode do
   end
   subject { request.post('/', :params => params) }
 
-  context 'when valid code is given' do
-    let(:app) do
-      Rack::OAuth2::Server::Token.new do |request, response|
-        response.access_token = 'access_token'
-      end
-    end
-    its(:status)       { should == 200 }
-    its(:content_type) { should == 'application/json' }
-    its(:body)         { should == '{"access_token":"access_token"}' }
-  end
+  its(:status)       { should == 200 }
+  its(:content_type) { should == 'application/json' }
+  its(:body)         { should == '{"access_token":"access_token"}' }
 
-  Rack::OAuth2::Server::Token::ErrorMethods::DEFAULT_DESCRIPTION.each do |error, default_message|
-    status = if error == :invalid_client
-      401
-    else
-      400
-    end
-    context "when #{error}" do
-      let(:app) do
-        Rack::OAuth2::Server::Token.new do |request, response|
-          request.send "#{error}!"
+  [:code, :redirect_uri].each do |required|
+    context "when #{required} is missing" do
+      before do
+        params.delete_if do |key, value|
+          key == required
         end
       end
-      its(:status)       { should == status }
+      its(:status)       { should == 400 }
       its(:content_type) { should == 'application/json' }
-      its(:body)         { should include "\"error\":\"#{error}\"" }
-      its(:body)         { should include "\"error_description\":\"#{default_message}\"" }
+      its(:body)         { should include '"error":"invalid_request"' }
     end
   end
 end

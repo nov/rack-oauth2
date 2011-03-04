@@ -10,12 +10,13 @@ module Rack
           end
 
           class Request < Token::Request
-            attr_required :code
+            attr_required :code, :redirect_uri
 
             def initialize(env)
               super
-              @grant_type = :authorization_code
-              @code       = params['code']
+              @grant_type   = :authorization_code
+              @code         = params['code']
+              @redirect_uri = params['redirect_uri']
               attr_missing!
             end
           end

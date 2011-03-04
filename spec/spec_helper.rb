@@ -9,15 +9,3 @@ def simple_app
     [ 200, {'Content-Type' => 'text/plain'}, ["HELLO"] ]
   end
 end
-
-def assert_error_response(format, error)
-  response = yield
-  case format
-  when :json
-    response.status.should == 400
-    response.body.should match("\"error\":\"#{error}\"")
-  when :query
-    response.status.should == 302
-    response.location.should match("error=#{error}")
-  end
-end
