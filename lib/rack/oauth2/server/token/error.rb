@@ -7,7 +7,7 @@ module Rack
             super do |response|
               response.status = status
               response.header['Content-Type'] = 'application/json'
-              response.write protocol_params.compact.to_json
+              response.write Util.compact_hash(protocol_params).to_json
             end
           end
         end
@@ -18,7 +18,7 @@ module Rack
               response.status = status
               response.header['Content-Type'] = 'application/json'
               response.header['WWW-Authenticate'] = 'Basic realm="OAuth2 Token Endpoint"'
-              response.write protocol_params.compact.to_json
+              response.write Util.compact_hash(protocol_params).to_json
             end
           end
         end

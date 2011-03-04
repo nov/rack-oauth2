@@ -9,8 +9,9 @@ describe Rack::OAuth2::Server::Util do
     'http://client.example.com/callback'
   end
 
-  describe '.redirect_uri' do
-    pending # TODO
+  describe '.compact_hash' do
+    subject { util.compact_hash :k1 => 'v1', :k2 => '', :k3 => nil }
+    it { should == {:k1 => 'v1'} }
   end
 
   describe '.parse_uri' do
@@ -38,6 +39,24 @@ describe Rack::OAuth2::Server::Util do
         expect { util.parse_uri nil }.should raise_error StandardError
         expect { util.parse_uri 123 }.should raise_error StandardError
       end
+    end
+  end
+
+  describe '.redirect_uri' do
+    let(:base_uri) { 'http://client.example.com' }
+    let(:params) do
+      {:k1 => :v1, :k2 => ''}
+    end
+    subject { util.redirect_uri base_uri, location, params }
+
+    context 'when location = :fragment' do
+      let(:location) { :fragment }
+      it { should == "#{base_uri}##{util.compact_hash(params).to_query}" }
+    end
+
+    context 'when location = :query' do
+      let(:location) { :query }
+      it { should == "#{base_uri}?#{util.compact_hash(params).to_query}" }
     end
   end
 

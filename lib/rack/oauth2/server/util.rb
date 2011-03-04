@@ -3,6 +3,12 @@ module Rack
     module Server
       module Util
         class << self
+          def compact_hash(hash)
+            hash.reject do |key, value|
+              value.blank?
+            end
+          end
+
           def parse_uri(uri)
             case uri
             when URI::Generic
@@ -14,13 +20,13 @@ module Rack
             end
           end
 
-          def redirect_uri(base_uri, location, parmas)
+          def redirect_uri(base_uri, location, params)
             redirect_uri = parse_uri base_uri
             case location
             when :query
-              redirect_uri.query = [redirect_uri.query, parmas.compact.to_query].compact.join('&')
+              redirect_uri.query = [redirect_uri.query, Util.compact_hash(params).to_query].compact.join('&')
             when :fragment
-              redirect_uri.fragment = parmas.compact.to_query
+              redirect_uri.fragment = Util.compact_hash(params).to_query
             end
             redirect_uri.to_s
           end

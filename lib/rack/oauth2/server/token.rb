@@ -59,7 +59,7 @@ module Rack
           end
 
           def finish
-            write protocol_params.compact.to_json
+            write Util.compact_hash(protocol_params).to_json
             header['Content-Type'] = "application/json"
             attr_missing!
             super
