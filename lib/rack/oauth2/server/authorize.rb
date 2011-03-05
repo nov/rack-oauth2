@@ -54,10 +54,6 @@ module Rack
             {:state => state}
           end
 
-          def protocol_params_location
-            raise 'Define me in subclasses'
-          end
-
           def finish
             if approved?
               attr_missing!

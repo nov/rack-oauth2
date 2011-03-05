@@ -3,22 +3,12 @@ module Rack
     module Server
       class Token
         class BadRequest < Abstract::BadRequest
-          def finish
-            super do |response|
-              response.status = status
-              response.header['Content-Type'] = 'application/json'
-              response.write Util.compact_hash(protocol_params).to_json
-            end
-          end
         end
 
         class Unauthorized < Abstract::Unauthorized
           def finish
             super do |response|
-              response.status = status
-              response.header['Content-Type'] = 'application/json'
               response.header['WWW-Authenticate'] = 'Basic realm="OAuth2 Token Endpoint"'
-              response.write Util.compact_hash(protocol_params).to_json
             end
           end
         end
@@ -49,12 +39,10 @@ module Rack
           end
 
           def bad_request!(error, description = nil, options = {})
-            description ||= DEFAULT_DESCRIPTION[error]
             raise BadRequest.new(error, description, options)
           end
 
           def unauthorized!(error, description = nil, options = {})
-            description ||= DEFAULT_DESCRIPTION[error]
             raise Unauthorized.new(error, description, options)
           end
         end

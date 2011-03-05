@@ -22,7 +22,12 @@ module Rack
 
           def finish
             response = Rack::Response.new
+            response.status = status
             yield response if block_given?
+            unless response.redirect?
+              response.header['Content-Type'] = 'application/json'
+              response.write Util.compact_hash(protocol_params).to_json
+            end
             response.finish
           end
         end

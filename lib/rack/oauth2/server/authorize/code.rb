@@ -22,9 +22,6 @@ module Rack
             attr_required :code
 
             def protocol_params
-              if approved? && code.blank?
-                raise AttrMissing.new("Setup code first.")
-              end
               super.merge(:code => code)
             end
 

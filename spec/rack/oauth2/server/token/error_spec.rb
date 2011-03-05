@@ -1,15 +1,7 @@
 require 'spec_helper.rb'
 
-shared_examples_for :respond_in_json do
-  let(:respnse) { error.finish.last }
-  its(:status)
-  it { should_not be_empty }
-  it { should have(1).element }
-end
-
 describe Rack::OAuth2::Server::Token::BadRequest do
-  let(:klass) { Rack::OAuth2::Server::Token::BadRequest }
-  let(:error) { klass.new(:invalid_request) }
+  let(:error) { Rack::OAuth2::Server::Token::BadRequest.new(:invalid_request) }
 
   it { should be_a Rack::OAuth2::Server::Abstract::BadRequest }
 
@@ -24,8 +16,7 @@ describe Rack::OAuth2::Server::Token::BadRequest do
 end
 
 describe Rack::OAuth2::Server::Token::Unauthorized do
-  let(:klass) { Rack::OAuth2::Server::Token::Unauthorized }
-  let(:error) { klass.new(:invalid_request) }
+  let(:error) { Rack::OAuth2::Server::Token::Unauthorized.new(:invalid_request) }
 
   it { should be_a Rack::OAuth2::Server::Abstract::Unauthorized }
 

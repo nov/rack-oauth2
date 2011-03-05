@@ -33,7 +33,7 @@ module Rack
               @auth_header = Rack::Auth::AbstractRequest.new(env)
             end
 
-            def oauth2?
+            def bearer?
               access_token.present?
             end
 
@@ -45,7 +45,7 @@ module Rack
               when 1
                 tokens.first
               else
-                invalid_request!('Both Authorization header and payload includes oauth_token.')
+                invalid_request!('Both Authorization header and payload includes access token.')
               end
             end
 
@@ -70,3 +70,5 @@ module Rack
     end
   end
 end
+
+require 'rack/oauth2/server/resource/bearer/error'

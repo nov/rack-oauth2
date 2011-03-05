@@ -14,13 +14,11 @@ module Rack
         class Request < Abstract::Request
           attr_required :grant_type
           attr_optional :client_secret
-          attr_accessor :via_authorization_header
 
           def initialize(env)
             auth = Rack::Auth::Basic::Request.new(env)
             if auth.provided? && auth.basic?
               @client_id, @client_secret = auth.credentials
-              @via_authorization_header = true
               super
             else
               super
