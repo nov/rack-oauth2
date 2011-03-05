@@ -7,7 +7,7 @@ module Rack
         def call(env)
           request = Request.new(env)
           request.profile.new(&@authenticator).call(env).finish
-        rescue BadRequest, Unauthorized => e
+        rescue Rack::OAuth2::Server::Abstract::Error => e
           e.finish
         end
 

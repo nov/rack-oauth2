@@ -12,12 +12,12 @@ module Rack
 
           def call(env)
             request = Request.new(env)
-            if request.oauth2?
+            if request.bearer?
               authenticate!(request)
               env[ACCESS_TOKEN] = request.access_token
             end
             @app.call(env)
-          rescue Error => e
+          rescue Rack::OAuth2::Server::Abstract::Error => e
             e.finish
           end
 
