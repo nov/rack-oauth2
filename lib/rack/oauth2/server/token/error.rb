@@ -35,14 +35,14 @@ module Rack
 
           def self.included(klass)
             DEFAULT_DESCRIPTION.each do |error, default_description|
-              status = if error == :invalid_client
+              error_method = if error == :invalid_client
                 :unauthorized!
               else
                 :bad_request!
               end
               klass.class_eval <<-ERROR
                 def #{error}!(description = "#{default_description}", options = {})
-                  #{status} :#{error}, description, options
+                  #{error_method} :#{error}, description, options
                 end
               ERROR
             end

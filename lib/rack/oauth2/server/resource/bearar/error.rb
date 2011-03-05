@@ -3,8 +3,25 @@ module Rack
     module Server
       module Resource
         class Bearer
-          class Error < Abstract::Error
+          class BadRequest < Abstract::BadRequest
+            def finish
+              # TODO
+            end
+          end
 
+          class Unauthorized < Abstract::Unauthorized
+            def finish
+              # TODO
+            end
+          end
+
+          class Forbidden < Abstract::Forbidden
+            def finish
+              # TODO
+            end
+          end
+
+          module ErrorMethods
             DEFAULT_DESCRIPTION = {
               :invalid_request => "The request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, uses more than one method for including an access token, or is otherwise malformed.",
               :invalid_token => "The access token provided is invalid.",
@@ -12,38 +29,38 @@ module Rack
               :insufficient_scope => "The request requires higher privileges than provided by the access token."
             }
 
-            def error!(error, description = nil, options = {})
-              description ||= DEFAULT_DESCRIPTION[error]
-              exception = case error
-              when :invalid_token, :expired_token
-                Unauthorized
-              when :insufficient_scope
-                Forbidden
-              when :invalid_request
-                BadRequest
-              else
-                raise Error.new(options[:status] || 400, error, description, options)
+            def self.included(klass)
+              DEFAULT_DESCRIPTION.each do |error, default_description|
+                error_method = case error
+                when :invalid_request
+                  :bad_request!
+                when :insufficient_scope
+                  :forbidden!
+                else
+                  :unauthorized!
+                end
+                klass.class_eval <<-ERROR
+                  def #{error}!(description = "#{default_description}", options = {})
+                    #{error_method} :#{error}, description, options
+                  end
+                ERROR
               end
-              raise exception.new(error, description, options)
             end
 
-            def invalid_request!(description = nil, options = {})
-              error!(:invalid_request, description, options)
+            def bad_request!(error, description = nil, options = {})
+              BadRequest.new(error, description, options)
             end
 
-            def invalid_token!(description = nil, options = {})
-              error!(:invalid_token, description, options)
+            def unauthorized!(error, description = nil, options = {})
+              Unauthorized.new(error, description, options)
             end
 
-            def expired_token!(description = nil, options = {})
-              error!(:expired_token, description, options)
+            def forbidden!(error, description = nil, options = {})
+              Forbidden.new(error, description, options)
             end
-
-            def insufficient_scope!(description = nil, options = {})
-              error!(:insufficient_scope, description, options)
-            end
-
           end
+
+          Request.send :include, ErrorMethods
         end
       end
     end

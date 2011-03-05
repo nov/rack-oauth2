@@ -3,7 +3,6 @@ module Rack
     module Server
       module Resource
         class Bearer < Abstract::Handler
-
           ACCESS_TOKEN = 'rack.oauth2.bearer.oauth_token'
 
           def initialize(app, &authenticator)
@@ -29,8 +28,6 @@ module Rack
           end
 
           class Request < Rack::Request
-            include Error::Resource
-
             def initialize(env)
               @env = env
               @auth_header = Rack::Auth::AbstractRequest.new(env)
@@ -53,7 +50,7 @@ module Rack
             end
 
             def access_token_in_haeder
-              if @auth_header.provided? && @auth_header.scheme == :oauth2
+              if @auth_header.provided? && @auth_header.scheme == :bearer
                 @auth_header.params
               else
                 nil
@@ -67,7 +64,6 @@ module Rack
                 nil # This is OAuth1 request
               end
             end
-
           end
         end
       end
