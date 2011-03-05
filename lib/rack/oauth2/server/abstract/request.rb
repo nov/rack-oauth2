@@ -15,7 +15,7 @@ module Rack
 
           def attr_missing_with_error_handling!
             if params['client_id'].present? && @client_id != params['client_id']
-              bad_request! :bad_request, "Multiple client credentials are provided."
+              invalid_request! 'Multiple client credentials are provided.'
             end
             attr_missing_without_error_handling!
           rescue AttrRequired::AttrMissing => e

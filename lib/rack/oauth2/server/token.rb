@@ -41,7 +41,6 @@ module Rack
               unsupported_grant_type!("'#{params['grant_type']}' isn't supported.")
             end
           end
-
         end
 
         class Response < Abstract::Response

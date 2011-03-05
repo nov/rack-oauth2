@@ -1,4 +1,5 @@
 require 'spec_helper.rb'
+require 'base64'
 
 describe Rack::OAuth2::Server::Token do
   let(:request) { Rack::MockRequest.new app }
@@ -15,9 +16,40 @@ describe Rack::OAuth2::Server::Token do
       :redirect_uri => 'http://client.example.com/callback'
     }
   end
-  subject { request.post('/', :params => params) }
+  subject { request.post('/token', :params => params) }
 
-  context "when unsupported grant_type is given" do
+  context 'when multiple client credentials are given' do
+    context 'when different credentials are given' do
+      let(:env) do
+        Rack::MockRequest.env_for(
+          '/token',
+          'HTTP_AUTHORIZATION' => "Basic #{Base64.encode64('client_id2:client_secret')}",
+          :params => params
+        )
+      end
+      it 'should fail with unsupported_grant_type' do
+        status, header, response = app.call(env)
+        status.should == 400
+        response.body.first.should include '"error":"invalid_request"'
+      end
+    end
+
+    context 'when same credentials are given' do
+      let(:env) do
+        Rack::MockRequest.env_for(
+          '/token',
+          'HTTP_AUTHORIZATION' => "Basic #{Base64.encode64('client_id:client_secret')}",
+          :params => params
+        )
+      end
+      it 'should ignore duplicates' do
+        status, header, response = app.call(env)
+        status.should == 200
+      end
+    end
+  end
+
+  context 'when unsupported grant_type is given' do
     before do
       params.merge!(:grant_type => 'unknown')
     end
