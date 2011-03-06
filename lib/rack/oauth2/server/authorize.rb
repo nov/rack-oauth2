@@ -15,6 +15,8 @@ module Rack
 
           def initialize(env)
             super
+            # NOTE: Raise before redirect_uri is saved not to redirect back to unverified redirect_uri.
+            bad_request! if client_id.blank?
             @redirect_uri = Util.parse_uri(params['redirect_uri']) if params['redirect_uri']
             @state = params['state']
           end
@@ -28,7 +30,7 @@ module Rack
             when ''
               attr_missing!
             else
-              unsupported_response_type! "#{CGI.escape params['response_type']} isn't supported."
+              unsupported_response_type!
             end
           end
 

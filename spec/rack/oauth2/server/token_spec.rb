@@ -6,6 +6,7 @@ describe Rack::OAuth2::Server::Token do
   let(:app) do
     Rack::OAuth2::Server::Token.new do |request, response|
       response.access_token = 'access_token'
+      response.token_type = :bearer
     end
   end
   let(:params) do

@@ -5,6 +5,7 @@ describe Rack::OAuth2::Server::Token::Password do
   let(:app) do
     Rack::OAuth2::Server::Token.new do |request, response|
       response.access_token = 'access_token'
+      response.token_type = :bearer
     end
   end
   let(:params) do
@@ -19,7 +20,8 @@ describe Rack::OAuth2::Server::Token::Password do
 
   its(:status)       { should == 200 }
   its(:content_type) { should == 'application/json' }
-  its(:body)         { should == '{"access_token":"access_token"}' }
+  its(:body)         { should include '"access_token":"access_token"' }
+  its(:body)         { should include '"token_type":"bearer"' }
 
   [:username, :password].each do |required|
     context "when #{required} is missing" do

@@ -5,6 +5,7 @@ describe Rack::OAuth2::Server::Token::RefreshToken do
   let(:app) do
     Rack::OAuth2::Server::Token.new do |request, response|
       response.access_token = 'access_token'
+      response.token_type = :bearer
     end
   end
   let(:params) do
@@ -18,7 +19,8 @@ describe Rack::OAuth2::Server::Token::RefreshToken do
 
   its(:status)       { should == 200 }
   its(:content_type) { should == 'application/json' }
-  its(:body)         { should == '{"access_token":"access_token"}' }
+  its(:body)         { should include '"access_token":"access_token"' }
+  its(:body)         { should include '"token_type":"bearer"' }
 
   context 'when refresh_token is missing' do
     before do
