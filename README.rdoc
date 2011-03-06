@@ -2,8 +2,8 @@
 
 Rack Middleware for OAuth2. Currently support only Server/Provider, not Client/Consumer.
 
-This gem is based on OAuth 2.0 draft v.10
-http://tools.ietf.org/html/draft-ietf-oauth-v2-10
+This gem is based on OAuth 2.0 draft v.13
+http://tools.ietf.org/html/draft-ietf-oauth-v2-13
 
 == Installation
 
@@ -13,30 +13,17 @@ http://tools.ietf.org/html/draft-ietf-oauth-v2-10
 
 * View RDoc on RDoc.info (http://rdoc.info/github/nov/rack-oauth2)
 * View Source on GitHub (http://github.com/nov/rack-oauth2)
+* Sample Server App (http://github.com/nov/rack-oauth2)
 * Report Issues on GitHub (http://github.com/nov/rack-oauth2/issues)
 * Facebook Page (http://www.facebook.com/pages/RackOAuth2/141477809244105)
 
-== Usage
+== Sample Application (Rails3)
 
-=== Rails
+Running on Heroku
+http://rack-oauth2-sample.heroku.com
 
-==== Resource Owner Authorization & Token Endpoint
-
-http://gist.github.com/584594
-
-==== Protected Resource Middleware Setting
-
-http://gist.github.com/584565
-
-=== Sinatra
-
-==== Resource Owner Authorization Endpoint
-
-http://gist.github.com/584595
-
-==== Token Endpoint
-
-http://gist.github.com/584574
+Source on GitHub
+http://github.com/nov/rack-oauth2-sample
 
 == Note on Patches/Pull Requests
  
