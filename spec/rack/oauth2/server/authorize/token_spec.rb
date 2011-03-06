@@ -19,7 +19,7 @@ describe Rack::OAuth2::Server::Authorize::Token do
 
     it 'should redirect with authorization code in fragment' do
       response.status.should == 302
-      response.location.should == "#{redirect_uri}#access_token=#{access_token}"
+      response.location.should == "#{redirect_uri}#access_token=#{access_token}&token_type=#{token_type}"
     end
 
     context 'when redirect_uri is missing' do

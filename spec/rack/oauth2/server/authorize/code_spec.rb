@@ -24,24 +24,14 @@ describe Rack::OAuth2::Server::Authorize::Code do
     end
 
     context 'when redirect_uri is missing' do
-      let :app do
-        Rack::OAuth2::Server::Authorize.new do |request, response|
-          response.code = authorization_code
-          response.approve!
-        end
-      end
+      let(:redirect_uri) { nil }
       it do
         expect { response }.should raise_error AttrRequired::AttrMissing
       end
     end
 
     context 'when code is missing' do
-      let :app do
-        Rack::OAuth2::Server::Authorize.new do |request, response|
-          response.redirect_uri = redirect_uri
-          response.approve!
-        end
-      end
+      let(:authorization_code) { nil }
       it do
         expect { response }.should raise_error AttrRequired::AttrMissing
       end

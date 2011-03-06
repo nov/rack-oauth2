@@ -31,6 +31,15 @@ module Rack
               unsupported_response_type! "#{CGI.escape params['response_type']} isn't supported."
             end
           end
+
+          def varified_redirect_uri(pre_registered)
+            verified = if redirect_uri.present? && Util.verify_redirect_uri(pre_registered, redirect_uri)
+              redirect_uri
+            else
+              self.redirect_uri = pre_registered
+            end
+            verified.to_s
+          end
         end
 
         class Response < Abstract::Response
