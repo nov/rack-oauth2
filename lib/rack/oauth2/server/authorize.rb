@@ -37,7 +37,7 @@ module Rack
 
           def verify_redirect_uri!(pre_registered)
             @verified_redirect_uri = if redirect_uri.present?
-              if Util.verify_redirect_uri(pre_registered, redirect_uri)
+              if Util.uri_match?(pre_registered, redirect_uri)
                 redirect_uri
               else
                 bad_request!

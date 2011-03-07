@@ -60,27 +60,27 @@ describe Rack::OAuth2::Server::Util do
     end
   end
 
-  describe '.verify_redirect_uri' do
+  describe '.uri_match?' do
     context 'when invalid URI is given' do
       it do
-        util.verify_redirect_uri('::', '::').should be_false
-        util.verify_redirect_uri(123, 'http://client.example.com/other').should be_false
-        util.verify_redirect_uri('http://client.example.com/other', nil).should be_false
+        util.uri_match?('::', '::').should be_false
+        util.uri_match?(123, 'http://client.example.com/other').should be_false
+        util.uri_match?('http://client.example.com/other', nil).should be_false
       end
     end
 
     context 'when exactry same' do
-      it { util.verify_redirect_uri(uri, uri).should be_true }
+      it { util.uri_match?(uri, uri).should be_true }
     end
 
     context 'when path prefix matches' do
-      it { util.verify_redirect_uri(uri, "#{uri}/deep_path").should be_true }
+      it { util.uri_match?(uri, "#{uri}/deep_path").should be_true }
     end
 
     context 'otherwise' do
       it do
-        util.verify_redirect_uri(uri, 'http://client.example.com/other').should be_false
-        util.verify_redirect_uri(uri, 'http://attacker.example.com/callback').should be_false
+        util.uri_match?(uri, 'http://client.example.com/other').should be_false
+        util.uri_match?(uri, 'http://attacker.example.com/callback').should be_false
       end
     end
   end

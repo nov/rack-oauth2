@@ -31,14 +31,14 @@ module Rack
             redirect_uri.to_s
           end
 
-          def verify_redirect_uri(registered, given)
-            registered = parse_uri(registered)
+          def uri_match?(base, given)
+            base = parse_uri(base)
             given = parse_uri(given)
-            registered.path = '/' if registered.path.blank?
+            base.path = '/' if base.path.blank?
             given.path = '/' if given.path.blank?
             [:scheme, :host, :port].all? do |key|
-              registered.send(key) == given.send(key)
-            end && /^#{registered.path}/ =~ given.path
+              base.send(key) == given.send(key)
+            end && /^#{base.path}/ =~ given.path
           rescue
             false
           end
