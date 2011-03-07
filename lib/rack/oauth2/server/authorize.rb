@@ -12,6 +12,7 @@ module Rack
         class Request < Abstract::Request
           attr_required :response_type
           attr_optional :redirect_uri, :state
+          attr_reader :verified_redirect_uri
 
           def initialize(env)
             super
@@ -34,13 +35,17 @@ module Rack
             end
           end
 
-          def varified_redirect_uri(pre_registered)
-            verified = if redirect_uri.present? && Util.verify_redirect_uri(pre_registered, redirect_uri)
-              redirect_uri
+          def verify_redirect_uri!(pre_registered)
+            @verified_redirect_uri = if redirect_uri.present?
+              if Util.verify_redirect_uri(pre_registered, redirect_uri)
+                redirect_uri
+              else
+                bad_request!
+              end
             else
-              self.redirect_uri = pre_registered
+              pre_registered
             end
-            verified.to_s
+            self.verified_redirect_uri.to_s
           end
         end
 

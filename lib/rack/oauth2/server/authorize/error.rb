@@ -33,7 +33,7 @@ module Rack
             DEFAULT_DESCRIPTION.each do |error, default_description|
               klass.class_eval <<-ERROR
                 def #{error}!(description = "#{default_description}", options = {})
-                  bad_request! :#{error}, description, options.merge(:redirect => true)
+                  bad_request! :#{error}, description, options
                 end
               ERROR
             end
@@ -48,7 +48,7 @@ module Rack
               :fragment
             end
             exception.state = state
-            exception.redirect_uri = redirect_uri if options[:redirect]
+            exception.redirect_uri = verified_redirect_uri
             raise exception
           end
         end

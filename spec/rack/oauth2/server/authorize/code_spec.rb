@@ -41,6 +41,7 @@ describe Rack::OAuth2::Server::Authorize::Code do
   context 'when denied' do
     let :app do
       Rack::OAuth2::Server::Authorize.new do |request, response|
+        request.verify_redirect_uri! redirect_uri
         request.access_denied!
       end
     end
