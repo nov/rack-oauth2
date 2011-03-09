@@ -2,6 +2,8 @@ module Rack
   module OAuth2
     class Client
       class Approval
+        include AttrRequired, AttrOptional
+
         def initialize(attributes = {})
           required_attributes.each do |key|
             self.send "#{key}=", attributes[key]

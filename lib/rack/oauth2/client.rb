@@ -1,6 +1,7 @@
 module Rack
   module OAuth2
     class Client
+      include AttrRequired, AttrOptional
       attr_required :identifier
       attr_optional :secret, :approval, :redirect_uri, :response_type, :authorize_endpoint, :token_endpoint
 
