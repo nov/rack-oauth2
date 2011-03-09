@@ -16,13 +16,17 @@ http://tools.ietf.org/html/draft-ietf-oauth-v2-13
 * Report Issues on GitHub (http://github.com/nov/rack-oauth2/issues)
 * Facebook Page (http://www.facebook.com/pages/RackOAuth2/141477809244105)
 
-== Sample Application (Rails3)
+== Sample Server Application (Rails3)
 
 Running on Heroku
 http://rack-oauth2-sample.heroku.com
 
 Source on GitHub
 http://github.com/nov/rack-oauth2-sample
+
+== Sample Client
+
+https://gist.github.com/862393
 
 == Note on Patches/Pull Requests
  
