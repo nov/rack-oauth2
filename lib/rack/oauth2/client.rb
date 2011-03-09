@@ -25,7 +25,7 @@ module Rack
       end
 
       def authorize_url(response_type = :code, params = {})
-        absolute_url_for authorize_endpoint, params.merge(
+        Util.redirect_uri absolute_url_for(authorize_endpoint), :query, params.merge(
           :client_id => self.identifier,
           :redirect_uri => self.redirect_uri,
           :response_type => response_type
@@ -59,11 +59,10 @@ module Rack
 
       private
 
-      def absolute_url_for(endpoint, params = {})
+      def absolute_url_for(endpoint)
         _endpoint_ = Util.parse_uri endpoint
-        _endpoint_.scheme ||= 'https'
+        _endpoint_.scheme ||= self.scheme || 'https'
         _endpoint_.host ||= self.host
-        _endpoint_.query = Util.compact_hash(params).to_query
         _endpoint_.to_s
       end
 
