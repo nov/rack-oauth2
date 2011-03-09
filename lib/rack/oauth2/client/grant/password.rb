@@ -1,8 +1,8 @@
 module Rack
   module OAuth2
     class Client
-      class Approval
-        class ResourceOwnerCredentials < Approval
+      class Grant
+        class Password < Grant
           attr_required :username, :password
         end
       end

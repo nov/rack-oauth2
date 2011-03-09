@@ -3,7 +3,7 @@ module Rack
     class Client
       include AttrRequired, AttrOptional
       attr_required :identifier
-      attr_optional :secret, :approval, :redirect_uri, :response_type, :authorize_endpoint, :token_endpoint
+      attr_optional :secret, :redirect_uri, :response_type, :authorize_endpoint, :token_endpoint
 
       def initialize(attributes = {})
         (required_attributes + optional_attributes).each do |key|
@@ -24,21 +24,23 @@ module Rack
       end
 
       def authorization_code=(code)
-        @approval = Approval::AuthorizationCode.new(
+        @approval = Grant::AuthorizationCode.new(
           :code => code,
           :redirect_uri => self.redirect_uri
         )
       end
 
       def resource_owner_credentials=(username, password)
-        @approval = Approval::ResourceOwnerCredentials.new(
+        @approval = Grant::ResourceOwnerCredentials.new(
           :username => username,
           :password => password
         )
       end
 
       def access_token!
-        params = self.approval.try(:to_hash) || {}
+        @approval ||= Grant::CrientCredentials.new
+        params = @approval.to_hash
+        params[:grant_type] ||= :client_credentials
         params.merge!(
           :client_id => self.identifier,
           :client_secret => self.secret
