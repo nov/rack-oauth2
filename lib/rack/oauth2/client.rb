@@ -3,7 +3,7 @@ module Rack
     class Client
       include AttrRequired, AttrOptional
       attr_required :identifier
-      attr_optional :secret, :redirect_uri, :scheme, :host, :response_type, :authorize_endpoint, :token_endpoint
+      attr_optional :secret, :redirect_uri, :scheme, :host, :response_type, :authorization_endpoint, :token_endpoint
 
       class Exception < StandardError
         attr_accessor :status, :response
@@ -19,13 +19,13 @@ module Rack
           self.send "#{key}=", attributes[key]
         end
         @grant = Grant::ClientCredentials.new
-        @authorize_endpoint ||= '/oauth2/authorize'
+        @authorization_endpoint ||= '/oauth2/authorize'
         @token_endpoint ||= '/oauth2/token'
         attr_missing!
       end
 
-      def authorize_url(response_type = :code, params = {})
-        Util.redirect_uri absolute_url_for(authorize_endpoint), :query, params.merge(
+      def authorization_url(response_type = :code, params = {})
+        Util.redirect_uri absolute_url_for(authorization_endpoint), :query, params.merge(
           :client_id => self.identifier,
           :redirect_uri => self.redirect_uri,
           :response_type => response_type
