@@ -18,8 +18,8 @@ module Rack
           :redirect_uri => self.redirect_uri,
           :response_type => response_type
         )
-        endpoint = URI.parse authorize_endpoint
-        endpoint.query = compact_hash(_params_).to_query
+        endpoint = Util.parse_uri authorize_endpoint
+        endpoint.query = Util.compact_hash(_params_).to_query
         endpoint.to_s
       end
 
@@ -43,7 +43,7 @@ module Rack
           :client_id => self.identifier,
           :client_secret => self.secret
         )
-        RestClient.post token_endpoint, compact_hash(params)
+        RestClient.post token_endpoint.to_s, Util.compact_hash(params)
       end
     end
   end
