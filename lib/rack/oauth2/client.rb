@@ -38,7 +38,7 @@ module Rack
       end
 
       def access_token!
-        params = self.approval.to_hash if self.approval
+        params = self.approval.try(:to_hash) || {}
         params.merge!(
           :client_id => self.identifier,
           :client_secret => self.secret

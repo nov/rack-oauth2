@@ -23,4 +23,3 @@ end
 
 require 'rack/oauth2/client/approval/authorization_code'
 require 'rack/oauth2/client/approval/resource_owner_credentials'
-require 'rack/oauth2/client/approval/client_credentials'
