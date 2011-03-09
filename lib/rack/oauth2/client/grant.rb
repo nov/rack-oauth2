@@ -12,10 +12,11 @@ module Rack
         end
 
         def to_hash
-          hash = required_attributes.inject({}) do |hash, key|
+          required_attributes.inject({
+            :grant_type => self.class.name.split('::').last.underscore.to_sym
+          }) do |hash, key|
             hash.merge! key => self.send(key)
           end
-          hash[:grant_type] = self.class.name.downcase.to_sym
         end
       end
     end

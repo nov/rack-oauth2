@@ -3,52 +3,83 @@ module Rack
     class Client
       include AttrRequired, AttrOptional
       attr_required :identifier
-      attr_optional :secret, :redirect_uri, :response_type, :authorize_endpoint, :token_endpoint
+      attr_optional :secret, :redirect_uri, :scheme, :host, :response_type, :authorize_endpoint, :token_endpoint
+
+      class Exception < StandardError
+        attr_accessor :status, :response
+        def initialize(status, response)
+          @status = status
+          @response = response
+          super response[:error_description]
+        end
+      end
 
       def initialize(attributes = {})
         (required_attributes + optional_attributes).each do |key|
           self.send "#{key}=", attributes[key]
         end
+        @grant = Grant::ClientCredentials.new
+        @authorize_endpoint ||= '/oauth2/authorize'
+        @token_endpoint ||= '/oauth2/token'
         attr_missing!
       end
 
       def authorize_url(response_type = :code, params = {})
-        _params_ = params.merge(
+        absolute_url_for authorize_endpoint, params.merge(
           :client_id => self.identifier,
           :redirect_uri => self.redirect_uri,
           :response_type => response_type
         )
-        endpoint = Util.parse_uri authorize_endpoint
-        endpoint.query = Util.compact_hash(_params_).to_query
-        endpoint.to_s
       end
 
       def authorization_code=(code)
-        @approval = Grant::AuthorizationCode.new(
+        @grant = Grant::AuthorizationCode.new(
           :code => code,
           :redirect_uri => self.redirect_uri
         )
       end
 
       def resource_owner_credentials=(username, password)
-        @approval = Grant::ResourceOwnerCredentials.new(
+        @grant = Grant::ResourceOwnerCredentials.new(
           :username => username,
           :password => password
         )
       end
 
       def access_token!
-        @approval ||= Grant::CrientCredentials.new
-        params = @approval.to_hash
-        params[:grant_type] ||= :client_credentials
+        params = @grant.to_hash
         params.merge!(
           :client_id => self.identifier,
           :client_secret => self.secret
         )
-        RestClient.post token_endpoint.to_s, Util.compact_hash(params)
+        handle_response do
+          RestClient.post absolute_url_for(token_endpoint), Util.compact_hash(params)
+        end
+      end
+
+      private
+
+      def absolute_url_for(endpoint, params = {})
+        _endpoint_ = Util.parse_uri endpoint
+        _endpoint_.scheme ||= 'https'
+        _endpoint_.host ||= self.host
+        _endpoint_.query = Util.compact_hash(params).to_query
+        _endpoint_.to_s
+      end
+
+      def handle_response
+        response = yield
+        JSON.parse(response.body).with_indifferent_access
+      rescue RestClient::Exception => e
+        error = if e.http_body
+          JSON.parse(e.http_body).with_indifferent_access
+        else
+          {}
+        end
+        raise Exception.new(e.http_code, error)
       end
     end
   end
 end
 
-require 'rack/oauth2/client/approval'
+require 'rack/oauth2/client/grant'
