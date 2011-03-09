@@ -1,8 +1,8 @@
 require 'spec_helper.rb'
 
-describe Rack::OAuth2::Server::Util do
+describe Rack::OAuth2::Util do
   let :util do
-    Rack::OAuth2::Server::Util
+    Rack::OAuth2::Util
   end
 
   let :uri do

@@ -39,10 +39,10 @@ module Rack
         )
       end
 
-      def resource_owner_credentials=(username, password)
-        @grant = Grant::ResourceOwnerCredentials.new(
-          :username => username,
-          :password => password
+      def resource_owner_credentials=(credentials)
+        @grant = Grant::Password.new(
+          :username => credentials.first,
+          :password => credentials.last
         )
       end
 

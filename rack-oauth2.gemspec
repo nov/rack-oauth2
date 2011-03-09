@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.add_runtime_dependency "rack", ">= 1.1"
   s.add_runtime_dependency "json", ">= 1.4.3"
+  s.add_runtime_dependency "rest-client", "1.6"
   s.add_runtime_dependency "activesupport", ">= 2.3"
   s.add_runtime_dependency "i18n"
   s.add_runtime_dependency "attr_required", ">= 0.0.3"
