@@ -3,20 +3,11 @@ module Rack
     class Client
       include AttrRequired, AttrOptional
       attr_required :identifier
-      attr_optional :secret, :redirect_uri, :scheme, :host, :response_type, :authorization_endpoint, :token_endpoint
-
-      class Exception < StandardError
-        attr_accessor :status, :response
-        def initialize(status, response)
-          @status = status
-          @response = response
-          super response[:error_description]
-        end
-      end
+      attr_optional :secret, :redirect_uri, :scheme, :host, :authorization_endpoint, :token_endpoint
 
       def initialize(attributes = {})
         (required_attributes + optional_attributes).each do |key|
-          self.send "#{key}=", attributes[key]
+          self.send :"#{key}=", attributes[key]
         end
         @grant = Grant::ClientCredentials.new
         @authorization_endpoint ||= '/oauth2/authorize'
@@ -24,11 +15,12 @@ module Rack
         attr_missing!
       end
 
-      def authorization_url(response_type = :code, params = {})
-        Util.redirect_uri absolute_url_for(authorization_endpoint), :query, params.merge(
+      def authorization_uri(params = {})
+        params[:response_type] ||= :code
+        params[:scope] = Array(params[:scope]).join(' ')
+        Util.redirect_uri absolute_uri_for(authorization_endpoint), :query, params.merge(
           :client_id => self.identifier,
-          :redirect_uri => self.redirect_uri,
-          :response_type => response_type
+          :redirect_uri => self.redirect_uri
         )
       end
 
@@ -53,13 +45,13 @@ module Rack
           :client_secret => self.secret
         )
         handle_response do
-          RestClient.post absolute_url_for(token_endpoint), Util.compact_hash(params)
+          RestClient.post absolute_uri_for(token_endpoint), Util.compact_hash(params)
         end
       end
 
       private
 
-      def absolute_url_for(endpoint)
+      def absolute_uri_for(endpoint)
         _endpoint_ = Util.parse_uri endpoint
         _endpoint_.scheme ||= self.scheme || 'https'
         _endpoint_.host ||= self.host
@@ -70,15 +62,12 @@ module Rack
         response = yield
         JSON.parse(response.body).with_indifferent_access
       rescue RestClient::Exception => e
-        error = if e.http_body
-          JSON.parse(e.http_body).with_indifferent_access
-        else
-          {}
-        end
-        raise Exception.new(e.http_code, error)
+        error = JSON.parse(e.http_body).with_indifferent_access
+        raise Error.new(e.http_code, error)
       end
     end
   end
 end
 
+require 'rack/oauth2/client/error'
 require 'rack/oauth2/client/grant'
