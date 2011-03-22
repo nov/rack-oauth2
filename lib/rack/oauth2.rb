@@ -1,6 +1,6 @@
 require 'rack'
 require 'json'
-require 'restclient'
+require 'restclient_with_cert'
 require 'active_support/core_ext'
 require 'attr_required'
 require 'attr_optional'
