@@ -33,6 +33,8 @@ module Rack
               AuthorizationCode
             when 'password'
               Password
+            when 'client_credentials'
+              ClientCredentials
             when 'refresh_token'
               RefreshToken
             when ''
@@ -71,4 +73,5 @@ end
 require 'rack/oauth2/server/token/error'
 require 'rack/oauth2/server/token/authorization_code'
 require 'rack/oauth2/server/token/password'
+require 'rack/oauth2/server/token/client_credentials'
 require 'rack/oauth2/server/token/refresh_token'
