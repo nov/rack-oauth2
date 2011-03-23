@@ -26,7 +26,14 @@ http://github.com/nov/rack-oauth2-sample
 
 == Sample Client
 
+Authorization Request (request_type: 'code' and 'token')
 https://gist.github.com/862393
+
+Token Request (grant_type: 'client_credentials', 'password' and 'authorization_code')
+https://gist.github.com/883541
+
+Resource Request (request both for resource owner resource and for client resource)
+https://gist.github.com/883575
 
 == Note on Patches/Pull Requests
  
