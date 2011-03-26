@@ -1,6 +1,7 @@
 = rack-oauth2
 
-Rack Middleware for OAuth2 server. OAuth2 client library is also included.
+Rack Middleware for OAuth2 server.
+OAuth2 client library is also included.
 
 This gem is based on OAuth 2.0 draft v.13
 http://tools.ietf.org/html/draft-ietf-oauth-v2-13
@@ -11,10 +12,9 @@ http://tools.ietf.org/html/draft-ietf-oauth-v2-13
 
 == Resources
 
-* View RDoc on RDoc.info (http://rdoc.info/github/nov/rack-oauth2)
 * View Source on GitHub (http://github.com/nov/rack-oauth2)
 * Report Issues on GitHub (http://github.com/nov/rack-oauth2/issues)
-* Facebook Page (http://www.facebook.com/pages/RackOAuth2/141477809244105)
+* Subscribe Update Info (http://www.facebook.com/pages/RackOAuth2/141477809244105)
 
 == Sample Server Application (Rails3)
 
