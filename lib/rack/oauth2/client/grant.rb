@@ -26,3 +26,4 @@ end
 require 'rack/oauth2/client/grant/authorization_code'
 require 'rack/oauth2/client/grant/password'
 require 'rack/oauth2/client/grant/client_credentials'
+require 'rack/oauth2/client/grant/refresh_token'

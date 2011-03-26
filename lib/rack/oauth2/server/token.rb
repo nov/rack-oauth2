@@ -47,11 +47,12 @@ module Rack
 
         class Response < Abstract::Response
           attr_required :access_token, :token_type
-          attr_optional :expires_in, :refresh_token, :scope
+          attr_optional :refresh_token, :expires_in, :scope
 
           def protocol_params
             {
               :access_token => access_token,
+              :refresh_token => refresh_token,
               :token_type => token_type,
               :expires_in => expires_in,
               :scope => Array(scope).join(' ')

@@ -3,7 +3,7 @@ module Rack
     class Client
       include AttrRequired, AttrOptional
       attr_required :identifier
-      attr_optional :secret, :redirect_uri, :scheme, :host, :authorization_endpoint, :token_endpoint
+      attr_optional :secret, :redirect_uri, :scheme, :host, :port, :authorization_endpoint, :token_endpoint
 
       def initialize(attributes = {})
         (required_attributes + optional_attributes).each do |key|
@@ -38,6 +38,12 @@ module Rack
         )
       end
 
+      def refresh_token=(token)
+        @grant = Grant::RefreshToken.new(
+          :refresh_token => token
+        )
+      end
+
       def access_token!
         params = @grant.to_hash
         params.merge!(
@@ -55,6 +61,7 @@ module Rack
         _endpoint_ = Util.parse_uri endpoint
         _endpoint_.scheme ||= self.scheme || 'https'
         _endpoint_.host ||= self.host
+        _endpoint_.port ||= self.port
         _endpoint_.to_s
       end
 
