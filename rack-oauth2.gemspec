@@ -3,7 +3,7 @@ Gem::Specification.new do |s|
   s.version = File.read("VERSION")
   s.required_rubygems_version = Gem::Requirement.new(">= 1.3.6") if s.respond_to? :required_rubygems_version=
   s.authors = ["nov matake"]
-  s.description = %q{Rack Middleware for OAuth2 server. Experimental OAuth2 client library is also included.}
+  s.description = %q{Rack Middleware for OAuth2 server. OAuth2 client library is also included.}
   s.summary = %q{Rack Middleware for OAuth2 server}
   s.email = "nov@matake.jp"
   s.extra_rdoc_files = ["LICENSE", "README.rdoc"]
