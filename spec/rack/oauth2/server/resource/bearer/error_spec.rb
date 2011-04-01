@@ -16,6 +16,7 @@ end
 
 describe Rack::OAuth2::Server::Resource::Bearer::Unauthorized do
   let(:error) { Rack::OAuth2::Server::Resource::Bearer::Unauthorized.new(:invalid_token) }
+  let(:realm) { Rack::OAuth2::Server::Resource::Bearer::DEFAULT_REALM }
 
   it { should be_a Rack::OAuth2::Server::Abstract::Unauthorized }
   describe '#finish' do
@@ -23,7 +24,7 @@ describe Rack::OAuth2::Server::Resource::Bearer::Unauthorized do
       status, header, response = error.finish
       status.should == 401
       header['Content-Type'].should == 'application/json'
-      header['WWW-Authenticate'].should == 'Bearer error="invalid_token"'
+      header['WWW-Authenticate'].should == "Bearer realm=\"#{realm}\" error=\"invalid_token\""
       response.body.should == ['{"error":"invalid_token"}']
     end
   end
@@ -33,7 +34,18 @@ describe Rack::OAuth2::Server::Resource::Bearer::Unauthorized do
 
     it 'should have error_code in body but not in WWW-Authenticate header' do
       status, header, response = error.finish
-      header['WWW-Authenticate'].should == 'Bearer'
+      header['WWW-Authenticate'].should == "Bearer realm=\"#{realm}\""
+      response.body.first.should include '"error":"something"'
+    end
+  end
+
+  context 'when realm is specified' do
+    let(:realm) { 'server.example.com' }
+    let(:error) { Rack::OAuth2::Server::Resource::Bearer::Unauthorized.new(:something, nil, :realm => realm) }
+
+    it 'should use given realm' do
+      status, header, response = error.finish
+      header['WWW-Authenticate'].should == "Bearer realm=\"#{realm}\""
       response.body.first.should include '"error":"something"'
     end
   end

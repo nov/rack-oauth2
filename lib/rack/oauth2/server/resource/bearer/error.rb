@@ -9,13 +9,12 @@ module Rack
           class Unauthorized < Abstract::Unauthorized
             def finish
               super do |response|
-                response.header['WWW-Authenticate'] = if ErrorMethods::DEFAULT_DESCRIPTION.keys.include?(error)
-                  header = "Bearer error=\"#{error}\""
-                  header += " error_description=\"#{description}\"" if description.present?
-                  header += " error_uri=\"#{uri}\""                 if uri.present?
-                  header
-                else
-                  'Bearer'
+                self.realm ||= DEFAULT_REALM
+                header = response.header['WWW-Authenticate'] = "Bearer realm=\"#{realm}\""
+                if ErrorMethods::DEFAULT_DESCRIPTION.keys.include?(error)
+                  header << " error=\"#{error}\""
+                  header << " error_description=\"#{description}\"" if description.present?
+                  header << " error_uri=\"#{uri}\""                 if uri.present?
                 end
               end
             end

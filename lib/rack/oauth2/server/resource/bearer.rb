@@ -3,10 +3,13 @@ module Rack
     module Server
       module Resource
         class Bearer < Abstract::Handler
-          ACCESS_TOKEN = 'rack.oauth2.bearer.oauth_token'
+          ACCESS_TOKEN = 'rack.oauth2.bearer_token'
+          DEFAULT_REALM = 'Bearer Token Required'
+          attr_accessor :realm
 
-          def initialize(app, &authenticator)
+          def initialize(app, realm = nil,&authenticator)
             @app = app
+            @realm = realm
             super(&authenticator)
           end
 
@@ -18,6 +21,7 @@ module Rack
             end
             @app.call(env)
           rescue Rack::OAuth2::Server::Abstract::Error => e
+            e.realm ||= realm
             e.finish
           end
 
@@ -58,11 +62,7 @@ module Rack
             end
 
             def access_token_in_payload
-              if params['oauth_token'] && !params['oauth_signature_method']
-                params['oauth_token']
-              else
-                nil # This is OAuth1 request
-              end
+              params['bearer_token']
             end
           end
         end

@@ -59,7 +59,7 @@ describe Rack::OAuth2::Server::Resource::Bearer do
     end
 
     context 'when token is in params' do
-      let(:env) { Rack::MockRequest.env_for('/protected_resource', :params => {:oauth_token => 'valid_token'}) }
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', :params => {:bearer_token => 'valid_token'}) }
       it_behaves_like :authenticated_request
     end
   end
@@ -71,7 +71,7 @@ describe Rack::OAuth2::Server::Resource::Bearer do
     end
 
     context 'when token is in params' do
-      let(:env) { Rack::MockRequest.env_for('/protected_resource', :params => {:oauth_token => 'invalid_token'}) }
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', :params => {:bearer_token => 'invalid_token'}) }
       it_behaves_like :unauthorized_request
     end
   end
@@ -82,7 +82,7 @@ describe Rack::OAuth2::Server::Resource::Bearer do
         Rack::MockRequest.env_for(
           '/protected_resource',
           'HTTP_AUTHORIZATION' => 'Bearer valid_token',
-          :params => {:oauth_token => 'valid_token'}
+          :params => {:bearer_token => 'valid_token'}
         )
       end
       it_behaves_like :bad_request
@@ -112,6 +112,30 @@ describe Rack::OAuth2::Server::Resource::Bearer do
         })
       end
       it_behaves_like :non_oauth2_request
+    end
+  end
+
+  describe 'realm' do
+    let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'Bearer invalid_token') }
+
+    context 'when specified' do
+      let(:realm) { 'server.example.com' }
+      let(:app) do
+        Rack::OAuth2::Server::Resource::Bearer.new(simple_app, realm) do |request|
+          request.unauthorized!
+        end
+      end
+      it 'should use specified realm' do
+        status, header, response = request
+        header['WWW-Authenticate'].should include "Bearer realm=\"#{realm}\""
+      end
+    end
+
+    context 'otherwize' do
+      it 'should use default realm' do
+        status, header, response = request
+        header['WWW-Authenticate'].should include "Bearer realm=\"#{Rack::OAuth2::Server::Resource::Bearer::DEFAULT_REALM}\""
+      end
     end
   end
 end

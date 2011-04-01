@@ -3,13 +3,14 @@ module Rack
     module Server
       module Abstract
         class Error < StandardError
-          attr_accessor :status, :error, :description, :uri
+          attr_accessor :status, :error, :description, :uri, :realm
 
           def initialize(status, error, description = nil, options = {})
             @status      = status
             @error       = error
             @description = description
             @uri         = options[:uri]
+            @realm       = options[:realm]
           end
 
           def protocol_params
