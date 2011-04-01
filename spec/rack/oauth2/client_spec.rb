@@ -67,6 +67,12 @@ describe Rack::OAuth2::Client do
     it { should be_instance_of Rack::OAuth2::Client::Grant::Password }
   end
 
+  describe '#refresh_token=' do
+    before  { client.refresh_token = 'refresh_token' }
+    subject { client.instance_variable_get('@grant') }
+    it { should be_instance_of Rack::OAuth2::Client::Grant::RefreshToken }
+  end
+
   describe '#access_token!' do
     before  do
       client.authorization_code = 'code'
