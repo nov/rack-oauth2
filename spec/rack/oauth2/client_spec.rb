@@ -85,6 +85,7 @@ describe Rack::OAuth2::Client do
     it do
       client.access_token!.should == {
         'access_token' => 'access_token',
+        'token_type' => 'bearer',
         'expires_in' => 3600
       }
     end
