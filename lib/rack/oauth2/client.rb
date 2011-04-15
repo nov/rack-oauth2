@@ -68,6 +68,9 @@ module Rack
       def handle_response
         response = yield
         JSON.parse(response.body).with_indifferent_access
+      rescue JSON::ParserError
+        # NOTE: Facebook support (They don't use JSON as token response)
+        Rack::Utils.parse_nested_query(response.body).with_indifferent_access
       rescue RestClient::Exception => e
         error = JSON.parse(e.http_body).with_indifferent_access
         raise Error.new(e.http_code, error)
