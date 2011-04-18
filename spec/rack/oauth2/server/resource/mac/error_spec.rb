@@ -1,29 +1,29 @@
 require 'spec_helper.rb'
 
-describe Rack::OAuth2::Server::Resource::Mac::Unauthorized do
-  let(:error) { Rack::OAuth2::Server::Resource::Mac::Unauthorized.new(:invalid_token) }
+describe Rack::OAuth2::Server::Resource::MAC::Unauthorized do
+  let(:error) { Rack::OAuth2::Server::Resource::MAC::Unauthorized.new(:invalid_token) }
 
   it { should be_a Rack::OAuth2::Server::Resource::Unauthorized }
 
   describe '#scheme' do
     subject { error }
-    its(:scheme) { should == :mac }
+    its(:scheme) { should == :MAC }
   end
 
   describe '#finish' do
-    it 'should use Mac scheme' do
+    it 'should use MAC scheme' do
       status, header, response = error.finish
-      header['WWW-Authenticate'].should =~ /^Mac /
+      header['WWW-Authenticate'].should =~ /^MAC /
     end
   end
 end
 
-describe Rack::OAuth2::Server::Resource::Mac::ErrorMethods do
-  let(:unauthorized)        { Rack::OAuth2::Server::Resource::Mac::Unauthorized }
+describe Rack::OAuth2::Server::Resource::MAC::ErrorMethods do
+  let(:unauthorized)        { Rack::OAuth2::Server::Resource::MAC::Unauthorized }
   let(:redirect_uri)        { 'http://client.example.com/callback' }
   let(:default_description) { Rack::OAuth2::Server::Resource::ErrorMethods::DEFAULT_DESCRIPTION }
   let(:env)                 { Rack::MockRequest.env_for("/authorize?client_id=client_id") }
-  let(:request)             { Rack::OAuth2::Server::Resource::Mac::Request.new env }
+  let(:request)             { Rack::OAuth2::Server::Resource::MAC::Request.new env }
 
   describe 'unauthorized!' do
     it do

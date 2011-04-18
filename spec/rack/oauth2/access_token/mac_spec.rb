@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Rack::OAuth2::AccessToken::Mac do
+describe Rack::OAuth2::AccessToken::MAC do
   subject do
-    Rack::OAuth2::AccessToken::Mac.new(
+    Rack::OAuth2::AccessToken::MAC.new(
       :access_token => 'access_token',
       :secret => 'secret',
       :algorithm => 'algorithm'

@@ -6,7 +6,7 @@ module Rack
         DEFAULT_REALM = 'Protected by OAuth 2.0'
         attr_accessor :realm, :request
 
-        def initialize(app, realm = nil,&authenticator)
+        def initialize(app, realm = nil, &authenticator)
           @app = app
           @realm = realm
           super &authenticator

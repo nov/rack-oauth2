@@ -1,8 +1,8 @@
 require 'spec_helper.rb'
 
-describe Rack::OAuth2::Server::Resource::Mac do
+describe Rack::OAuth2::Server::Resource::MAC do
   let(:app) do
-    Rack::OAuth2::Server::Resource::Mac.new(simple_app) do |request|
+    Rack::OAuth2::Server::Resource::MAC.new(simple_app) do |request|
       case request.access_token
       when 'valid_token'
         # nothing to do
@@ -35,7 +35,7 @@ describe Rack::OAuth2::Server::Resource::Mac do
     it 'should be unauthorized' do
       status, header, response = request
       status.should == 401
-      header['WWW-Authenticate'].should include 'Mac'
+      header['WWW-Authenticate'].should include 'MAC'
       access_token.should be_nil
     end
   end
@@ -57,35 +57,35 @@ describe Rack::OAuth2::Server::Resource::Mac do
   end
 
   context 'when valid_token is given' do
-    let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'Mac valid_token') }
+    let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC valid_token') }
     it_behaves_like :authenticated_mac_request
   end
 
   context 'when invalid_token is given' do
-    let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'Mac invalid_token') }
+    let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC invalid_token') }
     it_behaves_like :unauthorized_mac_request
   end
 
   describe 'realm' do
-    let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'Mac invalid_token') }
+    let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC invalid_token') }
 
     context 'when specified' do
       let(:realm) { 'server.example.com' }
       let(:app) do
-        Rack::OAuth2::Server::Resource::Mac.new(simple_app, realm) do |request|
+        Rack::OAuth2::Server::Resource::MAC.new(simple_app, realm) do |request|
           request.unauthorized!
         end
       end
       it 'should use specified realm' do
         status, header, response = request
-        header['WWW-Authenticate'].should include "Mac realm=\"#{realm}\""
+        header['WWW-Authenticate'].should include "MAC realm=\"#{realm}\""
       end
     end
 
     context 'otherwize' do
       it 'should use default realm' do
         status, header, response = request
-        header['WWW-Authenticate'].should include "Mac realm=\"#{Rack::OAuth2::Server::Resource::DEFAULT_REALM}\""
+        header['WWW-Authenticate'].should include "MAC realm=\"#{Rack::OAuth2::Server::Resource::DEFAULT_REALM}\""
       end
     end
   end

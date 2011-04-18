@@ -5,7 +5,7 @@ module Rack
         class Bearer
           class Unauthorized < Resource::Unauthorized
             def scheme
-              :bearer
+              :Bearer
             end
           end
 

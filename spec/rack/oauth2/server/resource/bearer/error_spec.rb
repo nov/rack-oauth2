@@ -7,11 +7,11 @@ describe Rack::OAuth2::Server::Resource::Bearer::Unauthorized do
 
   describe '#scheme' do
     subject { error }
-    its(:scheme) { should == :bearer }
+    its(:scheme) { should == :Bearer }
   end
 
   describe '#finish' do
-    it 'should use Mac scheme' do
+    it 'should use Bearer scheme' do
       status, header, response = error.finish
       header['WWW-Authenticate'].should =~ /^Bearer /
     end

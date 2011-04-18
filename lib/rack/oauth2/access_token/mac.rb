@@ -1,7 +1,7 @@
 module Rack
   module OAuth2
     class AccessToken
-      class Mac < AccessToken
+      class MAC < AccessToken
         attr_required :secret, :algorithm
 
         def protocol_params

@@ -32,7 +32,7 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
       e = error
       e.instance_eval do
         def scheme
-          :scheme
+          :Scheme
         end
       end
       e

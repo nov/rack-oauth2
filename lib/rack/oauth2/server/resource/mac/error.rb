@@ -2,10 +2,10 @@ module Rack
   module OAuth2
     module Server
       class Resource
-        class Mac
+        class MAC
           class Unauthorized < Resource::Unauthorized
             def scheme
-              :mac
+              :MAC
             end
           end
 

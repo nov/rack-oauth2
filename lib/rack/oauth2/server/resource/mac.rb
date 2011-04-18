@@ -2,22 +2,13 @@ module Rack
   module OAuth2
     module Server
       class Resource
-        class Mac < Resource
+        class MAC < Resource
           def call(env)
             self.request = Request.new(env)
             super
           end
 
           private
-
-          def authenticate!(request)
-            verify_signature!(request)
-            super
-          end
-
-          def verify_signature!(request)
-            # TODO
-          end
 
           class Request < Resource::Request
             def access_token
