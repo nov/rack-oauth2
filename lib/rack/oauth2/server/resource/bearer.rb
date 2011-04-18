@@ -4,26 +4,13 @@ module Rack
       class Resource
         class Bearer < Resource
           def call(env)
-            super do
-              request = Request.new(env)
-              if request.bearer?
-                authenticate!(request)
-                env[ACCESS_TOKEN] = request.access_token
-              end
-            end
+            self.request = Request.new(env)
+            super
           end
 
           private
 
           class Request < Resource::Request
-            def bearer?
-              access_token.present?
-            end
-
-            def scheme
-              :bearer
-            end
-
             def access_token
               tokens = [access_token_in_haeder, access_token_in_payload].compact
               case Array(tokens).size
@@ -37,7 +24,7 @@ module Rack
             end
 
             def access_token_in_haeder
-              if @auth_header.provided? && @auth_header.scheme == scheme
+              if @auth_header.provided? && @auth_header.scheme == :bearer
                 @auth_header.params
               else
                 nil

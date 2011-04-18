@@ -4,7 +4,7 @@ module Rack
       class Resource < Abstract::Handler
         ACCESS_TOKEN = 'rack.oauth2.access_token'
         DEFAULT_REALM = 'Protected by OAuth 2.0'
-        attr_accessor :realm
+        attr_accessor :realm, :request
 
         def initialize(app, realm = nil,&authenticator)
           @app = app
@@ -13,7 +13,10 @@ module Rack
         end
 
         def call(env)
-          yield
+          if request.oauth2?
+            authenticate!(request)
+            env[ACCESS_TOKEN] = request.access_token
+          end
           @app.call(env)
         rescue Rack::OAuth2::Server::Abstract::Error => e
           e.realm ||= realm
@@ -32,7 +35,11 @@ module Rack
             @auth_header = Rack::Auth::AbstractRequest.new(env)
           end
 
-          def scheme
+          def oauth2?
+            access_token.present?
+          end
+
+          def access_token
             raise 'Define me!'
           end
         end

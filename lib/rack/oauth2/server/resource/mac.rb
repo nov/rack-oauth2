@@ -4,13 +4,8 @@ module Rack
       class Resource
         class Mac < Resource
           def call(env)
-            super do
-              request = Request.new(env)
-              if request.mac?
-                authenticate!(request)
-                env[ACCESS_TOKEN] = request.access_token
-              end
-            end
+            self.request = Request.new(env)
+            super
           end
 
           private
@@ -25,16 +20,8 @@ module Rack
           end
 
           class Request < Resource::Request
-            def mac?
-              access_token.present?
-            end
-
-            def scheme
-              :mac
-            end
-
             def access_token
-              if @auth_header.provided? && @auth_header.scheme == scheme
+              if @auth_header.provided? && @auth_header.scheme == :mac
                 @auth_header.params
               else
                 nil
