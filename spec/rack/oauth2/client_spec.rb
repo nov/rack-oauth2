@@ -105,5 +105,21 @@ describe Rack::OAuth2::Client do
         end.should raise_error Rack::OAuth2::Client::Error
       end
     end
+
+    context 'when key-value response is given' do
+      before do
+        fake_response(
+          :post,
+          'https://server.example.com/oauth2/token',
+          'facebook_token_response.txt'
+        )
+      end
+      it do
+        client.access_token!.should == {
+          'access_token' => 'access_token',
+          'expires_in' => '3600' # NOTE: String not Integer
+        }
+      end
+    end
   end
 end

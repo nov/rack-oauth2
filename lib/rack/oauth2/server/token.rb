@@ -46,23 +46,16 @@ module Rack
         end
 
         class Response < Abstract::Response
-          attr_required :access_token, :token_type
-          attr_optional :refresh_token, :expires_in, :scope
+          attr_required :access_token
 
           def protocol_params
-            {
-              :access_token => access_token,
-              :refresh_token => refresh_token,
-              :token_type => token_type,
-              :expires_in => expires_in,
-              :scope => Array(scope).join(' ')
-            }
+            access_token.protocol_params
           end
 
           def finish
+            attr_missing!
             write Util.compact_hash(protocol_params).to_json
             header['Content-Type'] = "application/json"
-            attr_missing!
             super
           end
         end

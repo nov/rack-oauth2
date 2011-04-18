@@ -4,8 +4,7 @@ describe Rack::OAuth2::Server::Token::ClientCredentials do
   let(:request) { Rack::MockRequest.new app }
   let(:app) do
     Rack::OAuth2::Server::Token.new do |request, response|
-      response.access_token = 'access_token'
-      response.token_type = :bearer
+      response.access_token = Rack::OAuth2::AccessToken::Bearer.new(:access_token => 'access_token')
     end
   end
   let(:params) do
