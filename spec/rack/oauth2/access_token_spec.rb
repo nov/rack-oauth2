@@ -26,7 +26,7 @@ describe Rack::OAuth2::AccessToken do
 
   context 'when access_token is missing' do
     it do
-      lambda do
+      expect do
         Rack::OAuth2::AccessToken::Bearer.new(
           :refresh_token => 'refresh_token',
           :expires_in => 3600,
@@ -38,7 +38,7 @@ describe Rack::OAuth2::AccessToken do
 
   context 'otherwise' do
     it do
-      lambda do
+      expect do
         Rack::OAuth2::AccessToken::Bearer.new(
           :access_token => 'access_token'
         )

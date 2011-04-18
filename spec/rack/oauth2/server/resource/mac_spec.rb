@@ -49,7 +49,11 @@ describe Rack::OAuth2::Server::Resource::Mac do
 
   context 'when no access token is given' do
     let(:env) { Rack::MockRequest.env_for('/protected_resource') }
-    it_behaves_like :non_mac_request
+    it 'should skip OAuth 2.0 authentication' do
+      status, header, response = request
+      status.should == 200
+      access_token.should be_nil
+    end
   end
 
   context 'when valid_token is given' do
@@ -60,32 +64,6 @@ describe Rack::OAuth2::Server::Resource::Mac do
   context 'when invalid_token is given' do
     let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'Mac invalid_token') }
     it_behaves_like :unauthorized_mac_request
-  end
-
-  context 'when OAuth 1.0 request' do
-    context 'when token is in Authorization header' do
-      let(:env) do
-        Rack::MockRequest.env_for(
-          '/protected_resource',
-          'HTTP_AUTHORIZATION' => 'OAuth oauth_consumer_key="key" oauth_token="token" oauth_signature_method="HMAC-SHA1" oauth_signature="sig" oauth_timestamp="123456789" oauth_nonce="nonce"'
-        )
-      end
-      it_behaves_like :non_mac_request
-    end
-
-    context 'when token is in params' do
-      let(:env) do
-        Rack::MockRequest.env_for('/protected_resource', :params => {
-          :oauth_consumer_key => 'key',
-          :oauth_token => 'token',
-          :oauth_signature_method => 'HMAC-SHA1',
-          :oauth_signature => 'sig',
-          :oauth_timestamp => 123456789,
-          :oauth_nonce => 'nonce'
-        })
-      end
-      it_behaves_like :non_mac_request
-    end
   end
 
   describe 'realm' do
@@ -107,7 +85,7 @@ describe Rack::OAuth2::Server::Resource::Mac do
     context 'otherwize' do
       it 'should use default realm' do
         status, header, response = request
-        header['WWW-Authenticate'].should include "Mac realm=\"#{Rack::OAuth2::Server::Resource::Bearer::DEFAULT_REALM}\""
+        header['WWW-Authenticate'].should include "Mac realm=\"#{Rack::OAuth2::Server::Resource::DEFAULT_REALM}\""
       end
     end
   end

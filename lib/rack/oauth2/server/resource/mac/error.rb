@@ -5,7 +5,7 @@ module Rack
         class Mac
           class Unauthorized < Resource::Unauthorized
             def scheme
-              :Mac
+              :mac
             end
           end
 

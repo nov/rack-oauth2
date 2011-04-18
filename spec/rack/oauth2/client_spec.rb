@@ -18,9 +18,7 @@ describe Rack::OAuth2::Client do
 
   context 'when identifier is missing' do
     it do
-      lambda do
-        Rack::OAuth2::Client.new
-      end.should raise_error AttrRequired::AttrMissing
+      expect { Rack::OAuth2::Client.new }.should raise_error AttrRequired::AttrMissing
     end
   end
 
@@ -100,9 +98,7 @@ describe Rack::OAuth2::Client do
         )
       end
       it do
-        lambda do
-          client.access_token!
-        end.should raise_error Rack::OAuth2::Client::Error
+        expect { client.access_token! }.should raise_error Rack::OAuth2::Client::Error
       end
     end
 

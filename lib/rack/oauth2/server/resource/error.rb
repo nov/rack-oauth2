@@ -13,7 +13,7 @@ module Rack
           def finish
             super do |response|
               self.realm ||= DEFAULT_REALM
-              header = response.header['WWW-Authenticate'] = "#{scheme} realm=\"#{realm}\""
+              header = response.header['WWW-Authenticate'] = "#{scheme.to_s.camelize} realm=\"#{realm}\""
               if ErrorMethods::DEFAULT_DESCRIPTION.keys.include?(error)
                 header << " error=\"#{error}\""
                 header << " error_description=\"#{description}\"" if description.present?
@@ -73,6 +73,8 @@ module Rack
             raise Forbidden.new(error, description, options)
           end
         end
+
+        Request.send :include, ErrorMethods
       end
     end
   end
