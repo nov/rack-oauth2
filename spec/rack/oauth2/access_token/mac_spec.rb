@@ -11,7 +11,7 @@ describe Rack::OAuth2::AccessToken::MAC do
 
   its(:secret)    { should == 'secret' }
   its(:algorithm) { should == 'algorithm' }
-  its(:protocol_params) do
+  its(:token_response) do
     should == {
       :token_type => :mac,
       :access_token => 'access_token',

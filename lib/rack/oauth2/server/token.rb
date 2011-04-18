@@ -49,7 +49,7 @@ module Rack
           attr_required :access_token
 
           def protocol_params
-            access_token.protocol_params
+            access_token.token_response
           end
 
           def finish

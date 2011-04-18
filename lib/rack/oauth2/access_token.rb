@@ -13,7 +13,7 @@ module Rack
         attr_missing!
       end
 
-      def protocol_params
+      def token_response(options = {})
         {
           :access_token => access_token,
           :refresh_token => refresh_token,

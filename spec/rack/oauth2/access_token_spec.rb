@@ -14,7 +14,7 @@ describe Rack::OAuth2::AccessToken do
   its(:refresh_token) { should == 'refresh_token' }
   its(:expires_in)    { should == 3600 }
   its(:scope)         { should == [:scope1, :scope2] }
-  its(:protocol_params) do
+  its(:token_response) do
     should == {
       :token_type => :bearer,
       :access_token => 'access_token',
