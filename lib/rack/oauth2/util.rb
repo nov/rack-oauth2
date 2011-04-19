@@ -2,6 +2,10 @@ module Rack
   module OAuth2
     module Util
       class << self
+        def rfc3986_encode(text)
+          URI.encode(text, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+        end
+
         def compact_hash(hash)
           hash.reject do |key, value|
             value.blank?

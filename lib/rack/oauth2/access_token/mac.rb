@@ -85,5 +85,6 @@ module Rack
   end
 end
 
+require 'rack/oauth2/access_token/mac/verifier'
 require 'rack/oauth2/access_token/mac/body_hash'
 require 'rack/oauth2/access_token/mac/signature'
