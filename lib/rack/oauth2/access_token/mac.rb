@@ -13,7 +13,12 @@ module Rack
         end
 
         def verify!(request)
-          BodyHash.new(request.post_params).verify!(request.body_hash)
+          if request.body_hash.present?
+            BodyHash.new(
+              :raw_body  => request.body,
+              :algorithm => self.algorithm
+            ).verify!(request.body_hash)
+          end
           Signature.new(
             :token     => request.access_token,
             :secret    => self.secret,
@@ -54,8 +59,14 @@ module Rack
         def authenticate(method, url, headers = {}, payload = {})
           _url_ = URI.parse(url)
           self.timestamp = Time.now.to_i
-          self.nonce = ActiveSupport::SecureRandom.hex(16)
-          self.body_hash = BodyHash.new(payload).calculate
+          self.nonce = generate_nonce
+          if payload.present?
+            raw_body = RestClient::Payload.generate(payload).to_s
+            self.body_hash = BodyHash.new(
+              :raw_body => raw_body,
+              :algorithm => self.algorithm
+            ).calculate
+          end
           self.signature = Signature.new(
             :token     => self.access_token,
             :secret    => self.secret,
@@ -67,7 +78,7 @@ module Rack
             :host      => _url_.host,
             :port      => _url_.port,
             :path      => _url_.path,
-            :query     => _url_.query
+            :query     => Rack::Utils.parse_nested_query(_url_.query)
           ).calculate
           headers.merge(:HTTP_AUTHORIZATION => authorization_header)
         end
@@ -77,8 +88,12 @@ module Rack
           header << " token=\"#{access_token}\""
           header << " timestamp=\"#{timestamp}\""
           header << " nonce=\"#{nonce}\""
-          header << " bodyhash=\"#{body_hash}\""
+          header << " bodyhash=\"#{body_hash}\"" if self.body_hash.present?
           header << " signature=\"#{signature}\""
+        end
+
+        def generate_nonce
+          ActiveSupport::SecureRandom.hex(16)
         end
       end
     end

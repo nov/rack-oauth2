@@ -4,6 +4,7 @@ module Rack
       class MAC
         class Verifier
           include AttrRequired, AttrOptional
+          attr_required :algorithm
 
           # TODO: rescue this in proper location later
           class VerificationFailed < StandardError; end
@@ -16,10 +17,10 @@ module Rack
           end
 
           def verify!(expected)
-            unless expected == self.calculate
-              VerificationFailed.new("#{self.class.to_s.split('::').last} Invalid")
+            if expected == self.calculate
+              expected
             else
-              :valid
+              VerificationFailed.new("#{self.class.to_s.split('::').last} Invalid")
             end
           end
 

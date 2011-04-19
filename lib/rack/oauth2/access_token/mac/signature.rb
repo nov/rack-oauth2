@@ -3,11 +3,11 @@ module Rack
     class AccessToken
       class MAC
         class Signature < Verifier
-          attr_required :token, :secret, :algorithm, :timestamp, :nonce, :method, :host, :port, :path, :query
-          attr_optional :body_hash
+          attr_required :token, :secret, :timestamp, :nonce, :method, :host, :port, :path
+          attr_optional :body_hash, :query
 
           def calculate
-            OpenSSL::HMAC.digest(
+            Rack::OAuth2::Util.base64_encode OpenSSL::HMAC.digest(
               hash_generator,
               secret,
               normalized_request_string
@@ -26,15 +26,19 @@ module Rack
               host,
               port,
               path,
-              normalize_query
+              normalized_query
             ].join("\n")
           end
 
           def normalized_query
-            query.inject([]) do |result, (key, value)|
-              result << [key, value]
-            end.sort.inject('') do |result, (key, value)|
-              result << "#{Rack::OAuth2::Util.rfc3986_encode key}=#{Rack::OAuth2::Util.rfc3986_encode value}\n"
+            if query.present?
+              query.inject([]) do |result, (key, value)|
+                result << [key, value]
+              end.sort.inject('') do |result, (key, value)|
+                result << "#{Rack::OAuth2::Util.rfc3986_encode key}=#{Rack::OAuth2::Util.rfc3986_encode value}\n"
+              end
+            else
+              query.to_s
             end
           end
         end
