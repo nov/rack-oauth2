@@ -21,7 +21,7 @@ module Rack
         private
 
         def authenticate(headers)
-          headers.merge(:HTTP_AUTHORIZATION => "Bearer #{access_token}")
+          headers.merge(:AUTHORIZATION => "Bearer #{access_token}")
         end
       end
     end

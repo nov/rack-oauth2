@@ -37,7 +37,7 @@ describe Rack::OAuth2::AccessToken::MAC do
         Time.fix(Time.at(1302361200)) do
           RestClient.should_receive(:get).with(
             resource_endpoint,
-            :HTTP_AUTHORIZATION => "MAC token=\"access_token\" timestamp=\"1302361200\" nonce=\"51e74de734c05613f37520872e68db5f\" signature=\"yYDSkZMrEbOOqj0anHNLA9ougNA+lxU0zmPiMSPtmJ8=\""
+            :AUTHORIZATION => "MAC token=\"access_token\" timestamp=\"1302361200\" nonce=\"51e74de734c05613f37520872e68db5f\" signature=\"yYDSkZMrEbOOqj0anHNLA9ougNA+lxU0zmPiMSPtmJ8=\""
           )
           token.get resource_endpoint
         end
@@ -50,7 +50,7 @@ describe Rack::OAuth2::AccessToken::MAC do
           RestClient.should_receive(:post).with(
             resource_endpoint,
             {:key => :value},
-            {:HTTP_AUTHORIZATION => "MAC token=\"access_token\" timestamp=\"1302361200\" nonce=\"51e74de734c05613f37520872e68db5f\" bodyhash=\"Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=\" signature=\"xRvIiA+rmjhPjULVpyCCgiHEsOkLEHZik4ZaB+cyqgk=\""}
+            {:AUTHORIZATION => "MAC token=\"access_token\" timestamp=\"1302361200\" nonce=\"51e74de734c05613f37520872e68db5f\" bodyhash=\"Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=\" signature=\"xRvIiA+rmjhPjULVpyCCgiHEsOkLEHZik4ZaB+cyqgk=\""}
           )
           token.post resource_endpoint, :key => :value
         end
@@ -63,7 +63,7 @@ describe Rack::OAuth2::AccessToken::MAC do
           RestClient.should_receive(:put).with(
             resource_endpoint,
             {:key => :value},
-            {:HTTP_AUTHORIZATION => "MAC token=\"access_token\" timestamp=\"1302361200\" nonce=\"51e74de734c05613f37520872e68db5f\" bodyhash=\"Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=\" signature=\"2lWgkUCtD9lNBlDi5fe9eVDwEwbxfLGAqjgykaSV1ww=\""}
+            {:AUTHORIZATION => "MAC token=\"access_token\" timestamp=\"1302361200\" nonce=\"51e74de734c05613f37520872e68db5f\" bodyhash=\"Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=\" signature=\"2lWgkUCtD9lNBlDi5fe9eVDwEwbxfLGAqjgykaSV1ww=\""}
           )
           token.put resource_endpoint, :key => :value
         end
@@ -75,7 +75,7 @@ describe Rack::OAuth2::AccessToken::MAC do
         Time.fix(Time.at(1302361200)) do
           RestClient.should_receive(:delete).with(
             resource_endpoint,
-            :HTTP_AUTHORIZATION => "MAC token=\"access_token\" timestamp=\"1302361200\" nonce=\"51e74de734c05613f37520872e68db5f\" signature=\"PX2GhHuo5yYNEs51e4Zlllw8itQ4Te0v+6ZuRCK7k+s=\""
+            :AUTHORIZATION => "MAC token=\"access_token\" timestamp=\"1302361200\" nonce=\"51e74de734c05613f37520872e68db5f\" signature=\"PX2GhHuo5yYNEs51e4Zlllw8itQ4Te0v+6ZuRCK7k+s=\""
           )
           token.delete resource_endpoint
         end

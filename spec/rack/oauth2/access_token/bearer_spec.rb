@@ -17,7 +17,7 @@ describe Rack::OAuth2::AccessToken::Bearer do
       it 'should have Bearer Authorization header' do
         RestClient.should_receive(method).with(
           resource_endpoint,
-          :HTTP_AUTHORIZATION => 'Bearer access_token'
+          :AUTHORIZATION => 'Bearer access_token'
         )
         token.send method, resource_endpoint
       end
@@ -34,7 +34,7 @@ describe Rack::OAuth2::AccessToken::Bearer do
         RestClient.should_receive(method).with(
           resource_endpoint,
           {:key => :value},
-          {:HTTP_AUTHORIZATION => 'Bearer access_token'}
+          {:AUTHORIZATION => 'Bearer access_token'}
         )
         token.send method, resource_endpoint, {:key => :value}
       end

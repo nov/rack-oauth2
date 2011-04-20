@@ -84,7 +84,7 @@ module Rack
             :query     => Rack::Utils.parse_nested_query(_url_.query)
           )
           self.signature = _signature_.calculate
-          headers.merge(:HTTP_AUTHORIZATION => authorization_header)
+          headers.merge(:AUTHORIZATION => authorization_header)
         end
 
         def authorization_header
