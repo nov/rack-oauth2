@@ -3,8 +3,16 @@
 Rack Middleware for OAuth2 server.
 OAuth2 client library is also included.
 
-This gem is based on OAuth 2.0 draft v.13
-http://tools.ietf.org/html/draft-ietf-oauth-v2-13
+This gem is based on OAuth 2.0 draft v.15
+http://tools.ietf.org/html/draft-ietf-oauth-v2-15
+
+Plus, both Bearer and MAC are supported.
+
+The OAuth 2.0 Protocol: Bearer Tokens
+http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-03
+
+HTTP Authentication: MAC Authentication
+http://tools.ietf.org/html/draft-hammer-oauth-v2-mac-token-02
 
 == Installation
 
@@ -18,13 +26,25 @@ http://tools.ietf.org/html/draft-ietf-oauth-v2-13
 
 == Sample Server Application (Rails3)
 
+=== Bearer
+
 Running on Heroku
 http://rack-oauth2-sample.heroku.com
 
 Source on GitHub
 http://github.com/nov/rack-oauth2-sample
 
+=== MAC
+
+Running on Heroku
+http://rack-oauth2-sample-mac.heroku.com
+
+Source on GitHub
+http://github.com/nov/rack-oauth2-sample-mac
+
 == Sample Client
+
+=== Bearer
 
 Authorization Request (request_type: 'code' and 'token')
 https://gist.github.com/862393
@@ -34,6 +54,10 @@ https://gist.github.com/883541
 
 Resource Request (request both for resource owner resource and for client resource)
 https://gist.github.com/883575
+
+=== MAC
+
+Coming soon..
 
 == Note on Patches/Pull Requests
  
