@@ -14,7 +14,7 @@ module Rack
 
         def call(env)
           if request.oauth2?
-            authenticate!(request)
+            authenticate! request.setup!
             env[ACCESS_TOKEN] = request.access_token
           end
           @app.call(env)
@@ -30,16 +30,18 @@ module Rack
         end
 
         class Request < Rack::Request
+          attr_reader :access_token
+
           def initialize(env)
             @env = env
             @auth_header = Rack::Auth::AbstractRequest.new(env)
           end
 
-          def oauth2?
-            access_token.present?
+          def setup!
+            raise 'Define me!'
           end
 
-          def access_token
+          def oauth2?
             raise 'Define me!'
           end
         end

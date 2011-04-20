@@ -11,12 +11,23 @@ module Rack
           private
 
           class Request < Resource::Request
-            def access_token
-              if @auth_header.provided? && @auth_header.scheme == :mac
-                @auth_header.params
-              else
-                nil
-              end
+            attr_reader :timestamp, :nonce, :body_hash, :signature
+
+            def setup!
+              auth_params = @auth_header.params.split(' ').inject({}) do |auth_params, pair|
+                key, value = pair.scan(/^(.*)=\"(.*)\"/).flatten
+                auth_params.merge!(key => value)
+              end.with_indifferent_access
+              @access_token = auth_params[:token]
+              @timestamp = auth_params[:timestamp]
+              @nonce = auth_params[:nonce]
+              @body_hash = auth_params[:bodyhash]
+              @signature = auth_params[:signature]
+              self
+            end
+
+            def oauth2?
+              @auth_header.provided? && @auth_header.scheme == :mac
             end
           end
         end

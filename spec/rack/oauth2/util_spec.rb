@@ -9,6 +9,16 @@ describe Rack::OAuth2::Util do
     'http://client.example.com/callback'
   end
 
+  describe '.rfc3986_encode' do
+    subject { util.rfc3986_encode '=+ .-/' }
+    it { should == '%3D%2B%20.-%2F' }
+  end
+
+  describe '.base64_encode' do
+    subject { util.base64_encode '=+ .-/' }
+    it { should == 'PSsgLi0v' }
+  end
+
   describe '.compact_hash' do
     subject { util.compact_hash :k1 => 'v1', :k2 => '', :k3 => nil }
     it { should == {:k1 => 'v1'} }

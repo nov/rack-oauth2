@@ -18,9 +18,9 @@ module Rack
 
           def verify!(expected)
             if expected == self.calculate
-              expected
+              :verified
             else
-              VerificationFailed.new("#{self.class.to_s.split('::').last} Invalid")
+              raise VerificationFailed.new("#{self.class.to_s.split('::').last} Invalid")
             end
           end
 

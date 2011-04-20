@@ -82,4 +82,82 @@ describe Rack::OAuth2::AccessToken::MAC do
       end
     end
   end
+
+  describe 'verify!' do
+    let(:request) { Rack::OAuth2::Server::Resource::MAC::Request.new(env) }
+
+    context 'when no body_hash is given' do
+      let(:env) do
+        Rack::MockRequest.env_for(
+          '/protected_resources',
+          'HTTP_AUTHORIZATION' => "MAC token=\"access_token\" timestamp=\"1302361200\" nonce=\"51e74de734c05613f37520872e68db5f\" signature=\"#{signature}\""
+        )
+      end
+
+      context 'when signature is valid' do
+        let(:signature) { 'jaOwJ1eEjabkiRJJ4hdOeVvCGfiCHgeb9NDSrkM0ka4=' }
+        it do
+          Time.fix(Time.at(1302361200)) do
+            token.verify!(request.setup!).should == :verified
+          end
+        end
+      end
+
+      context 'otherwise' do
+        let(:signature) { 'invalid' }
+        it do
+          expect { token.verify!(request.setup!) }.should raise_error(
+            Rack::OAuth2::AccessToken::MAC::Verifier::VerificationFailed,
+            'Signature Invalid'
+          )
+        end
+      end
+    end
+
+    context 'when body_hash is given' do
+      let(:env) do
+        Rack::MockRequest.env_for(
+          '/protected_resources',
+          :method => :POST,
+          :params => {
+            :key1 => 'value1'
+          },
+          'HTTP_AUTHORIZATION' => "MAC token=\"access_token\" timestamp=\"1302361200\" nonce=\"51e74de734c05613f37520872e68db5f\" bodyhash=\"#{body_hash}\" signature=\"#{signature}\""
+        )
+      end
+      let(:signature) { 'invalid' }
+
+      context 'when body_hash is invalid' do
+        let(:body_hash) { 'invalid' }
+        it do
+          expect { token.verify!(request.setup!) }.should raise_error(
+            Rack::OAuth2::AccessToken::MAC::Verifier::VerificationFailed,
+            'BodyHash Invalid'
+          )
+        end
+      end
+
+      context 'when body_hash is valid' do
+        let(:body_hash) { 'TPzUbFn1S16mpfmwXCi1L+8oZHRxlLX9/D1ZwAV781o=' }
+
+        context 'when signature is valid' do
+          let(:signature) { 'ZSicF/YCg5bdDef103/NLGeuhH7ylHwrnYUUMcCz12A=' }
+          it do
+            Time.fix(Time.at(1302361200)) do
+              token.verify!(request.setup!).should == :verified
+            end
+          end
+        end
+
+        context 'otherwise' do
+          it do
+            expect { token.verify!(request.setup!) }.should raise_error(
+              Rack::OAuth2::AccessToken::MAC::Verifier::VerificationFailed,
+              'Signature Invalid'
+            )
+          end
+        end
+      end
+    end
+  end
 end

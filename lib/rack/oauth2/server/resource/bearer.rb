@@ -11,16 +11,19 @@ module Rack
           private
 
           class Request < Resource::Request
-            def access_token
+            def setup!
               tokens = [access_token_in_haeder, access_token_in_payload].compact
-              case Array(tokens).size
-              when 0
-                nil
+              @access_token = case Array(tokens).size
               when 1
                 tokens.first
               else
                 invalid_request!('Both Authorization header and payload includes access token.')
               end
+              self
+            end
+
+            def oauth2?
+              (access_token_in_haeder || access_token_in_payload).present?
             end
 
             def access_token_in_haeder

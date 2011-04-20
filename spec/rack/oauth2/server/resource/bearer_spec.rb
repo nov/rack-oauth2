@@ -33,7 +33,7 @@ describe Rack::OAuth2::Server::Resource::Bearer do
     end
   end
   shared_examples_for :bad_bearer_request do
-    it 'should be unauthorized' do
+    it 'should be bad_request' do
       status, header, response = request
       status.should == 400
       access_token.should be_nil
@@ -62,14 +62,38 @@ describe Rack::OAuth2::Server::Resource::Bearer do
   end
 
   context 'when invalid_token is given' do
+    let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'Bearer invalid_token') }
+
     context 'when token is in Authorization header' do
-      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'Bearer invalid_token') }
       it_behaves_like :unauthorized_bearer_request
     end
 
     context 'when token is in params' do
       let(:env) { Rack::MockRequest.env_for('/protected_resource', :params => {:bearer_token => 'invalid_token'}) }
       it_behaves_like :unauthorized_bearer_request
+    end
+
+    describe 'realm' do
+
+      context 'when specified' do
+        let(:realm) { 'server.example.com' }
+        let(:app) do
+          Rack::OAuth2::Server::Resource::Bearer.new(simple_app, realm) do |request|
+            request.unauthorized!
+          end
+        end
+        it 'should use specified realm' do
+          status, header, response = request
+          header['WWW-Authenticate'].should include "Bearer realm=\"#{realm}\""
+        end
+      end
+
+      context 'otherwize' do
+        it 'should use default realm' do
+          status, header, response = request
+          header['WWW-Authenticate'].should include "Bearer realm=\"#{Rack::OAuth2::Server::Resource::Bearer::DEFAULT_REALM}\""
+        end
+      end
     end
   end
 
@@ -83,30 +107,6 @@ describe Rack::OAuth2::Server::Resource::Bearer do
         )
       end
       it_behaves_like :bad_bearer_request
-    end
-  end
-
-  describe 'realm' do
-    let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'Bearer invalid_token') }
-
-    context 'when specified' do
-      let(:realm) { 'server.example.com' }
-      let(:app) do
-        Rack::OAuth2::Server::Resource::Bearer.new(simple_app, realm) do |request|
-          request.unauthorized!
-        end
-      end
-      it 'should use specified realm' do
-        status, header, response = request
-        header['WWW-Authenticate'].should include "Bearer realm=\"#{realm}\""
-      end
-    end
-
-    context 'otherwize' do
-      it 'should use default realm' do
-        status, header, response = request
-        header['WWW-Authenticate'].should include "Bearer realm=\"#{Rack::OAuth2::Server::Resource::Bearer::DEFAULT_REALM}\""
-      end
     end
   end
 end

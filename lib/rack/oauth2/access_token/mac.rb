@@ -14,24 +14,26 @@ module Rack
 
         def verify!(request)
           if request.body_hash.present?
-            BodyHash.new(
-              :raw_body  => request.body,
+            _body_hash_ = BodyHash.new(
+              :raw_body  => request.body.read,
               :algorithm => self.algorithm
-            ).verify!(request.body_hash)
+            )
+            _body_hash_.verify!(request.body_hash)
           end
-          Signature.new(
+          _signature_ = Signature.new(
             :token     => request.access_token,
             :secret    => self.secret,
             :algorithm => self.algorithm,
             :timestamp => request.timestamp,
             :nonce     => request.nonce,
             :body_hash => request.body_hash,
-            :method    => request.method,
+            :method    => request.request_method,
             :host      => request.host,
             :port      => request.port,
             :path      => request.path,
-            :query     => request.query
-          ).verify!(request.signature)
+            :query     => request.GET
+          )
+          _signature_.verify!(request.signature)
         end
 
         def get(url, headers = {}, &block)
@@ -62,12 +64,13 @@ module Rack
           self.nonce = generate_nonce
           if payload.present?
             raw_body = RestClient::Payload.generate(payload).to_s
-            self.body_hash = BodyHash.new(
+            _body_hash_ = BodyHash.new(
               :raw_body => raw_body,
               :algorithm => self.algorithm
-            ).calculate
+            )
+            self.body_hash = _body_hash_.calculate
           end
-          self.signature = Signature.new(
+          _signature_ = Signature.new(
             :token     => self.access_token,
             :secret    => self.secret,
             :algorithm => self.algorithm,
@@ -79,7 +82,8 @@ module Rack
             :port      => _url_.port,
             :path      => _url_.path,
             :query     => Rack::Utils.parse_nested_query(_url_.query)
-          ).calculate
+          )
+          self.signature = _signature_.calculate
           headers.merge(:HTTP_AUTHORIZATION => authorization_header)
         end
 

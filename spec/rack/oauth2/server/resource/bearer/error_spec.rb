@@ -13,7 +13,7 @@ describe Rack::OAuth2::Server::Resource::Bearer::Unauthorized do
   describe '#finish' do
     it 'should use Bearer scheme' do
       status, header, response = error.finish
-      header['WWW-Authenticate'].should =~ /^Bearer /
+      header['WWW-Authenticate'].should include 'Bearer'
     end
   end
 end

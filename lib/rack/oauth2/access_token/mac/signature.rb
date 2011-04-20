@@ -15,7 +15,7 @@ module Rack
           end
 
           def normalized_request_string
-            [
+            arr = [
               token,
               secret,
               algorithm,
@@ -27,7 +27,8 @@ module Rack
               port,
               path,
               normalized_query
-            ].join("\n")
+            ]
+            arr.join("\n")
           end
 
           def normalized_query
