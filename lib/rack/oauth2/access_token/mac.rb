@@ -88,12 +88,12 @@ module Rack
         end
 
         def authorization_header
-          header = "MAC"
-          header << " token=\"#{access_token}\""
-          header << " timestamp=\"#{timestamp}\""
-          header << " nonce=\"#{nonce}\""
-          header << " bodyhash=\"#{body_hash}\"" if self.body_hash.present?
-          header << " signature=\"#{signature}\""
+          header = "MAC "
+          header << "token=\"#{access_token}\","
+          header << "timestamp=\"#{timestamp}\","
+          header << "nonce=\"#{nonce}\","
+          header << "bodyhash=\"#{body_hash}\"," if self.body_hash.present?
+          header << "signature=\"#{signature}\""
         end
 
         def generate_nonce
