@@ -43,7 +43,7 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
         status, header, response = error_with_scheme.finish
         status.should == 401
         header['Content-Type'].should == 'application/json'
-        header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\" error=\"invalid_token\""
+        header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\",error=\"invalid_token\""
         response.body.should == ['{"error":"invalid_token"}']
       end
 
