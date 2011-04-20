@@ -14,10 +14,7 @@ module Rack
             attr_reader :timestamp, :nonce, :body_hash, :signature
 
             def setup!
-              auth_params = @auth_header.params.split(',').inject({}) do |auth_params, pair|
-                key, value = pair.scan(/^(.*)=\"(.*)\"/).flatten
-                auth_params.merge!(key => value)
-              end.with_indifferent_access
+              auth_params = Rack::Auth::Digest::Params.parse(@auth_header.params).with_indifferent_access
               @access_token = auth_params[:token]
               @timestamp = auth_params[:timestamp]
               @nonce = auth_params[:nonce]
