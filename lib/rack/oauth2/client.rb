@@ -67,7 +67,15 @@ module Rack
 
       def handle_response
         response = yield
-        JSON.parse(response.body).with_indifferent_access
+        token_hash = JSON.parse(response.body).with_indifferent_access
+        case token_hash[:token_type]
+        when 'bearer'
+          AccessToken::Bearer.new(token_hash)
+        when 'mac'
+          AccessToken::MAC.new(token_hash)
+        else
+          token_hash
+        end
       rescue JSON::ParserError
         # NOTE: Facebook support (They don't use JSON as token response)
         Rack::Utils.parse_nested_query(response.body).with_indifferent_access

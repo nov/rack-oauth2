@@ -72,20 +72,74 @@ describe Rack::OAuth2::Client do
   end
 
   describe '#access_token!' do
-    before  do
-      client.authorization_code = 'code'
-      fake_response(
-        :post,
-        'https://server.example.com/oauth2/token',
-        'token.json'
-      )
+    subject { client.access_token! }
+
+    context 'when bearer token is given' do
+      before  do
+        client.authorization_code = 'code'
+        fake_response(
+          :post,
+          'https://server.example.com/oauth2/token',
+          'tokens/bearer.json'
+        )
+      end
+      it { should be_instance_of Rack::OAuth2::AccessToken::Bearer }
+      its(:token_type) { should == :bearer }
+      its(:access_token) { should == 'access_token' }
+      its(:refresh_token) { should == 'refresh_token' }
+      its(:expires_in) { should == 3600 }
     end
-    it do
-      client.access_token!.should == {
-        'access_token' => 'access_token',
-        'token_type' => 'bearer',
-        'expires_in' => 3600
-      }
+
+    context 'when mac token is given' do
+      before  do
+        client.authorization_code = 'code'
+        fake_response(
+          :post,
+          'https://server.example.com/oauth2/token',
+          'tokens/mac.json'
+        )
+      end
+      it { should be_instance_of Rack::OAuth2::AccessToken::MAC }
+      its(:token_type) { should == :mac }
+      its(:access_token) { should == 'access_token' }
+      its(:refresh_token) { should == 'refresh_token' }
+      its(:expires_in) { should == 3600 }
+    end
+
+    context 'when legacy-style (JSON) token is given' do
+      before  do
+        client.authorization_code = 'code'
+        fake_response(
+          :post,
+          'https://server.example.com/oauth2/token',
+          'tokens/legacy.json'
+        )
+      end
+      it { should be_instance_of ActiveSupport::HashWithIndifferentAccess }
+      it do
+        client.access_token!.should == {
+          'access_token' => 'access_token',
+          'refresh_token' => 'refresh_token',
+          'expires_in' => 3600
+        }
+      end
+    end
+
+    context 'when legacy-style (key-value) response is given' do
+      before do
+        fake_response(
+          :post,
+          'https://server.example.com/oauth2/token',
+          'tokens/legacy.txt'
+        )
+      end
+      it { should be_instance_of ActiveSupport::HashWithIndifferentAccess }
+      it do
+        client.access_token!.should == {
+          'access_token' => 'access_token',
+          'expires_in' => '3600' # NOTE: String not Integer
+        }
+      end
     end
 
     context 'when error response is given' do
@@ -93,28 +147,12 @@ describe Rack::OAuth2::Client do
         fake_response(
           :post,
           'https://server.example.com/oauth2/token',
-          'invalid_request.json',
+          'errors/invalid_request.json',
           :status => 400
         )
       end
       it do
         expect { client.access_token! }.should raise_error Rack::OAuth2::Client::Error
-      end
-    end
-
-    context 'when key-value response is given' do
-      before do
-        fake_response(
-          :post,
-          'https://server.example.com/oauth2/token',
-          'facebook_token_response.txt'
-        )
-      end
-      it do
-        client.access_token!.should == {
-          'access_token' => 'access_token',
-          'expires_in' => '3600' # NOTE: String not Integer
-        }
       end
     end
   end
