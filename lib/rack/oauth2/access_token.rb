@@ -22,9 +22,26 @@ module Rack
           :scope => Array(scope).join(' ')
         }
       end
+
+      def get(url, headers = {}, &block)
+        RestClient.get url, authenticate(headers), &block
+      end
+
+      def post(url, payload, headers = {}, &block)
+        RestClient.post url, payload, authenticate(headers), &block
+      end
+
+      def put(url, payload, headers = {}, &block)
+        RestClient.put url, payload, authenticate(headers), &block
+      end
+
+      def delete(url, headers = {}, &block)
+        RestClient.delete url, authenticate(headers), &block
+      end
     end
   end
 end
 
 require 'rack/oauth2/access_token/bearer'
 require 'rack/oauth2/access_token/mac'
+require 'rack/oauth2/access_token/legacy'

@@ -106,7 +106,7 @@ describe Rack::OAuth2::Client do
       its(:expires_in) { should == 3600 }
     end
 
-    context 'when legacy-style (JSON) token is given' do
+    context 'when no-type token is given (JSON)' do
       before  do
         client.authorization_code = 'code'
         fake_response(
@@ -115,17 +115,14 @@ describe Rack::OAuth2::Client do
           'tokens/legacy.json'
         )
       end
-      it { should be_instance_of ActiveSupport::HashWithIndifferentAccess }
-      it do
-        client.access_token!.should == {
-          'access_token' => 'access_token',
-          'refresh_token' => 'refresh_token',
-          'expires_in' => 3600
-        }
-      end
+      it { should be_instance_of Rack::OAuth2::AccessToken::Legacy }
+      its(:token_type) { should == :legacy }
+      its(:access_token) { should == 'access_token' }
+      its(:refresh_token) { should == 'refresh_token' }
+      its(:expires_in) { should == 3600 }
     end
 
-    context 'when legacy-style (key-value) response is given' do
+    context 'when no-type token is given (key-value)' do
       before do
         fake_response(
           :post,
@@ -133,12 +130,34 @@ describe Rack::OAuth2::Client do
           'tokens/legacy.txt'
         )
       end
-      it { should be_instance_of ActiveSupport::HashWithIndifferentAccess }
+      it { should be_instance_of Rack::OAuth2::AccessToken::Legacy }
+      its(:token_type) { should == :legacy }
+      its(:access_token) { should == 'access_token' }
+      its(:expires_in) { should == 3600 }
+
+      context 'when expires_in is not given' do
+        before do
+          fake_response(
+            :post,
+            'https://server.example.com/oauth2/token',
+            'tokens/legacy_without_expires_in.txt'
+          )
+        end
+        its(:expires_in) { should be_nil }
+      end
+    end
+
+    context 'when unknown-type token is given' do
+      before  do
+        client.authorization_code = 'code'
+        fake_response(
+          :post,
+          'https://server.example.com/oauth2/token',
+          'tokens/unknown.json'
+        )
+      end
       it do
-        client.access_token!.should == {
-          'access_token' => 'access_token',
-          'expires_in' => '3600' # NOTE: String not Integer
-        }
+        expect { client.access_token! }.should raise_error(StandardError, 'Unknown Token Type')
       end
     end
 

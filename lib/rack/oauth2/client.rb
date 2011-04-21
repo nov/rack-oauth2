@@ -73,12 +73,14 @@ module Rack
           AccessToken::Bearer.new(token_hash)
         when 'mac'
           AccessToken::MAC.new(token_hash)
+        when nil
+          AccessToken::Legacy.new(token_hash)
         else
-          token_hash
+          raise 'Unknown Token Type'
         end
       rescue JSON::ParserError
         # NOTE: Facebook support (They don't use JSON as token response)
-        Rack::Utils.parse_nested_query(response.body).with_indifferent_access
+        AccessToken::Legacy.new Rack::Utils.parse_nested_query(response.body).with_indifferent_access
       rescue RestClient::Exception => e
         error = JSON.parse(e.http_body).with_indifferent_access
         raise Error.new(e.http_code, error)
