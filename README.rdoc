@@ -42,7 +42,7 @@ http://github.com/nov/rack-oauth2-sample-mac
 
 == Sample Client
 
-=== Bearer
+=== Common between Bearer and MAC
 
 Authorization Request (request_type: 'code' and 'token')
 https://gist.github.com/862393
@@ -50,12 +50,15 @@ https://gist.github.com/862393
 Token Request (grant_type: 'client_credentials', 'password', 'authorization_code' and 'refresh_token')
 https://gist.github.com/883541
 
+=== Bearer
+
 Resource Request (request both for resource owner resource and for client resource)
 https://gist.github.com/883575
 
 === MAC
 
-Coming soon..
+Resource Request (request both for resource owner resource and for client resource)
+https://gist.github.com/933885
 
 == Note on Patches/Pull Requests
  
