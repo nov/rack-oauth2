@@ -39,7 +39,7 @@ module Rack
                 result << "#{Rack::OAuth2::Util.rfc3986_encode key}=#{Rack::OAuth2::Util.rfc3986_encode value}\n"
               end
             else
-              query.to_s
+              ''
             end
           end
         end
