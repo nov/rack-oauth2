@@ -12,7 +12,7 @@ module Rack
 
           class Request < Resource::Request
             def setup!
-              tokens = [access_token_in_haeder, access_token_in_payload].compact
+              tokens = [access_token_in_header, access_token_in_payload].compact
               @access_token = case Array(tokens).size
               when 1
                 tokens.first
@@ -23,10 +23,10 @@ module Rack
             end
 
             def oauth2?
-              (access_token_in_haeder || access_token_in_payload).present?
+              (access_token_in_header || access_token_in_payload).present?
             end
 
-            def access_token_in_haeder
+            def access_token_in_header
               if @auth_header.provided? && @auth_header.scheme == :bearer
                 @auth_header.params
               else
