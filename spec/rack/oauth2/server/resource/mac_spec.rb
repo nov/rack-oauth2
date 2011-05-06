@@ -72,7 +72,7 @@ describe Rack::OAuth2::Server::Resource::MAC do
     end
 
     context 'when all required params are valid' do
-      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC token="valid_token", timestamp="1302361200", nonce="51e74de734c05613f37520872e68db5f", signature="0rykQnhMJ3/yoogoDM0R2ReCN7aiFFPQmQTQotBOQaI=""') }
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC token="valid_token", timestamp="1302361200", nonce="51e74de734c05613f37520872e68db5f", signature="cK4sig+1Rb7w5Dtvadj6q9RqCFnY4/Y+dvaVjXlm5Wk="') }
       it_behaves_like :authenticated_mac_request
     end
   end
