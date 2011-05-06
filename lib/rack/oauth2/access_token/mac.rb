@@ -34,6 +34,8 @@ module Rack
             :query     => request.GET
           )
           _signature_.verify!(request.signature)
+        rescue Verifier::VerificationFailed => e
+          request.invalid_token! e.message
         end
 
         def get(url, headers = {}, &block)

@@ -107,8 +107,8 @@ describe Rack::OAuth2::AccessToken::MAC do
         let(:signature) { 'invalid' }
         it do
           expect { token.verify!(request.setup!) }.should raise_error(
-            Rack::OAuth2::AccessToken::MAC::Verifier::VerificationFailed,
-            'Signature Invalid'
+            Rack::OAuth2::Server::Resource::MAC::Unauthorized,
+            'invalid_token :: Signature Invalid'
           )
         end
       end
@@ -131,8 +131,8 @@ describe Rack::OAuth2::AccessToken::MAC do
         let(:body_hash) { 'invalid' }
         it do
           expect { token.verify!(request.setup!) }.should raise_error(
-            Rack::OAuth2::AccessToken::MAC::Verifier::VerificationFailed,
-            'BodyHash Invalid'
+            Rack::OAuth2::Server::Resource::MAC::Unauthorized,
+            'invalid_token :: BodyHash Invalid'
           )
         end
       end
@@ -152,8 +152,8 @@ describe Rack::OAuth2::AccessToken::MAC do
         context 'otherwise' do
           it do
             expect { token.verify!(request.setup!) }.should raise_error(
-              Rack::OAuth2::AccessToken::MAC::Verifier::VerificationFailed,
-              'Signature Invalid'
+              Rack::OAuth2::Server::Resource::MAC::Unauthorized,
+              'invalid_token :: Signature Invalid'
             )
           end
         end

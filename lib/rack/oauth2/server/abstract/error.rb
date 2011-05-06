@@ -11,6 +11,7 @@ module Rack
             @description = description
             @uri         = options[:uri]
             @realm       = options[:realm]
+            super [error, description].compact.join(' :: ')
           end
 
           def protocol_params

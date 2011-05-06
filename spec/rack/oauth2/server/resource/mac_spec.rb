@@ -5,7 +5,11 @@ describe Rack::OAuth2::Server::Resource::MAC do
     Rack::OAuth2::Server::Resource::MAC.new(simple_app) do |request|
       case request.access_token
       when 'valid_token'
-        # nothing to do
+        Rack::OAuth2::AccessToken::MAC.new(
+          :access_token => 'valid_token',
+          :secret => 'secret',
+          :algorithm => 'hmac-sha-256'
+        ).verify!(request)
       when 'insufficient_scope_token'
         request.insufficient_scope!
       else
@@ -57,8 +61,20 @@ describe Rack::OAuth2::Server::Resource::MAC do
   end
 
   context 'when valid_token is given' do
-    let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC token="valid_token"') }
-    it_behaves_like :authenticated_mac_request
+    context 'when other required params are missing' do
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC token="valid_token"') }
+      it_behaves_like :unauthorized_mac_request
+    end
+
+    context 'when other required params are invalid' do
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC token="valid_token", timestamp="1302361200", nonce="51e74de734c05613f37520872e68db5f", signature="invalid""') }
+      it_behaves_like :unauthorized_mac_request
+    end
+
+    context 'when all required params are valid' do
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC token="valid_token", timestamp="1302361200", nonce="51e74de734c05613f37520872e68db5f", signature="0rykQnhMJ3/yoogoDM0R2ReCN7aiFFPQmQTQotBOQaI=""') }
+      it_behaves_like :authenticated_mac_request
+    end
   end
 
   context 'when invalid_token is given' do

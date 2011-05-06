@@ -6,7 +6,6 @@ module Rack
           include AttrRequired, AttrOptional
           attr_required :algorithm
 
-          # TODO: rescue this in proper location later
           class VerificationFailed < StandardError; end
 
           def initialize(attributes = {})
@@ -14,6 +13,8 @@ module Rack
               self.send :"#{key}=", attributes[key]
             end
             attr_missing!
+          rescue AttrRequired::AttrMissing => e
+            raise VerificationFailed.new("#{self.class.to_s.split('::').last} Invalid: #{e.message}")
           end
 
           def verify!(expected)
