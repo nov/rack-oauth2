@@ -17,12 +17,10 @@ module Rack
           def normalized_request_string
             arr = [
               token,
-              secret,
-              algorithm,
               timestamp,
               nonce,
-              body_hash,
-              method,
+              body_hash || '',
+              method.to_s.upcase,
               host,
               port,
               path,
