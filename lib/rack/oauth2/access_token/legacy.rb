@@ -7,6 +7,10 @@ module Rack
           self.expires_in = self.expires_in.try(:to_i)
         end
 
+        def to_s
+          self.access_token
+        end
+
         private
         def authenticate(headers)
           headers.merge(:AUTHORIZATION => "OAuth2 #{access_token}")
