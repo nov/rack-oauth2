@@ -37,7 +37,7 @@ describe Rack::OAuth2::AccessToken::MAC do
         Time.fix(Time.at(1302361200)) do
           RestClient.should_receive(:get).with(
             resource_endpoint,
-            :AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", mac="bKTQvxDwZ1SnYMB+XYUoYD0a6+FphfFZoRA7HHecNis="'
+            :AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", mac="OzNHHj7V58g9Yhlc9IRGJu6emDNPsszh8rnz9Ot6M00="'
           )
           token.get resource_endpoint
         end

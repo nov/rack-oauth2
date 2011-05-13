@@ -83,7 +83,7 @@ module Rack
             :host      => _url_.host,
             :port      => _url_.port,
             :path      => _url_.path,
-            :query     => Rack::Utils.parse_nested_query(_url_.query)
+            :query     => _url_.query
           )
           self.signature = _signature_.calculate
           headers.merge(:AUTHORIZATION => authorization_header)

@@ -18,7 +18,7 @@ module Rack
             arr = [
               nonce,
               method.to_s.upcase,
-              path + normalized_query,
+              path + (query.present? ? "?#{query}" : ''),
               host,
               port,
               body_hash || '',
@@ -27,17 +27,6 @@ module Rack
             arr.join("\n")
           end
 
-          def normalized_query
-            if query.present?
-              query.inject([]) do |result, (key, value)|
-                result << [key, value]
-              end.sort.inject('') do |result, (key, value)|
-                result << "#{Rack::OAuth2::Util.rfc3986_encode key}=#{Rack::OAuth2::Util.rfc3986_encode value}\n"
-              end
-            else
-              ''
-            end
-          end
         end
       end
     end
