@@ -62,27 +62,27 @@ describe Rack::OAuth2::Server::Resource::MAC do
 
   context 'when valid_token is given' do
     context 'when other required params are missing' do
-      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC token="valid_token"') }
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC id="valid_token"') }
       it_behaves_like :unauthorized_mac_request
     end
 
     context 'when other required params are invalid' do
-      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC token="valid_token", timestamp="1302361200", nonce="51e74de734c05613f37520872e68db5f", signature="invalid""') }
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC id="valid_token", nonce="51e74de734c05613f37520872e68db5f", mac="invalid""') }
       it_behaves_like :unauthorized_mac_request
     end
 
     context 'when all required params are valid' do
-      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC token="valid_token", timestamp="1302361200", nonce="51e74de734c05613f37520872e68db5f", signature="cK4sig+1Rb7w5Dtvadj6q9RqCFnY4/Y+dvaVjXlm5Wk="') }
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC id="valid_token", nonce="51e74de734c05613f37520872e68db5f", mac="sLjHqqz2iuXRrQldZzvT/YofjPAxwO7tH3Z7DwotsxE="') }
       it_behaves_like :authenticated_mac_request
     end
   end
 
   context 'when invalid_token is given' do
-    let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC token="invalid_token"') }
+    let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC id="invalid_token"') }
     it_behaves_like :unauthorized_mac_request
 
     describe 'realm' do
-      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC token="invalid_token"') }
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC id="invalid_token"') }
 
       context 'when specified' do
         let(:realm) { 'server.example.com' }

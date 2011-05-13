@@ -3,12 +3,17 @@ module Rack
     class AccessToken
       class MAC < AccessToken
         attr_required :secret, :algorithm
-        attr_optional :timestamp, :nonce, :body_hash, :signature
+        attr_optional :nonce, :body_hash, :signature
+
+        def initialize(attributes = {})
+          super(attributes)
+          @issued_at = Time.now.utc
+        end
 
         def token_response
           super.merge(
-            :secret => secret,
-            :algorithm => algorithm
+            :mac_key => secret,
+            :mac_algorithm => algorithm
           )
         end
 
@@ -21,10 +26,8 @@ module Rack
             _body_hash_.verify!(request.body_hash)
           end
           _signature_ = Signature.new(
-            :token     => request.access_token,
             :secret    => self.secret,
             :algorithm => self.algorithm,
-            :timestamp => request.timestamp,
             :nonce     => request.nonce,
             :body_hash => request.body_hash,
             :method    => request.request_method,
@@ -62,7 +65,6 @@ module Rack
 
         def authenticate(method, url, headers = {}, payload = {})
           _url_ = URI.parse(url)
-          self.timestamp = Time.now.to_i
           self.nonce = generate_nonce
           if payload.present?
             raw_body = RestClient::Payload.generate(payload).to_s
@@ -73,10 +75,8 @@ module Rack
             self.body_hash = _body_hash_.calculate
           end
           _signature_ = Signature.new(
-            :token     => self.access_token,
             :secret    => self.secret,
             :algorithm => self.algorithm,
-            :timestamp => self.timestamp,
             :nonce     => self.nonce,
             :body_hash => self.body_hash,
             :method    => method,
@@ -91,15 +91,15 @@ module Rack
 
         def authorization_header
           header = "MAC"
-          header << " token=\"#{access_token}\","
-          header << " timestamp=\"#{timestamp}\","
+          header << " id=\"#{access_token}\","
           header << " nonce=\"#{nonce}\","
           header << " bodyhash=\"#{body_hash}\"," if self.body_hash.present?
-          header << " signature=\"#{signature}\""
+          header << " mac=\"#{signature}\""
         end
 
         def generate_nonce
-          ActiveSupport::SecureRandom.hex(16)
+          age = (Time.now.utc - @issued_at).to_i
+          "#{age}:#{ActiveSupport::SecureRandom.base64(16)}"
         end
       end
     end

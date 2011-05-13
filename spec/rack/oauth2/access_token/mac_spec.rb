@@ -15,13 +15,13 @@ describe Rack::OAuth2::AccessToken::MAC do
   its(:algorithm) { should == 'hmac-sha-256' }
   its(:token_response) do
     should == {
-      :token_type => :mac,
       :access_token => 'access_token',
-      :secret => 'secret',
-      :algorithm => 'hmac-sha-256',
-      :expires_in => nil,
       :refresh_token => nil,
-      :scope => ''
+      :token_type => :mac,
+      :expires_in => nil,
+      :scope => '',
+      :mac_key => 'secret',
+      :mac_algorithm => 'hmac-sha-256'
     }
   end
   its(:generate_nonce) { should be_a String }
@@ -37,7 +37,7 @@ describe Rack::OAuth2::AccessToken::MAC do
         Time.fix(Time.at(1302361200)) do
           RestClient.should_receive(:get).with(
             resource_endpoint,
-            :AUTHORIZATION => "MAC token=\"access_token\", timestamp=\"1302361200\", nonce=\"51e74de734c05613f37520872e68db5f\", signature=\"l7uMvWa3BIHjBaJrS3MHKPUAwEFTf5Xyp+N3R7Fda/s=\""
+            :AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", mac="bKTQvxDwZ1SnYMB+XYUoYD0a6+FphfFZoRA7HHecNis="'
           )
           token.get resource_endpoint
         end
@@ -50,7 +50,7 @@ describe Rack::OAuth2::AccessToken::MAC do
           RestClient.should_receive(:post).with(
             resource_endpoint,
             {:key => :value},
-            {:AUTHORIZATION => "MAC token=\"access_token\", timestamp=\"1302361200\", nonce=\"51e74de734c05613f37520872e68db5f\", bodyhash=\"Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=\", signature=\"r7IH6k98Wo0qxA6udjhsgURJoxdlS4MQ3rV6YOlGmXA=\""}
+            {:AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", bodyhash="Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=", mac="Ob5dT8DrOdFgMW0ygJJlSaX5SjFWNtAeAmkTVh8N/yQ="'}
           )
           token.post resource_endpoint, :key => :value
         end
@@ -63,7 +63,7 @@ describe Rack::OAuth2::AccessToken::MAC do
           RestClient.should_receive(:put).with(
             resource_endpoint,
             {:key => :value},
-            {:AUTHORIZATION => "MAC token=\"access_token\", timestamp=\"1302361200\", nonce=\"51e74de734c05613f37520872e68db5f\", bodyhash=\"Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=\", signature=\"JP0Kvw+0wVF+XRlweJNCXsEJGjjZGz8ZU7ehc4/7Z10=\""}
+            {:AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", bodyhash="Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=", mac="/0QRwcNZYknY4yMbiOibpSeeu6gkLUy+6QwAGDvMQJw="'}
           )
           token.put resource_endpoint, :key => :value
         end
@@ -75,7 +75,7 @@ describe Rack::OAuth2::AccessToken::MAC do
         Time.fix(Time.at(1302361200)) do
           RestClient.should_receive(:delete).with(
             resource_endpoint,
-            :AUTHORIZATION => "MAC token=\"access_token\", timestamp=\"1302361200\", nonce=\"51e74de734c05613f37520872e68db5f\", signature=\"aPVm8GmDwc/BZ8AYus4FICZ6ylsNECCWdxWYKJSCX2s=\""
+            :AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", mac="FDoSkEwGL50VDUZ7/lZvoBtv0fE1yBHXKLdt60E5sao="'
           )
           token.delete resource_endpoint
         end
@@ -90,12 +90,12 @@ describe Rack::OAuth2::AccessToken::MAC do
       let(:env) do
         Rack::MockRequest.env_for(
           '/protected_resources',
-          'HTTP_AUTHORIZATION' => "MAC token=\"access_token\", timestamp=\"1302361200\", nonce=\"51e74de734c05613f37520872e68db5f\", signature=\"#{signature}\""
+          'HTTP_AUTHORIZATION' => %{MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", mac="#{signature}"}
         )
       end
 
       context 'when signature is valid' do
-        let(:signature) { 'zohXlhqYIVrRlT6YTR4pIZuKgAYepZ6/GlnGqHahOog=' }
+        let(:signature) { '1oBk/NOEZ/LN1AB9MNrHiVOywBBujjKuVsdjrfECZag=' }
         it do
           Time.fix(Time.at(1302361200)) do
             token.verify!(request.setup!).should == :verified
@@ -122,7 +122,7 @@ describe Rack::OAuth2::AccessToken::MAC do
           :params => {
             :key1 => 'value1'
           },
-          'HTTP_AUTHORIZATION' => "MAC token=\"access_token\", timestamp=\"1302361200\", nonce=\"51e74de734c05613f37520872e68db5f\", bodyhash=\"#{body_hash}\", signature=\"#{signature}\""
+          'HTTP_AUTHORIZATION' => %{MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", bodyhash="#{body_hash}", mac="#{signature}"}
         )
       end
       let(:signature) { 'invalid' }
@@ -141,7 +141,7 @@ describe Rack::OAuth2::AccessToken::MAC do
         let(:body_hash) { 'TPzUbFn1S16mpfmwXCi1L+8oZHRxlLX9/D1ZwAV781o=' }
 
         context 'when signature is valid' do
-          let(:signature) { 'xq2HfmPIC6VL4zXulRLYi9AesMyT58Jztu4Kn9k9MJ0=' }
+          let(:signature) { 'ktyTVCFQgOMkLzOx+FPe2KGOd0IOodMC1kR524pXBgg=' }
           it do
             Time.fix(Time.at(1302361200)) do
               token.verify!(request.setup!).should == :verified
