@@ -4,15 +4,15 @@ describe Rack::OAuth2::AccessToken::MAC do
   let :token do
     Rack::OAuth2::AccessToken::MAC.new(
       :access_token => 'access_token',
-      :secret => 'secret',
-      :algorithm => 'hmac-sha-256'
+      :mac_key => 'secret',
+      :mac_algorithm => 'hmac-sha-256'
     )
   end
   let(:resource_endpoint) { 'https://server.example.com/resources/fake' }
   subject { token }
 
-  its(:secret)    { should == 'secret' }
-  its(:algorithm) { should == 'hmac-sha-256' }
+  its(:mac_key)    { should == 'secret' }
+  its(:mac_algorithm) { should == 'hmac-sha-256' }
   its(:token_response) do
     should == {
       :access_token => 'access_token',

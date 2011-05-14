@@ -7,8 +7,8 @@ describe Rack::OAuth2::Server::Resource::MAC do
       when 'valid_token'
         Rack::OAuth2::AccessToken::MAC.new(
           :access_token => 'valid_token',
-          :secret => 'secret',
-          :algorithm => 'hmac-sha-256'
+          :mac_key => 'secret',
+          :mac_algorithm => 'hmac-sha-256'
         ).verify!(request)
       when 'insufficient_scope_token'
         request.insufficient_scope!
