@@ -11,13 +11,14 @@ module Rack
           private
 
           class Request < Resource::Request
-            attr_reader :nonce, :body_hash, :signature
+            attr_reader :nonce, :body_hash, :ext, :signature
 
             def setup!
               auth_params = Rack::Auth::Digest::Params.parse(@auth_header.params).with_indifferent_access
               @access_token = auth_params[:id]
               @nonce = auth_params[:nonce]
               @body_hash = auth_params[:bodyhash]
+              @ext = auth_params[:ext]
               @signature = auth_params[:mac]
               self
             end

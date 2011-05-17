@@ -3,7 +3,7 @@ module Rack
     class AccessToken
       class MAC
         class Signature < Verifier
-          attr_required :secret, :nonce, :method, :host, :port, :path
+          attr_required :secret, :nonce, :method, :request_uri, :host, :port
           attr_optional :body_hash, :ext, :query
 
           def calculate
@@ -15,16 +15,16 @@ module Rack
           end
 
           def normalized_request_string
-            arr = [
+            [
               nonce,
               method.to_s.upcase,
-              path + (query.present? ? "?#{query}" : ''),
+              request_uri,
               host,
               port,
               body_hash || '',
-              ext || ''
-            ]
-            arr.join("\n")
+              ext || '',
+              nil
+            ].join("\n")
           end
 
         end

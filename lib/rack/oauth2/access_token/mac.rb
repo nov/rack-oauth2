@@ -3,11 +3,12 @@ module Rack
     class AccessToken
       class MAC < AccessToken
         attr_required :mac_key, :mac_algorithm
-        attr_optional :nonce, :body_hash, :signature
+        attr_optional :issued_at, :ext
+        attr_reader :nonce, :body_hash, :signature
 
         def initialize(attributes = {})
           super(attributes)
-          @issued_at = Time.now.utc
+          @issued_at ||= Time.now.utc
         end
 
         def token_response
@@ -26,15 +27,15 @@ module Rack
             _body_hash_.verify!(request.body_hash)
           end
           _signature_ = Signature.new(
-            :secret    => self.mac_key,
-            :algorithm => self.mac_algorithm,
-            :nonce     => request.nonce,
-            :body_hash => request.body_hash,
-            :method    => request.request_method,
-            :host      => request.host,
-            :port      => request.port,
-            :path      => request.path,
-            :query     => request.GET
+            :secret      => self.mac_key,
+            :algorithm   => self.mac_algorithm,
+            :nonce       => request.nonce,
+            :method      => request.request_method,
+            :request_uri => request.fullpath,
+            :host        => request.host,
+            :port        => request.port,
+            :body_hash   => request.body_hash,
+            :ext         => request.ext
           )
           _signature_.verify!(request.signature)
         rescue Verifier::VerificationFailed => e
@@ -65,27 +66,27 @@ module Rack
 
         def authenticate(method, url, headers = {}, payload = {})
           _url_ = URI.parse(url)
-          self.nonce = generate_nonce
+          @nonce = generate_nonce
           if payload.present?
             raw_body = RestClient::Payload.generate(payload).to_s
             _body_hash_ = BodyHash.new(
               :raw_body => raw_body,
               :algorithm => self.mac_algorithm
             )
-            self.body_hash = _body_hash_.calculate
+            @body_hash = _body_hash_.calculate
           end
           _signature_ = Signature.new(
-            :secret    => self.mac_key,
-            :algorithm => self.mac_algorithm,
-            :nonce     => self.nonce,
-            :body_hash => self.body_hash,
-            :method    => method,
-            :host      => _url_.host,
-            :port      => _url_.port,
-            :path      => _url_.path,
-            :query     => _url_.query
+            :secret      => self.mac_key,
+            :algorithm   => self.mac_algorithm,
+            :nonce       => self.nonce,
+            :method      => method,
+            :request_uri => _url_.request_uri,
+            :host        => _url_.host,
+            :port        => _url_.port,
+            :body_hash   => self.body_hash,
+            :ext         => self.ext
           )
-          self.signature = _signature_.calculate
+          @signature = _signature_.calculate
           headers.merge(:AUTHORIZATION => authorization_header)
         end
 
@@ -93,13 +94,16 @@ module Rack
           header = "MAC"
           header << " id=\"#{access_token}\","
           header << " nonce=\"#{nonce}\","
-          header << " bodyhash=\"#{body_hash}\"," if self.body_hash.present?
+          header << " bodyhash=\"#{body_hash}\"," if body_hash.present?
+          header << " ext=\"#{ext}\"," if ext.present?
           header << " mac=\"#{signature}\""
         end
 
         def generate_nonce
-          age = (Time.now.utc - @issued_at).to_i
-          "#{age}:#{ActiveSupport::SecureRandom.base64(16)}"
+          [
+            (Time.now.utc - @issued_at).to_i,
+            ActiveSupport::SecureRandom.base64(16)
+          ].join(':')
         end
       end
     end
