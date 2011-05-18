@@ -10,7 +10,7 @@ describe Rack::OAuth2::AccessToken::Bearer do
 
   [:get, :delete].each do |method|
     before do
-      fake_response(method, resource_endpoint, 'resources/fake.txt')
+      mock_response(method, resource_endpoint, 'resources/fake.txt')
     end
 
     describe method.to_s.upcase do
@@ -26,7 +26,7 @@ describe Rack::OAuth2::AccessToken::Bearer do
 
   [:post, :put].each do |method|
     before do
-      fake_response(method, resource_endpoint, 'resources/fake.txt')
+      mock_response(method, resource_endpoint, 'resources/fake.txt')
     end
 
     describe method.to_s.upcase do

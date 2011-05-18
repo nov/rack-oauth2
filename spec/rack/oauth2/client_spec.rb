@@ -77,7 +77,7 @@ describe Rack::OAuth2::Client do
     context 'when bearer token is given' do
       before  do
         client.authorization_code = 'code'
-        fake_response(
+        mock_response(
           :post,
           'https://server.example.com/oauth2/token',
           'tokens/bearer.json'
@@ -93,7 +93,7 @@ describe Rack::OAuth2::Client do
     context 'when mac token is given' do
       before  do
         client.authorization_code = 'code'
-        fake_response(
+        mock_response(
           :post,
           'https://server.example.com/oauth2/token',
           'tokens/mac.json'
@@ -109,7 +109,7 @@ describe Rack::OAuth2::Client do
     context 'when no-type token is given (JSON)' do
       before  do
         client.authorization_code = 'code'
-        fake_response(
+        mock_response(
           :post,
           'https://server.example.com/oauth2/token',
           'tokens/legacy.json'
@@ -124,7 +124,7 @@ describe Rack::OAuth2::Client do
 
     context 'when no-type token is given (key-value)' do
       before do
-        fake_response(
+        mock_response(
           :post,
           'https://server.example.com/oauth2/token',
           'tokens/legacy.txt'
@@ -137,7 +137,7 @@ describe Rack::OAuth2::Client do
 
       context 'when expires_in is not given' do
         before do
-          fake_response(
+          mock_response(
             :post,
             'https://server.example.com/oauth2/token',
             'tokens/legacy_without_expires_in.txt'
@@ -150,7 +150,7 @@ describe Rack::OAuth2::Client do
     context 'when unknown-type token is given' do
       before  do
         client.authorization_code = 'code'
-        fake_response(
+        mock_response(
           :post,
           'https://server.example.com/oauth2/token',
           'tokens/unknown.json'
@@ -163,7 +163,7 @@ describe Rack::OAuth2::Client do
 
     context 'when error response is given' do
       before do
-        fake_response(
+        mock_response(
           :post,
           'https://server.example.com/oauth2/token',
           'errors/invalid_request.json',
