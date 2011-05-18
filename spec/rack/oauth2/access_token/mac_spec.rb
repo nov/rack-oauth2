@@ -37,7 +37,7 @@ describe Rack::OAuth2::AccessToken::MAC do
         Time.fix(Time.at(1302361200)) do
           RestClient.should_receive(:get).with(
             resource_endpoint,
-            :AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", mac="OzNHHj7V58g9Yhlc9IRGJu6emDNPsszh8rnz9Ot6M00="'
+            :AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", mac="gMJ8AmvTGmfPFCJCf5DUwNTmT7ksw6GqyoGW2lUIUZ0="'
           )
           token.get resource_endpoint
         end
@@ -50,7 +50,7 @@ describe Rack::OAuth2::AccessToken::MAC do
           RestClient.should_receive(:post).with(
             resource_endpoint,
             {:key => :value},
-            {:AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", bodyhash="Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=", mac="Ob5dT8DrOdFgMW0ygJJlSaX5SjFWNtAeAmkTVh8N/yQ="'}
+            {:AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", bodyhash="Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=", mac="7OOseGqNi14lThhRnwhItACXACM4Qp5GleBEuizzUpw="'}
           )
           token.post resource_endpoint, :key => :value
         end
@@ -63,7 +63,7 @@ describe Rack::OAuth2::AccessToken::MAC do
           RestClient.should_receive(:put).with(
             resource_endpoint,
             {:key => :value},
-            {:AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", bodyhash="Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=", mac="/0QRwcNZYknY4yMbiOibpSeeu6gkLUy+6QwAGDvMQJw="'}
+            {:AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", bodyhash="Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=", mac="lxTg/F29zkE7vBEbAK9VULRpM4IN5uShqHbj2k7e9lA="'}
           )
           token.put resource_endpoint, :key => :value
         end
@@ -75,7 +75,7 @@ describe Rack::OAuth2::AccessToken::MAC do
         Time.fix(Time.at(1302361200)) do
           RestClient.should_receive(:delete).with(
             resource_endpoint,
-            :AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", mac="FDoSkEwGL50VDUZ7/lZvoBtv0fE1yBHXKLdt60E5sao="'
+            :AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", mac="JtOibEO1rBQNBGy6hUPT29L2cHSmLP09K+kUL4oEe/g="'
           )
           token.delete resource_endpoint
         end
@@ -95,7 +95,7 @@ describe Rack::OAuth2::AccessToken::MAC do
       end
 
       context 'when signature is valid' do
-        let(:signature) { '1oBk/NOEZ/LN1AB9MNrHiVOywBBujjKuVsdjrfECZag=' }
+        let(:signature) { 'jWo6L7w86ZKNlkRYjzQxp/HJpSxZJXq60hfd+yw4si0=' }
         it do
           Time.fix(Time.at(1302361200)) do
             token.verify!(request.setup!).should == :verified
@@ -141,7 +141,7 @@ describe Rack::OAuth2::AccessToken::MAC do
         let(:body_hash) { 'TPzUbFn1S16mpfmwXCi1L+8oZHRxlLX9/D1ZwAV781o=' }
 
         context 'when signature is valid' do
-          let(:signature) { 'ktyTVCFQgOMkLzOx+FPe2KGOd0IOodMC1kR524pXBgg=' }
+          let(:signature) { 'xNoae5ETuB9BVFH/vFV8y8S0fXdY41bSq0bekoLClwM=' }
           it do
             Time.fix(Time.at(1302361200)) do
               token.verify!(request.setup!).should == :verified
