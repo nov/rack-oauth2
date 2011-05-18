@@ -1,6 +1,3 @@
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-
 require 'rack/oauth2'
 require 'rspec'
 require 'fakeweb'

@@ -43,4 +43,4 @@ DEPENDENCIES
   rack-oauth2!
   rake (>= 0.8)
   rcov (>= 0.9)
-  rspec (>= 2)
+  rspec (<= 2.5, >= 2)

@@ -40,4 +40,9 @@ describe Rack::OAuth2::AccessToken::Legacy do
       end
     end
   end
+
+  describe '#to_s' do
+    subject { token }
+    its(:to_s) { should == token.access_token }
+  end
 end

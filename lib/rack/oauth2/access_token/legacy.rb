@@ -7,7 +7,7 @@ module Rack
           self.expires_in = self.expires_in.try(:to_i)
         end
 
-        def to_s
+        def to_s # This is for fb_graph
           self.access_token
         end
 
