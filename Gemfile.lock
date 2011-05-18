@@ -13,7 +13,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     activesupport (3.0.7)
-    addressable (2.2.5)
+    addressable (2.2.6)
     attr_required (0.0.3)
     crack (0.1.8)
     diff-lcs (1.1.2)
