@@ -7,8 +7,11 @@ module Rack
         end
 
         def filter_request(request)
-          raise "filter"
           @token.authenticate(request)
+        end
+
+        def filter_response(response, request)
+          # nothing to do
         end
       end
     end

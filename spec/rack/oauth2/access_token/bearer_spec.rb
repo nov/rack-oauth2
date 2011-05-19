@@ -16,10 +16,11 @@ describe Rack::OAuth2::AccessToken::Bearer do
     describe method do
       it 'should have Bearer Authorization header' do
         # TODO: Hot to test filters?
-        token.client.request_filter.last.should_receive(:filter_request).and_return do |req|
-          p rep
-        end
+        # token.client.request_filter.last.should_receive(:filter_request)
+        p token.client.request_filter.collect(&:class)
+        token.client.debug_dev = @str = ''
         token.send method, resource_endpoint
+        p @str
       end
     end
   end
@@ -32,6 +33,7 @@ describe Rack::OAuth2::AccessToken::Bearer do
     describe method do
       it 'should have Bearer Authorization header' do
         # TODO: Hot to test filters?
+        # token.client.request_filter.last.should_receive(:filter_request)
         token.send method, resource_endpoint, :key => :value
       end
     end

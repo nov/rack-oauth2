@@ -29,13 +29,6 @@ module Rack
   end
 end
 
-class HTTPClient
-  def get_with_debug(*args)
-    p args
-    super
-  end
-end
-
 require 'rack/oauth2/access_token/authenticator'
 require 'rack/oauth2/access_token/bearer'
 require 'rack/oauth2/access_token/mac'
