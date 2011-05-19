@@ -20,13 +20,12 @@ module Rack
 
         def verify!(request)
           if request.body_hash.present?
-            _body_hash_ = BodyHash.new(
+            BodyHash.new(
               :raw_body  => request.body.read,
               :algorithm => self.mac_algorithm
-            )
-            _body_hash_.verify!(request.body_hash)
+            ).verify!(request.body_hash)
           end
-          _signature_ = Signature.new(
+          Signature.new(
             :secret      => self.mac_key,
             :algorithm   => self.mac_algorithm,
             :nonce       => request.nonce,
@@ -36,13 +35,10 @@ module Rack
             :port        => request.port,
             :body_hash   => request.body_hash,
             :ext         => request.ext
-          )
-          _signature_.verify!(request.signature)
+          ).verify!(request.signature)
         rescue Verifier::VerificationFailed => e
           request.invalid_token! e.message
         end
-
-        private
 
         def authenticate(request)
           @nonce = generate_nonce
@@ -56,7 +52,7 @@ module Rack
             :secret      => self.mac_key,
             :algorithm   => self.mac_algorithm,
             :nonce       => self.nonce,
-            :method      => method,
+            :method      => request.header.request_method,
             :request_uri => request.header.create_query_uri,
             :host        => request.header.request_uri.host,
             :port        => request.header.request_uri.port,
@@ -65,6 +61,8 @@ module Rack
           ).calculate
           request.header['Authorization'] = authorization_header
         end
+
+        private
 
         def authorization_header
           header = "MAC"
@@ -78,7 +76,7 @@ module Rack
         def generate_nonce
           [
             (Time.now.utc - @issued_at).to_i,
-            ActiveSupport::SecureRandom.base64(16)
+            ActiveSupport::SecureRandom.hex
           ].join(':')
         end
       end

@@ -31,8 +31,8 @@ GEM
     rspec-expectations (2.5.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.5.0)
-    webmock (1.6.2)
-      addressable (>= 2.2.2)
+    webmock (1.6.4)
+      addressable (> 2.2.5, ~> 2.2)
       crack (>= 0.1.7)
 
 PLATFORMS

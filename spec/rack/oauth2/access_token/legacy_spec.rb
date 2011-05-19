@@ -7,39 +7,17 @@ describe Rack::OAuth2::AccessToken::Legacy do
     )
   end
   let(:resource_endpoint) { 'https://server.example.com/resources/fake' }
-
-  [:get, :delete].each do |method|
-    before do
-      mock_response(method, resource_endpoint, 'resources/fake.txt')
-      token.client.debug_dev = @logger = ''
-    end
-
-    describe method.to_s.upcase do
-      it 'should have OAuth2 Authorization header' do
-        # TODO: Hot to test filters?
-        # token.client.request_filter.last.should_receive(:filter_request)
-        token.send method, resource_endpoint
-        p @logger
-      end
-    end
-  end
-
-  [:post, :put].each do |method|
-    before do
-      mock_response(method, resource_endpoint, 'resources/fake.txt')
-    end
-
-    describe method.to_s.upcase do
-      it 'should have OAuth2 Authorization header' do
-        # TODO: Hot to test filters?
-        # token.client.request_filter.last.should_receive(:filter_request)
-        token.send method, resource_endpoint, {:key => :value}
-      end
-    end
-  end
+  let(:request) { HTTPClient.new.send(:create_request, :post, URI.parse(resource_endpoint), {}, {:hello => "world"}, {}) }
 
   describe '#to_s' do
     subject { token }
     its(:to_s) { should == token.access_token }
+  end
+
+  describe '.authenticate' do
+    it 'should set Authorization header' do
+      request.header.should_receive(:[]=).with('Authorization', 'OAuth2 access_token')
+      token.authenticate(request)
+    end
   end
 end

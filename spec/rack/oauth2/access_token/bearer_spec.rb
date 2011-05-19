@@ -7,35 +7,12 @@ describe Rack::OAuth2::AccessToken::Bearer do
     )
   end
   let(:resource_endpoint) { 'https://server.example.com/resources/fake' }
+  let(:request) { HTTPClient.new.send(:create_request, :post, URI.parse(resource_endpoint), {}, {:hello => "world"}, {}) }
 
-  [:get, :delete].each do |method|
-    before do
-      mock_response method, resource_endpoint, 'resources/fake.txt'
-    end
-
-    describe method do
-      it 'should have Bearer Authorization header' do
-        # TODO: Hot to test filters?
-        # token.client.request_filter.last.should_receive(:filter_request)
-        p token.client.request_filter.collect(&:class)
-        token.client.debug_dev = @str = ''
-        token.send method, resource_endpoint
-        p @str
-      end
-    end
-  end
-
-  [:post, :put].each do |method|
-    before do
-      mock_response method, resource_endpoint, 'resources/fake.txt'
-    end
-
-    describe method do
-      it 'should have Bearer Authorization header' do
-        # TODO: Hot to test filters?
-        # token.client.request_filter.last.should_receive(:filter_request)
-        token.send method, resource_endpoint, :key => :value
-      end
+  describe '.authenticate' do
+    it 'should set Authorization header' do
+      request.header.should_receive(:[]=).with('Authorization', 'Bearer access_token')
+      token.authenticate(request)
     end
   end
 end

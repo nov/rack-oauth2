@@ -5,9 +5,12 @@ describe Rack::OAuth2::AccessToken::MAC do
     Rack::OAuth2::AccessToken::MAC.new(
       :access_token => 'access_token',
       :mac_key => 'secret',
-      :mac_algorithm => 'hmac-sha-256'
+      :mac_algorithm => 'hmac-sha-256',
+      :issued_at => issued_at
     )
   end
+  let(:issued_at) { 1305820455 }
+  let(:nonce) { '1000:51e74de734c05613f37520872e68db5f' }
   let(:resource_endpoint) { 'https://server.example.com/resources/fake' }
   subject { token }
 
@@ -26,67 +29,6 @@ describe Rack::OAuth2::AccessToken::MAC do
   end
   its(:generate_nonce) { should be_a String }
 
-  describe 'HTTP methods' do
-    before do
-      token.should_receive(:generate_nonce).and_return("51e74de734c05613f37520872e68db5f")
-    end
-
-    describe :GET do
-      let(:resource_endpoint) { 'https://server.example.com/resources/fake?key=value' }
-      it 'should have MAC Authorization header' do
-        Time.fix(Time.at(1302361200)) do
-          # TODO: Hot to test filters?
-          # RestClient.should_receive(:get).with(
-          #             resource_endpoint,
-          #             :AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", mac="gMJ8AmvTGmfPFCJCf5DUwNTmT7ksw6GqyoGW2lUIUZ0="'
-          #           )
-          token.get resource_endpoint
-        end
-      end
-    end
-
-    describe :POST do
-      it 'should have MAC Authorization header' do
-        Time.fix(Time.at(1302361200)) do
-          # TODO: Hot to test filters?
-          # RestClient.should_receive(:post).with(
-          #             resource_endpoint,
-          #             {:key => :value},
-          #             {:AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", bodyhash="Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=", mac="7OOseGqNi14lThhRnwhItACXACM4Qp5GleBEuizzUpw="'}
-          #           )
-          token.post resource_endpoint, :key => :value
-        end
-      end
-    end
-
-    describe :PUT do
-      it 'should have MAC Authorization header' do
-        Time.fix(Time.at(1302361200)) do
-          # TODO: Hot to test filters?
-          # RestClient.should_receive(:put).with(
-          #             resource_endpoint,
-          #             {:key => :value},
-          #             {:AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", bodyhash="Vj8DVxGNBe8UXWvd8pZswj6Gyo8vAT+RXlZa/fCfeiM=", mac="lxTg/F29zkE7vBEbAK9VULRpM4IN5uShqHbj2k7e9lA="'}
-          #           )
-          token.put resource_endpoint, :key => :value
-        end
-      end
-    end
-
-    describe :DELETE do
-      it 'should have MAC Authorization header' do
-        Time.fix(Time.at(1302361200)) do
-          # TODO: Hot to test filters?
-          # RestClient.should_receive(:delete).with(
-          #             resource_endpoint,
-          #             :AUTHORIZATION => 'MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", mac="JtOibEO1rBQNBGy6hUPT29L2cHSmLP09K+kUL4oEe/g="'
-          #           )
-          token.delete resource_endpoint
-        end
-      end
-    end
-  end
-
   describe 'verify!' do
     let(:request) { Rack::OAuth2::Server::Resource::MAC::Request.new(env) }
 
@@ -94,16 +36,14 @@ describe Rack::OAuth2::AccessToken::MAC do
       let(:env) do
         Rack::MockRequest.env_for(
           '/protected_resources',
-          'HTTP_AUTHORIZATION' => %{MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", mac="#{signature}"}
+          'HTTP_AUTHORIZATION' => %{MAC id="access_token", nonce="#{nonce}", mac="#{signature}"}
         )
       end
 
       context 'when signature is valid' do
-        let(:signature) { 'jWo6L7w86ZKNlkRYjzQxp/HJpSxZJXq60hfd+yw4si0=' }
+        let(:signature) { 'nbQj0NdvSBKdwvw1yX6wpQ4EwrQKBg/r3lqwJGcthDU=' }
         it do
-          Time.fix(Time.at(1302361200)) do
-            token.verify!(request.setup!).should == :verified
-          end
+          token.verify!(request.setup!).should == :verified
         end
       end
 
@@ -126,7 +66,7 @@ describe Rack::OAuth2::AccessToken::MAC do
           :params => {
             :key1 => 'value1'
           },
-          'HTTP_AUTHORIZATION' => %{MAC id="access_token", nonce="51e74de734c05613f37520872e68db5f", bodyhash="#{body_hash}", mac="#{signature}"}
+          'HTTP_AUTHORIZATION' => %{MAC id="access_token", nonce="#{nonce}", bodyhash="#{body_hash}", mac="#{signature}"}
         )
       end
       let(:signature) { 'invalid' }
@@ -145,7 +85,7 @@ describe Rack::OAuth2::AccessToken::MAC do
         let(:body_hash) { 'TPzUbFn1S16mpfmwXCi1L+8oZHRxlLX9/D1ZwAV781o=' }
 
         context 'when signature is valid' do
-          let(:signature) { 'xNoae5ETuB9BVFH/vFV8y8S0fXdY41bSq0bekoLClwM=' }
+          let(:signature) { 'ebFlQPMO3WzEZ3ncuIFnVK7IsVt+JEorQEEMJTiz/t8=' }
           it do
             Time.fix(Time.at(1302361200)) do
               token.verify!(request.setup!).should == :verified
@@ -162,6 +102,18 @@ describe Rack::OAuth2::AccessToken::MAC do
           end
         end
       end
+    end
+  end
+
+  describe '.authenticate' do
+    let(:request) { HTTPClient.new.send(:create_request, :post, URI.parse(resource_endpoint), {}, {:hello => "world"}, {}) }
+    let(:body_hash) { 'PQEeCVAqhFUqD4rhEtAkzCwRVZfjpXfV9JAHkCwiHcU=' }
+    let(:signature) { 'aL2Oh8gWrCAtJ/Xu6XMtJb6ZsYQT+GxQTs/TgJDQ7ZY=' }
+
+    it 'should set Authorization header' do
+      token.should_receive(:generate_nonce).and_return(nonce)
+      request.header.should_receive(:[]=).with('Authorization', "MAC id=\"access_token\", nonce=\"#{nonce}\", bodyhash=\"#{body_hash}\", mac=\"#{signature}\"")
+      token.authenticate(request)
     end
   end
 end
