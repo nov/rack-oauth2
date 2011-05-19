@@ -51,7 +51,7 @@ module Rack
           :client_secret => self.secret
         )
         handle_response do
-          RestClient.post absolute_uri_for(token_endpoint), Util.compact_hash(params)
+          HTTPClient.new.post absolute_uri_for(token_endpoint), Util.compact_hash(params)
         end
       end
 
@@ -67,6 +67,15 @@ module Rack
 
       def handle_response
         response = yield
+        case response.status
+        when 200
+          handle_success_response response
+        else
+          handle_error_response response
+        end
+      end
+
+      def handle_success_response(response)
         token_hash = JSON.parse(response.body).with_indifferent_access
         case token_hash[:token_type]
         when 'bearer'
@@ -81,9 +90,13 @@ module Rack
       rescue JSON::ParserError
         # NOTE: Facebook support (They don't use JSON as token response)
         AccessToken::Legacy.new Rack::Utils.parse_nested_query(response.body).with_indifferent_access
-      rescue RestClient::Exception => e
-        error = JSON.parse(e.http_body).with_indifferent_access
-        raise Error.new(e.http_code, error)
+      end
+
+      def handle_error_response(response)
+        error = JSON.parse(response.body).with_indifferent_access
+        raise Error.new(response.status, error)
+      rescue JSON::ParserError
+        raise Error.new(response.status, :error => 'Unknown', :error_description => resonse.body)
       end
     end
   end

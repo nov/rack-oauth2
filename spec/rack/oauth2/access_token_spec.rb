@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Rack::OAuth2::AccessToken do
-  subject do
+  let :token do
     Rack::OAuth2::AccessToken::Bearer.new(
       :access_token => 'access_token',
       :refresh_token => 'refresh_token',
@@ -9,6 +9,7 @@ describe Rack::OAuth2::AccessToken do
       :scope => [:scope1, :scope2]
     )
   end
+  subject { token }
 
   its(:access_token)  { should == 'access_token' }
   its(:refresh_token) { should == 'refresh_token' }
@@ -43,6 +44,17 @@ describe Rack::OAuth2::AccessToken do
           :access_token => 'access_token'
         )
       end.should_not raise_error
+    end
+  end
+
+  let(:resource_endpoint) { 'https://server.example.com/resources/fake' }
+  [:get, :delete, :post, :put].each do |method|
+    describe method do
+      it 'should delegate to HTTPClient with Authenticator filter' do
+        token.client.should_receive(method).with(resource_endpoint)
+        token.client.request_filter.last.should be_a Rack::OAuth2::AccessToken::Authenticator
+        token.send method, resource_endpoint
+      end
     end
   end
 end

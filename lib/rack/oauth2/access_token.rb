@@ -2,14 +2,17 @@ module Rack
   module OAuth2
     class AccessToken
       include AttrRequired, AttrOptional
-      attr_required :access_token, :token_type
+      attr_required :access_token, :token_type, :client
       attr_optional :refresh_token, :expires_in, :scope
+      delegate :get, :post, :put, :delete, :to => :client
 
       def initialize(attributes = {})
         (required_attributes + optional_attributes).each do |key|
           self.send :"#{key}=", attributes[key]
         end
         @token_type = self.class.to_s.split('::').last.underscore.to_sym
+        @client = HTTPClient.new
+        @client.request_filter << Authenticator.new(self)
         attr_missing!
       end
 
@@ -22,26 +25,18 @@ module Rack
           :scope => Array(scope).join(' ')
         }
       end
-
-      def get(url, headers = {}, &block)
-        RestClient.get url, authenticate(headers), &block
-      end
-
-      def post(url, payload, headers = {}, &block)
-        RestClient.post url, payload, authenticate(headers), &block
-      end
-
-      def put(url, payload, headers = {}, &block)
-        RestClient.put url, payload, authenticate(headers), &block
-      end
-
-      def delete(url, headers = {}, &block)
-        RestClient.delete url, authenticate(headers), &block
-      end
     end
   end
 end
 
+class HTTPClient
+  def get_with_debug(*args)
+    p args
+    super
+  end
+end
+
+require 'rack/oauth2/access_token/authenticator'
 require 'rack/oauth2/access_token/bearer'
 require 'rack/oauth2/access_token/mac'
 require 'rack/oauth2/access_token/legacy'

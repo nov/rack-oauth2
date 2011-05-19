@@ -10,15 +10,15 @@ describe Rack::OAuth2::AccessToken::Bearer do
 
   [:get, :delete].each do |method|
     before do
-      mock_response(method, resource_endpoint, 'resources/fake.txt')
+      mock_response method, resource_endpoint, 'resources/fake.txt'
     end
 
-    describe method.to_s.upcase do
+    describe method do
       it 'should have Bearer Authorization header' do
-        RestClient.should_receive(method).with(
-          resource_endpoint,
-          :AUTHORIZATION => 'Bearer access_token'
-        )
+        # TODO: Hot to test filters?
+        token.client.request_filter.last.should_receive(:filter_request).and_return do |req|
+          p rep
+        end
         token.send method, resource_endpoint
       end
     end
@@ -26,17 +26,13 @@ describe Rack::OAuth2::AccessToken::Bearer do
 
   [:post, :put].each do |method|
     before do
-      mock_response(method, resource_endpoint, 'resources/fake.txt')
+      mock_response method, resource_endpoint, 'resources/fake.txt'
     end
 
-    describe method.to_s.upcase do
+    describe method do
       it 'should have Bearer Authorization header' do
-        RestClient.should_receive(method).with(
-          resource_endpoint,
-          {:key => :value},
-          {:AUTHORIZATION => 'Bearer access_token'}
-        )
-        token.send method, resource_endpoint, {:key => :value}
+        # TODO: Hot to test filters?
+        token.send method, resource_endpoint, :key => :value
       end
     end
   end

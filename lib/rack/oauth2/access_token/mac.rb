@@ -42,52 +42,28 @@ module Rack
           request.invalid_token! e.message
         end
 
-        def get(url, headers = {}, &block)
-          _headers_ = authenticate(:get, url, headers)
-          RestClient.get url, _headers_, &block
-        end
-
-        def post(url, payload, headers = {}, &block)
-          _headers_ = authenticate(:post, url, headers, payload)
-          RestClient.post url, payload, _headers_, &block
-        end
-
-        def put(url, payload, headers = {}, &block)
-          _headers_ = authenticate(:put, url, headers, payload)
-          RestClient.put url, payload, _headers_, &block
-        end
-
-        def delete(url, headers = {}, &block)
-          _headers_ = authenticate(:delete, url, headers)
-          RestClient.delete url, _headers_, &block
-        end
-
         private
 
-        def authenticate(method, url, headers = {}, payload = {})
-          _url_ = URI.parse(url)
+        def authenticate(request)
           @nonce = generate_nonce
-          if payload.present?
-            raw_body = RestClient::Payload.generate(payload).to_s
-            _body_hash_ = BodyHash.new(
-              :raw_body => raw_body,
+          if request.contenttype == 'application/x-www-form-urlencoded'
+            @body_hash = BodyHash.new(
+              :raw_body => request.body,
               :algorithm => self.mac_algorithm
-            )
-            @body_hash = _body_hash_.calculate
+            ).calculate
           end
-          _signature_ = Signature.new(
+          @signature = Signature.new(
             :secret      => self.mac_key,
             :algorithm   => self.mac_algorithm,
             :nonce       => self.nonce,
             :method      => method,
-            :request_uri => _url_.request_uri,
-            :host        => _url_.host,
-            :port        => _url_.port,
+            :request_uri => request.header.create_query_uri,
+            :host        => request.header.request_uri.host,
+            :port        => request.header.request_uri.port,
             :body_hash   => self.body_hash,
             :ext         => self.ext
-          )
-          @signature = _signature_.calculate
-          headers.merge(:AUTHORIZATION => authorization_header)
+          ).calculate
+          request.header['Authorization'] = authorization_header
         end
 
         def authorization_header

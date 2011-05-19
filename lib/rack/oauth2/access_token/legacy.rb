@@ -11,9 +11,8 @@ module Rack
           self.access_token
         end
 
-        private
-        def authenticate(headers)
-          headers.merge(:AUTHORIZATION => "OAuth2 #{access_token}")
+        def authenticate(request)
+          request.header["Authorization"] = "OAuth2 #{access_token}"
         end
       end
     end
