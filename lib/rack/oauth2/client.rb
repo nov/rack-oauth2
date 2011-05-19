@@ -68,7 +68,7 @@ module Rack
       def handle_response
         response = yield
         case response.status
-        when 200
+        when 200..201
           handle_success_response response
         else
           handle_error_response response
