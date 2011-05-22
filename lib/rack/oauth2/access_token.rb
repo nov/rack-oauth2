@@ -11,7 +11,7 @@ module Rack
           self.send :"#{key}=", attributes[key]
         end
         @token_type = self.class.to_s.split('::').last.underscore.to_sym
-        @client = HTTPClient.new
+        @client = HTTPClient.new(:agent_name => self.class.to_s)
         @client.request_filter << Authenticator.new(self)
         attr_missing!
       end
