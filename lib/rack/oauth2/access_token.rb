@@ -2,17 +2,19 @@ module Rack
   module OAuth2
     class AccessToken
       include AttrRequired, AttrOptional
-      attr_required :access_token, :token_type, :client
+      attr_required :access_token, :token_type, :httpclient
       attr_optional :refresh_token, :expires_in, :scope
-      delegate :get, :post, :put, :delete, :to => :client
+      delegate :get, :post, :put, :delete, :to => :httpclient
 
       def initialize(attributes = {})
         (required_attributes + optional_attributes).each do |key|
           self.send :"#{key}=", attributes[key]
         end
         @token_type = self.class.to_s.split('::').last.underscore.to_sym
-        @client = HTTPClient.new(:agent_name => self.class.to_s)
-        @client.request_filter << Authenticator.new(self)
+        @httpclient = HTTPClient.new(
+          :agent_name => "#{self.class} (#{VERSION})"
+        )
+        @httpclient.request_filter << Authenticator.new(self)
         attr_missing!
       end
 

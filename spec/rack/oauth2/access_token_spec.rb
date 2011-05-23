@@ -51,8 +51,8 @@ describe Rack::OAuth2::AccessToken do
   [:get, :delete, :post, :put].each do |method|
     describe method do
       it 'should delegate to HTTPClient with Authenticator filter' do
-        token.client.should_receive(method).with(resource_endpoint)
-        token.client.request_filter.last.should be_a Rack::OAuth2::AccessToken::Authenticator
+        token.httpclient.should_receive(method).with(resource_endpoint)
+        token.httpclient.request_filter.last.should be_a Rack::OAuth2::AccessToken::Authenticator
         token.send method, resource_endpoint
       end
     end

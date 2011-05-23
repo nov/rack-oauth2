@@ -51,7 +51,9 @@ module Rack
           :client_secret => self.secret
         )
         handle_response do
-          HTTPClient.new.post absolute_uri_for(token_endpoint), Util.compact_hash(params)
+          HTTPClient.new(
+            :agent_name => "#{self.class} (#{VERSION})"
+          ).post absolute_uri_for(token_endpoint), Util.compact_hash(params)
         end
       end
 
