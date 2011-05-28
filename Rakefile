@@ -10,11 +10,3 @@ RSpec::Core::RakeTask.new(:rcov) do |spec|
 end
 
 task :default => :spec
-
-require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "rack-oauth2 #{File.read('VERSION')}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end
