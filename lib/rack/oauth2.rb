@@ -1,7 +1,7 @@
 module Rack
   module OAuth2
-    VERSION = File.read(
-      File.join(File.dirname(__FILE__), '../../VERSION')
+    VERSION = ::File.read(
+      ::File.join(::File.dirname(__FILE__), '../../VERSION')
     )
   end
 end
