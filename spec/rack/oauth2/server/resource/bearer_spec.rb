@@ -56,7 +56,7 @@ describe Rack::OAuth2::Server::Resource::Bearer do
     end
 
     context 'when token is in params' do
-      let(:env) { Rack::MockRequest.env_for('/protected_resource', :params => {:bearer_token => 'valid_token'}) }
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', :params => {:access_token => 'valid_token'}) }
       it_behaves_like :authenticated_bearer_request
     end
   end
@@ -69,7 +69,7 @@ describe Rack::OAuth2::Server::Resource::Bearer do
     end
 
     context 'when token is in params' do
-      let(:env) { Rack::MockRequest.env_for('/protected_resource', :params => {:bearer_token => 'invalid_token'}) }
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', :params => {:access_token => 'invalid_token'}) }
       it_behaves_like :unauthorized_bearer_request
     end
 
@@ -103,7 +103,7 @@ describe Rack::OAuth2::Server::Resource::Bearer do
         Rack::MockRequest.env_for(
           '/protected_resource',
           'HTTP_AUTHORIZATION' => 'Bearer valid_token',
-          :params => {:bearer_token => 'valid_token'}
+          :params => {:access_token => 'valid_token'}
         )
       end
       it_behaves_like :bad_bearer_request

@@ -35,7 +35,7 @@ module Rack
             end
 
             def access_token_in_payload
-              params['bearer_token']
+              params['access_token']
             end
           end
         end
