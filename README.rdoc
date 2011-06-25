@@ -6,11 +6,11 @@ Both Bearer and MAC token type are supported.
 The OAuth 2.0 Authorization Protocol (draft 15)
 http://tools.ietf.org/html/draft-ietf-oauth-v2-15
 
-The OAuth 2.0 Protocol: Bearer Tokens (draft 04)
-http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-04
+The OAuth 2.0 Protocol: Bearer Tokens (draft 06)
+http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-06
 
-HTTP Authentication: MAC Authentication (draft 02)
-http://tools.ietf.org/html/draft-hammer-oauth-v2-mac-token-02
+HTTP Authentication: MAC Access Authentication (draft 00)
+http://www.ietf.org/id/draft-ietf-oauth-v2-http-mac-00.txt
 
 == Installation
 
