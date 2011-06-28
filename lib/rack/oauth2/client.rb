@@ -98,7 +98,7 @@ module Rack
         error = JSON.parse(response.body).with_indifferent_access
         raise Error.new(response.status, error)
       rescue JSON::ParserError
-        raise Error.new(response.status, :error => 'Unknown', :error_description => resonse.body)
+        raise Error.new(response.status, :error => 'Unknown', :error_description => response.body)
       end
     end
   end
