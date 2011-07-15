@@ -15,12 +15,18 @@ describe Rack::OAuth2::Server::Token::AuthorizationCode do
       :redirect_uri => 'http://client.example.com/callback'
     }
   end
-  subject { request.post('/', :params => params) }
+  let(:response) { request.post('/', :params => params) }
+  subject { response }
 
   its(:status)       { should == 200 }
   its(:content_type) { should == 'application/json' }
   its(:body)         { should include '"access_token":"access_token"' }
   its(:body)         { should include '"token_type":"bearer"' }
+
+  it 'should prevent to be cached' do
+    response.header['Cache-Control'].should == 'no-store'
+    response.header['Pragma'].should == 'no-cache'
+  end
 
   [:code].each do |required|
     context "when #{required} is missing" do
