@@ -3,8 +3,8 @@
 OAuth 2.0 Server & Client Library.
 Both Bearer and MAC token type are supported.
 
-The OAuth 2.0 Authorization Protocol (draft 15)
-http://tools.ietf.org/html/draft-ietf-oauth-v2-15
+The OAuth 2.0 Authorization Protocol (draft 18)
+http://tools.ietf.org/html/draft-ietf-oauth-v2-18
 
 The OAuth 2.0 Protocol: Bearer Tokens (draft 06)
 http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-06
