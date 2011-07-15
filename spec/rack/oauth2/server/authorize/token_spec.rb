@@ -7,10 +7,11 @@ describe Rack::OAuth2::Server::Authorize::Token do
   let(:response)     { request.get("/?response_type=token&client_id=client&redirect_uri=#{redirect_uri}") }
 
   context "when approved" do
+    let(:bearer_token) { Rack::OAuth2::AccessToken::Bearer.new(:access_token => access_token) }
     let :app do
       Rack::OAuth2::Server::Authorize.new do |request, response|
         response.redirect_uri = redirect_uri
-        response.access_token = Rack::OAuth2::AccessToken::Bearer.new(:access_token => access_token)
+        response.access_token = bearer_token
         response.approve!
       end
     end
@@ -20,10 +21,24 @@ describe Rack::OAuth2::Server::Authorize::Token do
       response.location.should == "#{redirect_uri}#access_token=#{access_token}&token_type=bearer"
     end
 
+    context 'when refresh_token is given' do
+      let :bearer_token do
+        Rack::OAuth2::AccessToken::Bearer.new(
+          :access_token => access_token,
+          :refresh_token => 'refresh'
+        )
+      end
+
+      it 'should remove refresh_token from response' do
+        response.status.should == 302
+        response.location.should == "#{redirect_uri}#access_token=#{access_token}&token_type=bearer"
+      end
+    end
+
     context 'when redirect_uri is missing' do
       let :app do
         Rack::OAuth2::Server::Authorize.new do |request, response|
-          response.access_token = Rack::OAuth2::AccessToken::Bearer.new(:access_token => access_token)
+          response.access_token = bearer_token
           response.approve!
         end
       end

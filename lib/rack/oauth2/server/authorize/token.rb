@@ -21,7 +21,11 @@ module Rack
             attr_required :access_token
 
             def protocol_params
-              super.merge access_token.token_response
+              super.merge(
+                access_token.token_response.delete_if do |k, v|
+                  k == :refresh_token
+                end
+              )
             end
 
             def protocol_params_location
