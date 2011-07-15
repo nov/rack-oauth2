@@ -46,7 +46,6 @@ module Rack
           }
 
           def self.included(klass)
-            error_method = 
             DEFAULT_DESCRIPTION.each do |error, default_description|
               klass.class_eval <<-ERROR
                 def #{error}!(description = "#{default_description}", options = {})
