@@ -10,7 +10,8 @@ module Rack
           end
 
           class Request < Token::Request
-            attr_required :code, :redirect_uri
+            attr_required :code
+            attr_optional :redirect_uri
 
             def initialize(env)
               super

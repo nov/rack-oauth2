@@ -22,7 +22,7 @@ describe Rack::OAuth2::Server::Token::AuthorizationCode do
   its(:body)         { should include '"access_token":"access_token"' }
   its(:body)         { should include '"token_type":"bearer"' }
 
-  [:code, :redirect_uri].each do |required|
+  [:code].each do |required|
     context "when #{required} is missing" do
       before do
         params.delete_if do |key, value|

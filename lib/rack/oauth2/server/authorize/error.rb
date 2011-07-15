@@ -2,8 +2,10 @@ module Rack
   module OAuth2
     module Server
       class Authorize
-        class BadRequest < Abstract::BadRequest
-          attr_accessor :redirect_uri, :state, :protocol_params_location
+        module ErrorHandler
+          def self.included(klass)
+            klass.send :attr_accessor, :redirect_uri, :state, :protocol_params_location
+          end
 
           def protocol_params
             super.merge(:state => state)
@@ -20,16 +22,31 @@ module Rack
           end
         end
 
+        class BadRequest < Abstract::BadRequest
+          include ErrorHandler
+        end
+
+        class ServerError < Abstract::ServerError
+          include ErrorHandler
+        end
+
+        class TemporarilyUnavailable < Abstract::TemporarilyUnavailable
+          include ErrorHandler
+        end
+
         module ErrorMethods
           DEFAULT_DESCRIPTION = {
             :invalid_request => "The request is missing a required parameter, includes an unsupported parameter or parameter value, or is otherwise malformed.",
             :unauthorized_client => "The client is not authorized to use the requested response type.",
             :access_denied => "The end-user or authorization server denied the request.",
             :unsupported_response_type => "The requested response type is not supported by the authorization server.",
-            :invalid_scope => "The requested scope is invalid, unknown, or malformed."
+            :invalid_scope => "The requested scope is invalid, unknown, or malformed.",
+            :server_error => "Internal Server Error",
+            :temporarily_unavailable => "Service Unavailable"
           }
 
           def self.included(klass)
+            error_method = 
             DEFAULT_DESCRIPTION.each do |error, default_description|
               klass.class_eval <<-ERROR
                 def #{error}!(description = "#{default_description}", options = {})
