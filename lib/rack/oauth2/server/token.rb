@@ -40,6 +40,7 @@ module Rack
             when ''
               attr_missing!
             else
+              # TODO: support extensions
               unsupported_grant_type!("'#{params['grant_type']}' isn't supported.")
             end
           end

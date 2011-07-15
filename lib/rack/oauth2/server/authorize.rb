@@ -31,6 +31,7 @@ module Rack
             when ''
               attr_missing!
             else
+              # TODO: support extensions
               unsupported_response_type!
             end
           end
