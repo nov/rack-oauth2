@@ -13,6 +13,12 @@ module Rack
           end
         end
 
+        class ServerError < Abstract::ServerError
+        end
+
+        class TemporarilyUnavailable < Abstract::TemporarilyUnavailable
+        end
+
         module ErrorMethods
           DEFAULT_DESCRIPTION = {
             :invalid_request => "The request is missing a required parameter, includes an unsupported parameter or parameter value, repeats a parameter, includes multiple credentials, utilizes more than one mechanism for authenticating the client, or is otherwise malformed.",
@@ -20,7 +26,9 @@ module Rack
             :invalid_grant => "The provided access grant is invalid, expired, or revoked (e.g. invalid assertion, expired authorization token, bad end-user password credentials, or mismatching authorization code and redirection URI).",
             :unauthorized_client => "The authenticated client is not authorized to use the access grant type provided.",
             :unsupported_grant_type => "The access grant included - its type or another attribute - is not supported by the authorization server.",
-            :invalid_scope => "The requested scope is invalid, unknown, malformed, or exceeds the previously granted scope."
+            :invalid_scope => "The requested scope is invalid, unknown, malformed, or exceeds the previously granted scope.",
+            :server_error => "Internal Server Error",
+            :temporarily_unavailable => "Service Unavailable"
           }
 
           def self.included(klass)
