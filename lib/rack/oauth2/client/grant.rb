@@ -13,7 +13,7 @@ module Rack
 
         def to_hash
           required_attributes.inject({
-            :grant_type => self.class.name.split('::').last.underscore.to_sym
+            :grant_type => self.class.name.demodulize.underscore.to_sym
           }) do |hash, key|
             hash.merge! key => self.send(key)
           end

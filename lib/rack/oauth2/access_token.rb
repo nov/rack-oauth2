@@ -10,7 +10,7 @@ module Rack
         (required_attributes + optional_attributes).each do |key|
           self.send :"#{key}=", attributes[key]
         end
-        @token_type = self.class.to_s.split('::').last.underscore.to_sym
+        @token_type = self.class.name.demodulize.underscore.to_sym
         @httpclient = HTTPClient.new(
           :agent_name => "#{self.class} (#{VERSION})"
         )
