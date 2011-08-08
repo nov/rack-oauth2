@@ -16,7 +16,7 @@ describe Rack::OAuth2::AccessToken::Legacy do
 
   describe '.authenticate' do
     it 'should set Authorization header' do
-      request.header.should_receive(:[]=).with('Authorization', 'OAuth2 access_token')
+      request.header.should_receive(:[]=).with('Authorization', 'OAuth access_token')
       token.authenticate(request)
     end
   end

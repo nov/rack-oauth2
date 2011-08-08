@@ -3,7 +3,8 @@ module Rack
     class Client
       class Grant
         class AuthorizationCode < Grant
-          attr_required :code, :redirect_uri
+          attr_required :code
+          attr_optional :redirect_uri
         end
       end
     end
