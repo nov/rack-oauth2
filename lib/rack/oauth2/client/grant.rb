@@ -5,17 +5,19 @@ module Rack
         include AttrRequired, AttrOptional
 
         def initialize(attributes = {})
-          required_attributes.each do |key|
+          (required_attributes + optional_attributes).each do |key|
             self.send "#{key}=", attributes[key]
           end
           attr_missing!
         end
 
         def to_hash
-          required_attributes.inject({
+          (required_attributes + optional_attributes).inject({
             :grant_type => self.class.name.demodulize.underscore.to_sym
           }) do |hash, key|
             hash.merge! key => self.send(key)
+          end.delete_if do |key, value|
+            value.blank?
           end
         end
       end
