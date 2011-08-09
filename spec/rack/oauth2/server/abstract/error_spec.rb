@@ -49,3 +49,11 @@ end
 describe Rack::OAuth2::Server::Abstract::Forbidden do
   its(:status) { should == 403 }
 end
+
+describe Rack::OAuth2::Server::Abstract::ServerError do
+  its(:status) { should == 500 }
+end
+
+describe Rack::OAuth2::Server::Abstract::TemporarilyUnavailable do
+  its(:status) { should == 503 }
+end
