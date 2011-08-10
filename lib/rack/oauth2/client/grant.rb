@@ -17,7 +17,7 @@ module Rack
           }) do |hash, key|
             hash.merge! key => self.send(key)
           end.delete_if do |key, value|
-            value.blank?
+            value.nil?
           end
         end
       end

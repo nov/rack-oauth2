@@ -1,6 +1,7 @@
 require 'spec_helper.rb'
 
 describe Rack::OAuth2::Client::Grant::AuthorizationCode do
+  let(:redirect_uri) { 'https://client.example.com/callback' }
   let(:grant) { Rack::OAuth2::Client::Grant::AuthorizationCode }
 
   context 'when code is given' do
@@ -10,12 +11,21 @@ describe Rack::OAuth2::Client::Grant::AuthorizationCode do
 
     context 'when redirect_uri is given' do
       let :attributes do
-        {:code => 'code', :redirect_uri => 'https://client.example.com/callback'}
+        {:code => 'code', :redirect_uri => redirect_uri}
       end
       subject { grant.new attributes }
-      its(:redirect_uri) { should == 'https://client.example.com/callback' }
+      its(:redirect_uri) { should == redirect_uri }
       its(:to_hash) do
-        should == {:grant_type => :authorization_code, :code => 'code', :redirect_uri => 'https://client.example.com/callback'}
+        should == {:grant_type => :authorization_code, :code => 'code', :redirect_uri => redirect_uri}
+      end
+
+      # NOTE: Facebook JS SDK provide authorization code with redirect_uri=""
+      context 'when redirect_uri is blank string' do
+        let(:redirect_uri) { '' }
+        its(:redirect_uri) { should == '' }
+        its(:to_hash) do
+          should == {:grant_type => :authorization_code, :code => 'code', :redirect_uri => ''}
+        end
       end
     end
 
