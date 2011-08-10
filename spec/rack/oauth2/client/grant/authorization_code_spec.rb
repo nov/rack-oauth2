@@ -18,22 +18,13 @@ describe Rack::OAuth2::Client::Grant::AuthorizationCode do
       its(:to_hash) do
         should == {:grant_type => :authorization_code, :code => 'code', :redirect_uri => redirect_uri}
       end
-
-      # NOTE: Facebook JS SDK provide authorization code with redirect_uri=""
-      context 'when redirect_uri is blank string' do
-        let(:redirect_uri) { '' }
-        its(:redirect_uri) { should == '' }
-        its(:to_hash) do
-          should == {:grant_type => :authorization_code, :code => 'code', :redirect_uri => ''}
-        end
-      end
     end
 
     context 'otherwise' do
       subject { grant.new attributes }
       its(:redirect_uri) { should be_nil }
       its(:to_hash) do
-        should == {:grant_type => :authorization_code, :code => 'code'}
+        should == {:grant_type => :authorization_code, :code => 'code', :redirect_uri => nil}
       end
     end
   end

@@ -16,8 +16,6 @@ module Rack
             :grant_type => self.class.name.demodulize.underscore.to_sym
           }) do |hash, key|
             hash.merge! key => self.send(key)
-          end.delete_if do |key, value|
-            value.nil?
           end
         end
       end
