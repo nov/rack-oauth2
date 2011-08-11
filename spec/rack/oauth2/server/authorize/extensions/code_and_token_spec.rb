@@ -1,4 +1,5 @@
 require 'spec_helper.rb'
+require 'rack/oauth2/server/authorize/extensions/code_and_token'
 
 describe Rack::OAuth2::Server::Authorize::Extensions::CodeAndToken do
   let(:request)            { Rack::MockRequest.new app }
