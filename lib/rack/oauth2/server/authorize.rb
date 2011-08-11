@@ -4,9 +4,33 @@ module Rack
       class Authorize < Abstract::Handler
         def call(env)
           request = Request.new(env)
-          request.profile.new(&@authenticator).call(env).finish
+          response_type_for(request).new(&@authenticator).call(env).finish
         rescue Rack::OAuth2::Server::Abstract::Error => e
           e.finish
+        end
+
+        private
+
+        def response_type_for(request)
+          response_type = request.params['response_type'].to_s
+          case response_type
+          when 'code'
+            Code
+          when 'token'
+            Token
+          when ''
+            request.attr_missing!
+          else
+            extensions.detect do |extension|
+              extension.response_type_for? response_type
+            end || request.unsupported_response_type!
+          end
+        end
+
+        def extensions
+          Extensions.constants.sort.collect do |key|
+            Extensions.const_get key
+          end
         end
 
         class Request < Abstract::Request
@@ -22,20 +46,6 @@ module Rack
             @state = params['state']
           end
 
-          def profile
-            case params['response_type'].to_s
-            when 'code'
-              Code
-            when 'token'
-              Token
-            when ''
-              attr_missing!
-            else
-              # TODO: support extensions
-              unsupported_response_type!
-            end
-          end
-
           def verify_redirect_uri!(pre_registered)
             @verified_redirect_uri = if redirect_uri.present?
               if Util.uri_match?(pre_registered, redirect_uri)
@@ -47,6 +57,10 @@ module Rack
               pre_registered
             end
             self.verified_redirect_uri.to_s
+          end
+
+          def error_params_location
+            nil # => All errors are raised immediately and no error response are returned to client.
           end
         end
 
@@ -71,10 +85,14 @@ module Rack
             {:state => state}
           end
 
+          def redirect_uri_with_credentials
+            Util.redirect_uri(redirect_uri, protocol_params_location, protocol_params)
+          end
+
           def finish
             if approved?
               attr_missing!
-              redirect Util.redirect_uri(redirect_uri, protocol_params_location, protocol_params)
+              redirect redirect_uri_with_credentials
             end
             super
           end
@@ -86,4 +104,5 @@ end
 
 require 'rack/oauth2/server/authorize/code'
 require 'rack/oauth2/server/authorize/token'
+require 'rack/oauth2/server/authorize/extensions'
 require 'rack/oauth2/server/authorize/error'

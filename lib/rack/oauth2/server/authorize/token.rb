@@ -15,6 +15,10 @@ module Rack
               @response_type = :token
               attr_missing!
             end
+
+            def error_params_location
+              :fragment
+            end
           end
 
           class Response < Authorize::Response

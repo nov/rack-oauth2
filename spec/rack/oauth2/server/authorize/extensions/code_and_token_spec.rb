@@ -1,10 +1,13 @@
 require 'spec_helper.rb'
 
-describe Rack::OAuth2::Server::Authorize::Token do
-  let(:request)      { Rack::MockRequest.new app }
-  let(:redirect_uri) { 'http://client.example.com/callback' }
-  let(:access_token) { 'access_token' }
-  let(:response)     { request.get("/?response_type=token&client_id=client&redirect_uri=#{redirect_uri}") }
+describe Rack::OAuth2::Server::Authorize::Extensions::CodeAndToken do
+  let(:request)            { Rack::MockRequest.new app }
+  let(:redirect_uri)       { 'http://client.example.com/callback' }
+  let(:access_token)       { 'access_token' }
+  let(:authorization_code) { 'authorization_code' }
+  let(:response) do
+    request.get("/?response_type=code%20token&client_id=client&redirect_uri=#{redirect_uri}")
+  end
 
   context "when approved" do
     subject { response }
@@ -13,11 +16,12 @@ describe Rack::OAuth2::Server::Authorize::Token do
       Rack::OAuth2::Server::Authorize.new do |request, response|
         response.redirect_uri = redirect_uri
         response.access_token = bearer_token
+        response.code         = authorization_code
         response.approve!
       end
     end
     its(:status)   { should == 302 }
-    its(:location) { should == "#{redirect_uri}#access_token=#{access_token}&token_type=bearer" }
+    its(:location) { should == "#{redirect_uri}?code=#{authorization_code}#access_token=#{access_token}&token_type=bearer" }
 
     context 'when refresh_token is given' do
       let :bearer_token do
@@ -26,31 +30,7 @@ describe Rack::OAuth2::Server::Authorize::Token do
           :refresh_token => 'refresh'
         )
       end
-      its(:location) { should == "#{redirect_uri}#access_token=#{access_token}&token_type=bearer" }
-    end
-
-    context 'when redirect_uri is missing' do
-      let :app do
-        Rack::OAuth2::Server::Authorize.new do |request, response|
-          response.access_token = bearer_token
-          response.approve!
-        end
-      end
-      it do
-        expect { response }.should raise_error AttrRequired::AttrMissing
-      end
-    end
-
-    context 'when access_token is missing' do
-      let :app do
-        Rack::OAuth2::Server::Authorize.new do |request, response|
-          response.redirect_uri = redirect_uri
-          response.approve!
-        end
-      end
-      it do
-        expect { response }.should raise_error AttrRequired::AttrMissing
-      end
+      its(:location) { should == "#{redirect_uri}?code=#{authorization_code}#access_token=#{access_token}&token_type=bearer" }
     end
   end
 

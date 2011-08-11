@@ -57,12 +57,7 @@ module Rack
 
           def bad_request!(error = :bad_request, description = nil, options = {})
             exception = BadRequest.new error, description, options
-            exception.protocol_params_location = case response_type
-            when :code
-              :query
-            when :token
-              :fragment
-            end
+            exception.protocol_params_location = error_params_location
             exception.state = state
             exception.redirect_uri = verified_redirect_uri
             raise exception

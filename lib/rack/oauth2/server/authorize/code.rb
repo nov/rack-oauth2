@@ -15,6 +15,10 @@ module Rack
               @response_type = :code
               attr_missing!
             end
+
+            def error_params_location
+              :query
+            end
           end
 
           class Response < Authorize::Response

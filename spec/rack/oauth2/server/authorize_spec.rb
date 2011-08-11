@@ -6,24 +6,80 @@ describe Rack::OAuth2::Server::Authorize do
   let(:redirect_uri) { 'http://client.example.com/callback' }
   let(:bad_request)  { Rack::OAuth2::Server::Authorize::BadRequest }
 
-  context 'when redirect_uri is missing' do
-    it do
-      expect { request.get '/' }.should raise_error bad_request
+  describe 'extensions' do
+    let(:env) do
+      Rack::MockRequest.env_for("/authorize?response_type=#{response_type}&client_id=client")
+    end
+    let(:request) { Rack::OAuth2::Server::Authorize::Request.new env }
+    its(:extensions) { should == [Rack::OAuth2::Server::Authorize::Extensions::CodeAndToken] }
+
+    describe 'code token' do
+      let(:response_type) { 'code%20token' }
+      it do
+        app.send(
+          :response_type_for, request
+        ).should == Rack::OAuth2::Server::Authorize::Extensions::CodeAndToken
+      end
+    end
+
+    describe 'token code' do
+      let(:response_type) { 'token%20code' }
+      it do
+        app.send(
+          :response_type_for, request
+        ).should == Rack::OAuth2::Server::Authorize::Extensions::CodeAndToken
+      end
+    end
+
+    describe 'token code id_token' do
+      let(:response_type) { 'token%20code%20id_token' }
+      it do
+        expect do
+          app.send(:response_type_for, request)
+        end.should raise_error bad_request
+      end
+    end
+
+    describe 'id_token' do
+      before do
+        class Rack::OAuth2::Server::Authorize::Extensions::IdToken < Rack::OAuth2::Server::Abstract::Handler
+          def self.response_type_for?(response_type)
+            response_type == 'id_token'
+          end
+        end
+      end
+
+      its(:extensions) do
+        should == [
+          Rack::OAuth2::Server::Authorize::Extensions::CodeAndToken,
+          Rack::OAuth2::Server::Authorize::Extensions::IdToken
+        ]
+      end
+
+      let(:response_type) { 'id_token' }
+      it do
+        app.send(
+          :response_type_for, request
+        ).should == Rack::OAuth2::Server::Authorize::Extensions::IdToken
+      end
     end
   end
 
-  context 'when redirect_uri is given' do
-    context 'when client_id is missing' do
-      it do
-        expect { request.get "/?redirect_uri=#{redirect_uri}" }.should raise_error bad_request
-      end
+  context 'when response_type is missing' do
+    it do
+      expect { request.get "/?client_id=client&redirect_uri=#{redirect_uri}" }.should raise_error bad_request
     end
-    context 'when client_id is given' do
-      context 'when response_type is missing' do
-        it do
-          expect { request.get "/?client_id=client&redirect_uri=#{redirect_uri}" }.should raise_error bad_request
-        end
-      end
+  end
+
+  context 'when redirect_uri is missing' do
+    it do
+      expect { request.get "/?response_type=code&client_id=client" }.should_not raise_error
+    end
+  end
+
+  context 'when client_id is missing' do
+    it do
+      expect { request.get "/?response_type=code&redirect_uri=#{redirect_uri}" }.should raise_error bad_request
     end
   end
 
