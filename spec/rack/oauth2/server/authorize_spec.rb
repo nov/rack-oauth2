@@ -71,21 +71,21 @@ describe Rack::OAuth2::Server::Authorize do
 
   describe 'extensions' do
     before do
-      require 'rack/oauth2/server/authorize/extensions/code_and_token'
+      require 'rack/oauth2/server/authorize/extension/code_and_token'
     end
 
     let(:env) do
       Rack::MockRequest.env_for("/authorize?response_type=#{response_type}&client_id=client")
     end
     let(:request) { Rack::OAuth2::Server::Authorize::Request.new env }
-    its(:extensions) { should == [Rack::OAuth2::Server::Authorize::Extensions::CodeAndToken] }
+    its(:extensions) { should == [Rack::OAuth2::Server::Authorize::Extension::CodeAndToken] }
 
     describe 'code token' do
       let(:response_type) { 'code%20token' }
       it do
         app.send(
           :response_type_for, request
-        ).should == Rack::OAuth2::Server::Authorize::Extensions::CodeAndToken
+        ).should == Rack::OAuth2::Server::Authorize::Extension::CodeAndToken
       end
     end
 
@@ -94,7 +94,7 @@ describe Rack::OAuth2::Server::Authorize do
       it do
         app.send(
           :response_type_for, request
-        ).should == Rack::OAuth2::Server::Authorize::Extensions::CodeAndToken
+        ).should == Rack::OAuth2::Server::Authorize::Extension::CodeAndToken
       end
     end
 
@@ -109,7 +109,7 @@ describe Rack::OAuth2::Server::Authorize do
 
     describe 'id_token' do
       before do
-        class Rack::OAuth2::Server::Authorize::Extensions::IdToken < Rack::OAuth2::Server::Abstract::Handler
+        class Rack::OAuth2::Server::Authorize::Extension::IdToken < Rack::OAuth2::Server::Abstract::Handler
           def self.response_type_for?(response_type)
             response_type == 'id_token'
           end
@@ -118,8 +118,8 @@ describe Rack::OAuth2::Server::Authorize do
 
       its(:extensions) do
         should == [
-          Rack::OAuth2::Server::Authorize::Extensions::CodeAndToken,
-          Rack::OAuth2::Server::Authorize::Extensions::IdToken
+          Rack::OAuth2::Server::Authorize::Extension::CodeAndToken,
+          Rack::OAuth2::Server::Authorize::Extension::IdToken
         ]
       end
 
@@ -127,7 +127,7 @@ describe Rack::OAuth2::Server::Authorize do
       it do
         app.send(
           :response_type_for, request
-        ).should == Rack::OAuth2::Server::Authorize::Extensions::IdToken
+        ).should == Rack::OAuth2::Server::Authorize::Extension::IdToken
       end
     end
   end

@@ -28,8 +28,8 @@ module Rack
         end
 
         def extensions
-          Extensions.constants.sort.collect do |key|
-            Extensions.const_get key
+          Extension.constants.sort.collect do |key|
+            Extension.const_get key
           end
         end
 
@@ -104,5 +104,5 @@ end
 
 require 'rack/oauth2/server/authorize/code'
 require 'rack/oauth2/server/authorize/token'
-require 'rack/oauth2/server/authorize/extensions'
+require 'rack/oauth2/server/authorize/extension'
 require 'rack/oauth2/server/authorize/error'
