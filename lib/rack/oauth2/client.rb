@@ -79,7 +79,7 @@ module Rack
 
       def handle_success_response(response)
         token_hash = JSON.parse(response.body).with_indifferent_access
-        case token_hash[:token_type]
+        case token_hash[:token_type].try(:downcase)
         when 'bearer'
           AccessToken::Bearer.new(token_hash)
         when 'mac'

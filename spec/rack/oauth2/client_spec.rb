@@ -88,6 +88,19 @@ describe Rack::OAuth2::Client do
       its(:access_token) { should == 'access_token' }
       its(:refresh_token) { should == 'refresh_token' }
       its(:expires_in) { should == 3600 }
+
+      context 'when token type is "Bearer", not "bearer"' do
+        before  do
+          client.authorization_code = 'code'
+          mock_response(
+            :post,
+            'https://server.example.com/oauth2/token',
+            'tokens/_Bearer.json'
+          )
+        end
+        it { should be_instance_of Rack::OAuth2::AccessToken::Bearer }
+        its(:token_type) { should == :bearer }
+      end
     end
 
     context 'when mac token is given' do
