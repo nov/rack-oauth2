@@ -188,4 +188,26 @@ describe Rack::OAuth2::Client do
       end
     end
   end
+
+  context 'when no host info' do
+    let :client do
+      Rack::OAuth2::Client.new(
+        :identifier => 'client_id',
+        :secret => 'client_secret',
+        :redirect_uri => 'https://client.example.com/callback'
+      )
+    end
+
+    describe '#authorization_uri' do
+      it do
+        expect { client.authorization_uri }.should raise_error 'No Host Info'
+      end
+    end
+
+    describe '#access_token!' do
+      it do
+        expect { client.access_token! }.should raise_error 'No Host Info'
+      end
+    end
+  end
 end
