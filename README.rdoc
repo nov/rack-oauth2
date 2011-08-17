@@ -18,27 +18,27 @@ http://www.ietf.org/id/draft-ietf-oauth-v2-http-mac-00.txt
 
 == Resources
 
-* View Source on GitHub (http://github.com/nov/rack-oauth2)
-* Report Issues on GitHub (http://github.com/nov/rack-oauth2/issues)
-* Subscribe Update Info (http://www.facebook.com/pages/RackOAuth2/141477809244105)
+* View Source on GitHub (https://github.com/nov/rack-oauth2)
+* Report Issues on GitHub (https://github.com/nov/rack-oauth2/issues)
+* Subscribe Update Info (https://www.facebook.com/rackoauth2)
 
 == Sample Server Application (Rails3)
 
 === Bearer
 
 Running on Heroku
-http://rack-oauth2-sample.heroku.com
+https://rack-oauth2-sample.heroku.com
 
 Source on GitHub
-http://github.com/nov/rack-oauth2-sample
+https://github.com/nov/rack-oauth2-sample
 
 === MAC
 
 Running on Heroku
-http://rack-oauth2-sample-mac.heroku.com
+https://rack-oauth2-sample-mac.heroku.com
 
 Source on GitHub
-http://github.com/nov/rack-oauth2-sample-mac
+https://github.com/nov/rack-oauth2-sample-mac
 
 == Sample Client
 
