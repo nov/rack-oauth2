@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   s.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.files = `git ls-files`.split("\n")
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.add_runtime_dependency "rack", "1.1"
-  s.add_runtime_dependency "json", "1.4.3"
+  s.add_runtime_dependency "rack", ">= 1.1"
+  s.add_runtime_dependency "json", ">= 1.4.3"
   s.add_runtime_dependency "activesupport", ">= 2.3"
   s.add_runtime_dependency "i18n"
   s.add_development_dependency "rake", ">= 0.8"
