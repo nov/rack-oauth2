@@ -21,6 +21,7 @@ http://www.ietf.org/id/draft-ietf-oauth-v2-http-mac-00.txt
 * View Source on GitHub (https://github.com/nov/rack-oauth2)
 * Report Issues on GitHub (https://github.com/nov/rack-oauth2/issues)
 * Subscribe Update Info (https://www.facebook.com/rackoauth2)
+* Q&A on Google Groups (https://groups.google.com/group/rack-oauth2)
 
 == Sample Server Application (Rails3)
 
