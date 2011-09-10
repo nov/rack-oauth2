@@ -1,0 +1,1 @@
+require 'rack/oauth2/debugger/request_filter'

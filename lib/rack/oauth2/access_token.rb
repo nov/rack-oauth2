@@ -15,6 +15,7 @@ module Rack
           :agent_name => "#{self.class} (#{VERSION})"
         )
         @httpclient.request_filter << Authenticator.new(self)
+        @httpclient.request_filter << Debugger::RequestFilter.new if Rack::OAuth2.debugging?
         attr_missing!
       end
 
