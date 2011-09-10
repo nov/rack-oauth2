@@ -6,7 +6,7 @@ module Rack
         # request:: HTTP::Message
         def filter_request(request)
           started = "======= [Rack::OAuth2] HTTP REQUEST STARTED ======="
-          FbGraph.logger.info [started, request.dump].join("\n")
+          OAuth2.logger.info [started, request.dump].join("\n")
         end
 
         # Callback called in HTTPClient (after received a response)
@@ -14,7 +14,7 @@ module Rack
         # response:: HTTP::Message
         def filter_response(request, response)
           finished = "======= [Rack::OAuth2] HTTP REQUEST FINISHED ======="
-          FbGraph.logger.info ['-' * 50, response.dump, finished].join("\n")
+          OAuth2.logger.info ['-' * 50, response.dump, finished].join("\n")
         end
       end
     end
