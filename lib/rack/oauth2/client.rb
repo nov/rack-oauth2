@@ -17,6 +17,7 @@ module Rack
 
       def authorization_uri(params = {})
         params[:response_type] ||= :code
+        params[:response_type] = Array(params[:response_type]).join(' ')
         params[:scope] = Array(params[:scope]).join(' ')
         Util.redirect_uri absolute_uri_for(authorization_endpoint), :query, params.merge(
           :client_id => self.identifier,
