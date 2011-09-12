@@ -1,4 +1,5 @@
 require 'base64'
+require 'addressable/uri'
 
 module Rack
   module OAuth2
