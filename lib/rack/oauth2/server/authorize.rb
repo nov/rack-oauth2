@@ -46,15 +46,20 @@ module Rack
             @state = params['state']
           end
 
-          def verify_redirect_uri!(pre_registered)
+          def verify_redirect_uri!(pre_registered, allow_partial_match = false)
             @verified_redirect_uri = if redirect_uri.present?
-              if Util.uri_match?(pre_registered, redirect_uri)
+              verified = Array(pre_registered).any? do |_pre_registered_|
+                Util.uri_match?(_pre_registered_, redirect_uri, allow_partial_match)
+              end
+              if verified
                 redirect_uri
               else
-                bad_request!
+                bad_request! 'Invalid redirect_uri is given'
               end
-            else
+            elsif pre_registered.present?
               pre_registered
+            else
+              bad_request! 'No redirect_uri is given'
             end
             self.verified_redirect_uri.to_s
           end

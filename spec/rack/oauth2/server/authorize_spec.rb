@@ -42,12 +42,59 @@ describe Rack::OAuth2::Server::Authorize do
   describe Rack::OAuth2::Server::Authorize::Request do
     let(:env)            { Rack::MockRequest.env_for("/authorize?client_id=client&redirect_uri=#{redirect_uri}") }
     let(:request)        { Rack::OAuth2::Server::Authorize::Request.new env }
-    let(:pre_registered) { 'http://client.example.com' }
 
     describe '#varified_redirect_uri' do
-      context 'when valid redirect_uri is given' do
-        it 'should use given redirect_uri' do
+      context 'when an Array of pre-registered URIs are given' do
+        context 'when given redirect_uri is valid against one of them' do
+          let :pre_registered do
+            [
+              redirect_uri,
+              'http://ja.client.example.com/callback',
+              'http://en.client.example.com/callback'
+            ]
+          end
+          it 'should be valid' do
+            request.verify_redirect_uri!(pre_registered).should == redirect_uri
+          end
+        end
+
+        context 'otherwise' do
+          let :pre_registered do
+            [
+              'http://ja.client.example.com/callback',
+              'http://en.client.example.com/callback'
+            ]
+          end
+          it do
+            expect do
+              request.verify_redirect_uri!(pre_registered)
+            end.should raise_error Rack::OAuth2::Server::Authorize::BadRequest
+          end
+        end
+      end
+
+      context 'when exact mathed redirect_uri is given' do
+        let(:pre_registered) { redirect_uri }
+        it 'should be valid' do
           request.verify_redirect_uri!(pre_registered).should == redirect_uri
+        end
+      end
+
+      context 'when partially mathed redirect_uri is given' do
+        let(:pre_registered) { 'http://client.example.com' }
+
+        context 'when partial matching allowed' do
+          it 'should be valid' do
+            request.verify_redirect_uri!(pre_registered, :allow_partial_match).should == redirect_uri
+          end
+        end
+
+        context 'otherwise' do
+          it do
+            expect do
+              request.verify_redirect_uri!(pre_registered)
+            end.should raise_error Rack::OAuth2::Server::Authorize::BadRequest
+          end
         end
       end
 
@@ -55,12 +102,13 @@ describe Rack::OAuth2::Server::Authorize do
         let(:pre_registered) { 'http://client2.example.com' }
         it do
           expect do
-            request.verify_redirect_uri!(pre_registered).should == pre_registered
+            request.verify_redirect_uri!(pre_registered)
           end.should raise_error Rack::OAuth2::Server::Authorize::BadRequest
         end
       end
 
       context 'when redirect_uri is missing' do
+        let(:pre_registered) { redirect_uri }
         let(:env) { Rack::MockRequest.env_for("/authorize?client_id=client") }
         it 'should use pre-registered redirect_uri' do
           request.verify_redirect_uri!(pre_registered).should == pre_registered
