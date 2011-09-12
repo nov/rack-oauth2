@@ -26,12 +26,16 @@ describe Rack::OAuth2::Util do
 
   describe '.parse_uri' do
     context 'when String is given' do
-      it { util.parse_uri(uri).should be_a URI::Generic }
+      it { util.parse_uri(uri).should be_a Addressable::URI }
     end
 
     context 'when URI is given' do
+      it { util.parse_uri(URI.parse(uri)).should be_a Addressable::URI }
+    end
+
+    context 'when Addressable::URI is given' do
       it 'should be itself' do
-        _uri_ = URI.parse uri
+        _uri_ = Addressable::URI.parse uri
         util.parse_uri(_uri_).should be _uri_
       end
     end
@@ -40,7 +44,7 @@ describe Rack::OAuth2::Util do
       it do
         expect do
           util.parse_uri '::'
-        end.should raise_error URI::InvalidURIError
+        end.should raise_error Addressable::URI::InvalidURIError
       end
     end
 
@@ -79,8 +83,13 @@ describe Rack::OAuth2::Util do
       end
     end
 
-    context 'when exactry same' do
+    context 'when exactly same' do
       it { util.uri_match?(uri, uri).should be_true }
+    end
+
+    context 'when wildcard for subdomain' do
+      it { util.uri_match?("http://.example.com/callback", uri).should be_true }
+      it { util.uri_match?("http://example.com/callback", uri).should be_false }
     end
 
     context 'when path prefix matches' do
