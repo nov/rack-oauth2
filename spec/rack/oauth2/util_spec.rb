@@ -89,6 +89,7 @@ describe Rack::OAuth2::Util do
 
     context 'when wildcard for subdomain' do
       it { util.uri_match?("http://.example.com/callback", uri).should be_true }
+      it { util.uri_match?("http://.xample.com/callback", uri).should be_false }
       it { util.uri_match?("http://example.com/callback", uri).should be_false }
     end
 

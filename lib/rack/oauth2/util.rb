@@ -50,11 +50,11 @@ module Rack
           given = parse_uri(given)
           base.path = '/' if base.path.blank?
           given.path = '/' if given.path.blank?
-          (
-            base.host[0].chr != '.' ?
-            base.host == given.host :
-            base.host[1...base.host.length].reverse == given.host.reverse[0...(base.host.length-1)]
-          ) &&
+          ( if "#{base.host[0].chr}" == '.'
+            given.host =~ /^[a-zA-Z0-9]+\.#{Regexp.escape base.host[1...base.host.length]}$/
+          else
+            base.host == given.host
+          end ) &&
           [:scheme, :port].all? do |key|
             base.send(key) == given.send(key)
           end && /^#{base.path}/ =~ given.path
