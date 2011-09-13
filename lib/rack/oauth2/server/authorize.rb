@@ -49,7 +49,11 @@ module Rack
           def verify_redirect_uri!(pre_registered, allow_partial_match = false)
             @verified_redirect_uri = if redirect_uri.present?
               verified = Array(pre_registered).any? do |_pre_registered_|
-                Util.uri_match?(_pre_registered_, redirect_uri, allow_partial_match)
+                if allow_partial_match
+                  Util.uri_match?(_pre_registered_, redirect_uri)
+                else
+                  _pre_registered_.to_s == redirect_uri.to_s
+                end
               end
               if verified
                 redirect_uri

@@ -40,19 +40,14 @@ module Rack
           redirect_uri.to_s
         end
 
-        def uri_match?(base, given, allow_partial_match = true)
+        def uri_match?(base, given)
           base = parse_uri(base)
           given = parse_uri(given)
           base.path = '/' if base.path.blank?
           given.path = '/' if given.path.blank?
-          path_match = if allow_partial_match
-            /^#{base.path}/ =~ given.path
-          else
-            base.path == given.path
-          end
           [:scheme, :host, :port].all? do |key|
             base.send(key) == given.send(key)
-          end && path_match
+          end && /^#{base.path}/ =~ given.path
         rescue
           false
         end
