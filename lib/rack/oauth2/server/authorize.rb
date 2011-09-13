@@ -36,7 +36,7 @@ module Rack
         class Request < Abstract::Request
           attr_required :response_type
           attr_optional :redirect_uri, :state
-          attr_reader :verified_redirect_uri
+          attr_accessor :verified_redirect_uri
 
           def initialize(env)
             super
