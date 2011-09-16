@@ -22,7 +22,10 @@ describe Rack::OAuth2::Server::Authorize::Extension::CodeAndToken do
       end
     end
     its(:status)   { should == 302 }
-    its(:location) { should == "#{redirect_uri}?code=#{authorization_code}#access_token=#{access_token}&token_type=bearer" }
+    its(:location) { should include "#{redirect_uri}#" }
+    its(:location) { should include "code=#{authorization_code}"}
+    its(:location) { should include "access_token=#{access_token}"}
+    its(:location) { should include 'token_type=bearer' }
 
     context 'when refresh_token is given' do
       let :bearer_token do
@@ -31,7 +34,10 @@ describe Rack::OAuth2::Server::Authorize::Extension::CodeAndToken do
           :refresh_token => 'refresh'
         )
       end
-      its(:location) { should == "#{redirect_uri}?code=#{authorization_code}#access_token=#{access_token}&token_type=bearer" }
+      its(:location) { should include "#{redirect_uri}#" }
+      its(:location) { should include "code=#{authorization_code}"}
+      its(:location) { should include "access_token=#{access_token}"}
+      its(:location) { should include 'token_type=bearer' }
     end
   end
 

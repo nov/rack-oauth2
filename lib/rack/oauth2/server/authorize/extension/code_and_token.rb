@@ -27,8 +27,8 @@ module Rack
             class Response < Authorize::Token::Response
               attr_required :code
 
-              def redirect_uri_with_credentials
-                Util.redirect_uri(super, :query, :code => code)
+              def protocol_params
+                super.merge(:code => code)
               end
             end
           end
