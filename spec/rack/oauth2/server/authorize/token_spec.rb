@@ -4,7 +4,7 @@ describe Rack::OAuth2::Server::Authorize::Token do
   let(:request)      { Rack::MockRequest.new app }
   let(:redirect_uri) { 'http://client.example.com/callback' }
   let(:access_token) { 'access_token' }
-  let(:response)     { request.get("/?response_type=token&client_id=client&redirect_uri=#{redirect_uri}") }
+  let(:response)     { request.get("/?response_type=token&client_id=client&redirect_uri=#{redirect_uri}&state=state") }
 
   context "when approved" do
     subject { response }
@@ -17,7 +17,7 @@ describe Rack::OAuth2::Server::Authorize::Token do
       end
     end
     its(:status)   { should == 302 }
-    its(:location) { should == "#{redirect_uri}#access_token=#{access_token}&token_type=bearer" }
+    its(:location) { should == "#{redirect_uri}#access_token=#{access_token}&state=state&token_type=bearer" }
 
     context 'when refresh_token is given' do
       let :bearer_token do
@@ -26,7 +26,7 @@ describe Rack::OAuth2::Server::Authorize::Token do
           :refresh_token => 'refresh'
         )
       end
-      its(:location) { should == "#{redirect_uri}#access_token=#{access_token}&token_type=bearer" }
+      its(:location) { should == "#{redirect_uri}#access_token=#{access_token}&state=state&token_type=bearer" }
     end
 
     context 'when redirect_uri is missing' do
@@ -67,7 +67,7 @@ describe Rack::OAuth2::Server::Authorize::Token do
         :error => :access_denied,
         :error_description => Rack::OAuth2::Server::Authorize::ErrorMethods::DEFAULT_DESCRIPTION[:access_denied]
       }
-      response.location.should == "#{redirect_uri}##{error_message.to_query}"
+      response.location.should == "#{redirect_uri}##{error_message.to_query}&state=state"
     end
   end
 end
