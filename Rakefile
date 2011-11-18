@@ -6,11 +6,8 @@ RSpec::Core::RakeTask.new(:spec)
 
 if RUBY_VERSION >= '1.9'
   require 'cover_me'
-  RSpec::Core::RakeTask.new(:cover) do
-    CoverMe.config do |c|
-      c.file_pattern = /(#{CoverMe.config.project.root}\/lib\/.+\.rb)/i
-    end
-    CoverMe.complete!
+  CoverMe.config do |c|
+    c.file_pattern = /(#{CoverMe.config.project.root}\/lib\/.+\.rb)/i
   end
 else
   RSpec::Core::RakeTask.new(:rcov) do |spec|
