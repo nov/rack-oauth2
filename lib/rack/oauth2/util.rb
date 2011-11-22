@@ -1,11 +1,12 @@
 require 'base64'
+require 'addressable/uri'
 
 module Rack
   module OAuth2
     module Util
       class << self
         def rfc3986_encode(text)
-          URI.encode(text, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+          Addressable::URI.normalize_component(text, /[^#{Addressable::URI::CharacterClasses::UNRESERVED}]/)
         end
 
         def base64_encode(text)
@@ -20,10 +21,15 @@ module Rack
 
         def parse_uri(uri)
           case uri
-          when URI::Generic
+          when Addressable::URI
             uri
+          when URI::Generic
+            Addressable::URI.parse uri
           when String
-            URI.parse(uri)
+            Addressable::URI.parse(uri).tap do |parsed|
+              # Fires validation
+              "#{parsed}"
+            end
           else
             raise "Invalid format of URI is given."
           end
@@ -45,7 +51,12 @@ module Rack
           given = parse_uri(given)
           base.path = '/' if base.path.blank?
           given.path = '/' if given.path.blank?
-          [:scheme, :host, :port].all? do |key|
+          ( if "#{base.host[0].chr}" == '.'
+            given.host =~ /^[a-zA-Z0-9]+\.#{Regexp.escape base.host[1...base.host.length]}$/
+          else
+            base.host == given.host
+          end ) &&
+          [:scheme, :port].all? do |key|
             base.send(key) == given.send(key)
           end && /^#{base.path}/ =~ given.path
         rescue

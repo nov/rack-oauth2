@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "activesupport", ">= 2.3"
   s.add_runtime_dependency "i18n"
   s.add_runtime_dependency "attr_required", ">= 0.0.3"
+  s.add_runtime_dependency "addressable", ">= 2.2.6"
   s.add_development_dependency "rake", ">= 0.8"
   if RUBY_VERSION >= '1.9'
     s.add_development_dependency "cover_me", ">= 1.2.0"

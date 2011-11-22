@@ -3,6 +3,7 @@ PATH
   specs:
     rack-oauth2 (0.11.0)
       activesupport (>= 2.3)
+      addressable (>= 2.2.6)
       attr_required (>= 0.0.3)
       httpclient (>= 2.2.0.2)
       i18n
