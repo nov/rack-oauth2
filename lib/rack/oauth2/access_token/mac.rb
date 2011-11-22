@@ -76,7 +76,7 @@ module Rack
         def generate_nonce
           [
             (Time.now.utc - @issued_at).to_i,
-            ActiveSupport::SecureRandom.hex
+            SecureRandom.hex
           ].join(':')
         end
       end
