@@ -14,8 +14,8 @@ module Rack
 
         def call(env)
           if request.oauth2?
-            authenticate! request.setup!
-            env[ACCESS_TOKEN] = request.access_token
+            access_token = authenticate! request.setup!
+            env[ACCESS_TOKEN] = access_token
           end
           @app.call(env)
         rescue Rack::OAuth2::Server::Abstract::Error => e

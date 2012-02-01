@@ -5,13 +5,16 @@ describe Rack::OAuth2::Server::Resource::Bearer do
     Rack::OAuth2::Server::Resource::Bearer.new(simple_app) do |request|
       case request.access_token
       when 'valid_token'
-        # nothing to do
+        bearer_token
       when 'insufficient_scope_token'
         request.insufficient_scope!
       else
         request.invalid_token!
       end
     end
+  end
+  let(:bearer_token) do
+    Rack::OAuth2::AccessToken::Bearer.new(:access_token => 'valid_token')
   end
   let(:access_token) { env[Rack::OAuth2::Server::Resource::ACCESS_TOKEN] }
   let(:request) { app.call(env) }
@@ -21,7 +24,7 @@ describe Rack::OAuth2::Server::Resource::Bearer do
     it 'should be authenticated' do
       status, header, response = request
       status.should == 200
-      access_token.should == 'valid_token'
+      access_token.should == bearer_token
     end
   end
   shared_examples_for :unauthorized_bearer_request do

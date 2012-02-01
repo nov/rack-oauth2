@@ -5,17 +5,22 @@ describe Rack::OAuth2::Server::Resource::MAC do
     Rack::OAuth2::Server::Resource::MAC.new(simple_app) do |request|
       case request.access_token
       when 'valid_token'
-        Rack::OAuth2::AccessToken::MAC.new(
-          :access_token => 'valid_token',
-          :mac_key => 'secret',
-          :mac_algorithm => 'hmac-sha-256'
-        ).verify!(request)
+        token = mac_token
+        token.verify!(request)
+        token
       when 'insufficient_scope_token'
         request.insufficient_scope!
       else
         request.invalid_token!
       end
     end
+  end
+  let(:mac_token) do
+    Rack::OAuth2::AccessToken::MAC.new(
+      :access_token => 'valid_token',
+      :mac_key => 'secret',
+      :mac_algorithm => 'hmac-sha-256'
+    )
   end
   let(:access_token) { env[Rack::OAuth2::Server::Resource::ACCESS_TOKEN] }
   let(:request) { app.call(env) }
@@ -32,7 +37,7 @@ describe Rack::OAuth2::Server::Resource::MAC do
     it 'should be authenticated' do
       status, header, response = request
       status.should == 200
-      access_token.should == 'valid_token'
+      access_token.should == mac_token
     end
   end
   shared_examples_for :unauthorized_mac_request do
