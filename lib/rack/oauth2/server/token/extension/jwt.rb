@@ -4,9 +4,11 @@ module Rack
       class Token
         module Extension
           class JWT < Abstract::Handler
+            GRANT_TYPE_URN = 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+
             class << self
               def grant_type_for?(grant_type)
-                grant_type == 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+                grant_type == GRANT_TYPE_URN
               end
             end
 
@@ -21,7 +23,7 @@ module Rack
 
               def initialize(env)
                 super
-                @grant_type = :jwt
+                @grant_type = GRANT_TYPE_URN
                 @assertion = params['assertion']
                 attr_missing!
               end
