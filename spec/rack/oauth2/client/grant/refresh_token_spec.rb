@@ -8,7 +8,7 @@ describe Rack::OAuth2::Client::Grant::RefreshToken do
       {:refresh_token => 'refresh_token'}
     end
     subject { grant.new attributes }
-    its(:to_hash) do
+    its(:as_json) do
       should == {:grant_type => :refresh_token, :refresh_token => 'refresh_token'}
     end
   end

@@ -46,7 +46,7 @@ module Rack
       end
 
       def access_token!
-        params = @grant.to_hash
+        params = @grant.as_json
         params.merge!(
           :client_id => self.identifier,
           :client_secret => self.secret

@@ -4,7 +4,7 @@ module Rack
       class Token
         module Extension
           # Define your extension in this namespace and load it explicitly.
-          # extension/code_and_token.rb would be good example for you.
+          # extension/assertion/jwt.rb would be good example for you.
         end
       end
     end

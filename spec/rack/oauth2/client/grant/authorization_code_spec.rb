@@ -15,7 +15,7 @@ describe Rack::OAuth2::Client::Grant::AuthorizationCode do
       end
       subject { grant.new attributes }
       its(:redirect_uri) { should == redirect_uri }
-      its(:to_hash) do
+      its(:as_json) do
         should == {:grant_type => :authorization_code, :code => 'code', :redirect_uri => redirect_uri}
       end
     end
@@ -23,7 +23,7 @@ describe Rack::OAuth2::Client::Grant::AuthorizationCode do
     context 'otherwise' do
       subject { grant.new attributes }
       its(:redirect_uri) { should be_nil }
-      its(:to_hash) do
+      its(:as_json) do
         should == {:grant_type => :authorization_code, :code => 'code', :redirect_uri => nil}
       end
     end

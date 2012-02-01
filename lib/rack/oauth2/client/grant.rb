@@ -11,7 +11,7 @@ module Rack
           attr_missing!
         end
 
-        def to_hash
+        def as_json(options = {})
           (required_attributes + optional_attributes).inject({
             :grant_type => self.class.name.demodulize.underscore.to_sym
           }) do |hash, key|

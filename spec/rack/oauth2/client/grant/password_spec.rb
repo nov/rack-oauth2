@@ -13,7 +13,7 @@ describe Rack::OAuth2::Client::Grant::Password do
         {:username => 'username', :password => 'password'}
       end
       subject { grant.new attributes }
-      its(:to_hash) do
+      its(:as_json) do
         should == {:grant_type => :password, :username => 'username', :password => 'password'}
       end
     end

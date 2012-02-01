@@ -117,7 +117,7 @@ describe Rack::OAuth2::Server::Authorize do
     end
   end
 
-  describe 'extensions' do
+  describe 'extensibility' do
     before do
       require 'rack/oauth2/server/authorize/extension/code_and_token'
     end

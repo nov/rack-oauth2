@@ -100,4 +100,35 @@ describe Rack::OAuth2::Server::Token do
       end
     end
   end
+
+  describe 'extensibility' do
+    before do
+      require 'rack/oauth2/server/token/extension/jwt'
+    end
+
+    subject { app }
+    let(:env) do
+      Rack::MockRequest.env_for(
+        '/token',
+        :params => params
+      )
+    end
+    let(:request) { Rack::OAuth2::Server::Token::Request.new env }
+    its(:extensions) { should == [Rack::OAuth2::Server::Token::Extension::JWT] }
+
+    describe 'JWT assertion' do
+      let(:params) do
+        {
+          :grant_type => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+          :assertion => 'header.payload.signature'
+        }
+      end
+
+      it do
+        app.send(
+          :grant_type_for, request
+        ).should == Rack::OAuth2::Server::Token::Extension::JWT
+      end
+    end
+  end
 end

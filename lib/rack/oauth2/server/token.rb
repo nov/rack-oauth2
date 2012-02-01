@@ -6,14 +6,14 @@ module Rack
       class Token < Abstract::Handler
         def call(env)
           request = Request.new(env)
-          grant_for(request).new(&@authenticator).call(env).finish
+          grant_type_for(request).new(&@authenticator).call(env).finish
         rescue Rack::OAuth2::Server::Abstract::Error => e
           e.finish
         end
 
         private
 
-        def grant_for(request)
+        def grant_type_for(request)
           case request.grant_type
           when 'authorization_code'
             AuthorizationCode
@@ -27,7 +27,7 @@ module Rack
             request.attr_missing!
           else
             extensions.detect do |extension|
-              extension.response_type_for? response_type
+              extension.grant_type_for? request.grant_type
             end || request.unsupported_grant_type!
           end
         end
