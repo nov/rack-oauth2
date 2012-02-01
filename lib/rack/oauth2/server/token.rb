@@ -6,9 +6,36 @@ module Rack
       class Token < Abstract::Handler
         def call(env)
           request = Request.new(env)
-          request.profile.new(&@authenticator).call(env).finish
+          grant_for(request).new(&@authenticator).call(env).finish
         rescue Rack::OAuth2::Server::Abstract::Error => e
           e.finish
+        end
+
+        private
+
+        def grant_for(request)
+          case request.grant_type
+          when 'authorization_code'
+            AuthorizationCode
+          when 'password'
+            Password
+          when 'client_credentials'
+            ClientCredentials
+          when 'refresh_token'
+            RefreshToken
+          when ''
+            request.attr_missing!
+          else
+            extensions.detect do |extension|
+              extension.response_type_for? response_type
+            end || request.unsupported_grant_type!
+          end
+        end
+
+        def extensions
+          Extension.constants.sort.collect do |key|
+            Extension.const_get key
+          end
         end
 
         class Request < Abstract::Request
@@ -24,25 +51,7 @@ module Rack
               super
               @client_secret = params['client_secret']
             end
-            @grant_type = params['grant_type']
-          end
-
-          def profile
-            case params['grant_type'].to_s
-            when 'authorization_code'
-              AuthorizationCode
-            when 'password'
-              Password
-            when 'client_credentials'
-              ClientCredentials
-            when 'refresh_token'
-              RefreshToken
-            when ''
-              attr_missing!
-            else
-              # TODO: support extensions
-              unsupported_grant_type!("'#{params['grant_type']}' isn't supported.")
-            end
+            @grant_type = params['grant_type'].to_s
           end
         end
 
@@ -67,8 +76,9 @@ module Rack
   end
 end
 
-require 'rack/oauth2/server/token/error'
 require 'rack/oauth2/server/token/authorization_code'
 require 'rack/oauth2/server/token/password'
 require 'rack/oauth2/server/token/client_credentials'
 require 'rack/oauth2/server/token/refresh_token'
+require 'rack/oauth2/server/token/extension'
+require 'rack/oauth2/server/token/error'
