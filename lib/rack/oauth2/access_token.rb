@@ -11,11 +11,8 @@ module Rack
           self.send :"#{key}=", attributes[key]
         end
         @token_type = self.class.name.demodulize.underscore.to_sym
-        @httpclient = HTTPClient.new(
-          :agent_name => "#{self.class} (#{VERSION})"
-        )
+        @httpclient = Rack::OAuth2.http_client("#{self.class} (#{VERSION})")
         @httpclient.request_filter << Authenticator.new(self)
-        @httpclient.request_filter << Debugger::RequestFilter.new if Rack::OAuth2.debugging?
         attr_missing!
       end
 

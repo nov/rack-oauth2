@@ -38,6 +38,18 @@ module Rack
       self.debugging = original
     end
     self.debugging = false
+
+    def self.http_client(agent_name = "Rack::OAuth2 (#{VERSION})")
+      _http_client_ = HTTPClient.new(
+        :agent_name => agent_name
+      )
+      _http_client_.request_filter << Debugger::RequestFilter.new if debugging?
+      http_config.try(:call, _http_client_)
+      _http_client_
+    end
+    def self.http_config(&block)
+      @@http_config ||= block
+    end
   end
 end
 

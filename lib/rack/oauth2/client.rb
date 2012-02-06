@@ -52,19 +52,11 @@ module Rack
           :client_secret => self.secret
         )
         handle_response do
-          http_client.post absolute_uri_for(token_endpoint), Util.compact_hash(params)
+          Rack::OAuth2.http_client.post absolute_uri_for(token_endpoint), Util.compact_hash(params)
         end
       end
 
       private
-
-      def http_client
-        _http_client_ = HTTPClient.new(
-          :agent_name => "#{self.class} (#{VERSION})"
-        )
-        _http_client_.request_filter << Debugger::RequestFilter.new if Rack::OAuth2.debugging?
-        _http_client_
-      end
 
       def absolute_uri_for(endpoint)
         _endpoint_ = Util.parse_uri endpoint
