@@ -33,7 +33,7 @@ module Rack
           end
         end
 
-        class Request < Abstract::RequestWithClientID
+        class Request < Abstract::Request
           attr_required :response_type
           attr_optional :redirect_uri, :state
           attr_accessor :verified_redirect_uri

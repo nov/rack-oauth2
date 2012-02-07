@@ -38,7 +38,7 @@ module Rack
           end
         end
 
-        class Request < Abstract::RequestWithClientID
+        class Request < Abstract::Request
           attr_required :grant_type
           attr_optional :client_secret
 
