@@ -20,9 +20,7 @@ module Rack
 
             class Request < Token::Request
               attr_required :assertion
-
-              # NOTE: client_id is required as default, but optional when using assertion.
-              @required_attributes.delete :client_id
+              attr_optional :client_id
 
               def initialize(env)
                 super
