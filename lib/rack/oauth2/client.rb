@@ -45,14 +45,25 @@ module Rack
         )
       end
 
-      def access_token!
-        params = @grant.as_json
-        params.merge!(
-          :client_id => self.identifier,
-          :client_secret => self.secret
-        )
+      def access_token!(client_auth_method = :basic)
+        headers, params = {}, @grant.as_json
+        if secret && client_auth_method == :basic
+          cred = ["#{identifier}:#{secret}"].pack('m').tr("\n", '')
+          headers.merge!(
+            :Authorization => "Basic #{cred}"
+          )
+        else
+          params.merge!(
+            :client_id => identifier,
+            :client_secret => secret
+          )
+        end
         handle_response do
-          Rack::OAuth2.http_client.post absolute_uri_for(token_endpoint), Util.compact_hash(params)
+          Rack::OAuth2.http_client.post(
+            absolute_uri_for(token_endpoint),
+            Util.compact_hash(params),
+            headers
+          )
         end
       end
 

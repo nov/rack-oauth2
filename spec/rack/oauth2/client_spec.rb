@@ -79,6 +79,42 @@ describe Rack::OAuth2::Client do
   describe '#access_token!' do
     subject { client.access_token! }
 
+    describe 'client authentication method' do
+      before do
+        client.authorization_code = 'code'
+      end
+
+      it 'should be Basic auth as default' do
+        mock_response(
+          :post,
+          'https://server.example.com/oauth2/token',
+          'tokens/bearer.json',
+          :request_header => {
+            'Authorization' => 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ='
+          }
+        )
+        client.access_token!
+      end
+
+      context 'when' do
+        it do
+          mock_response(
+            :post,
+            'https://server.example.com/oauth2/token',
+            'tokens/bearer.json',
+            :params => {
+              :client_id => 'client_id',
+              :client_secret => 'client_secret',
+              :code => 'code',
+              :grant_type => 'authorization_code',
+              :redirect_uri => 'https://client.example.com/callback'
+            }
+          )
+          client.access_token! :client_auth_body
+        end
+      end
+    end
+
     context 'when bearer token is given' do
       before  do
         client.authorization_code = 'code'
