@@ -50,7 +50,7 @@ module Rack
         if secret && client_auth_method == :basic
           cred = ["#{identifier}:#{secret}"].pack('m').tr("\n", '')
           headers.merge!(
-            :Authorization => "Basic #{cred}"
+            'Authorization' => "Basic #{cred}"
           )
         else
           params.merge!(
