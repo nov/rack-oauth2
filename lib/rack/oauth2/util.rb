@@ -51,6 +51,7 @@ module Rack
         rescue
           false
         end
+
       end
     end
   end

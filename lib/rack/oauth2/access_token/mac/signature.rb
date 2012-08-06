@@ -3,8 +3,8 @@ module Rack
     class AccessToken
       class MAC
         class Signature < Verifier
-          attr_required :secret, :nonce, :method, :request_uri, :host, :port
-          attr_optional :body_hash, :ext, :query
+          attr_required :secret, :ts, :nonce, :method, :request_uri, :host, :port
+          attr_optional :ext, :query
 
           def calculate
             Rack::OAuth2::Util.base64_encode OpenSSL::HMAC.digest(
@@ -16,12 +16,12 @@ module Rack
 
           def normalized_request_string
             [
+              ts.to_i,
               nonce,
               method.to_s.upcase,
               request_uri,
               host,
               port,
-              body_hash || '',
               ext || '',
               nil
             ].join("\n")

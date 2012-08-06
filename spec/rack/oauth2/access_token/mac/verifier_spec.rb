@@ -20,4 +20,6 @@ describe Rack::OAuth2::AccessToken::MAC::Verifier do
       expect { verifier.send(:hash_generator) }.should raise_error(StandardError, 'Unsupported Algorithm')
     end
   end
+
+  
 end
