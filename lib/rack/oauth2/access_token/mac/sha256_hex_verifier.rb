@@ -2,11 +2,13 @@ module Rack
   module OAuth2
     class AccessToken
       class MAC
-        class BodyHash < Verifier
+        class Sha256HexVerifier < Verifier
           attr_optional :raw_body
 
           def calculate
-            Rack::OAuth2::Util.base64_encode hash_generator.digest(raw_body)
+            return nil if raw_body.nil?
+            
+            OpenSSL::Digest::SHA256.new.digest(raw_body).unpack('H*').first
           end
         end
       end

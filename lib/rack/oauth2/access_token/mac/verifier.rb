@@ -18,6 +18,7 @@ module Rack
           end
 
           def verify!(expected)
+            puts "verifying #{expected} = #{self.calculate}"
             if expected == self.calculate
               :verified
             else

@@ -3,12 +3,12 @@ module Rack
     class AccessToken
       class MAC < AccessToken
         attr_required :mac_key, :mac_algorithm
-        attr_optional :issued_at, :ext
-        attr_reader :nonce, :body_hash, :signature
+        attr_optional :ts, :ext_verifier
+        attr_reader :nonce, :signature, :ext
 
         def initialize(attributes = {})
           super(attributes)
-          @issued_at ||= Time.now.utc
+          @ts ||= Time.now.utc
         end
 
         def token_response
@@ -18,13 +18,16 @@ module Rack
           )
         end
 
-        def verify!(request)
-          if request.body_hash.present?
-            BodyHash.new(
-              :raw_body  => request.body.read,
+        def verify!(request)          
+
+          body = request.body.read
+          if self.ext_verifier.present?
+            self.ext_verifier.new(
+              :raw_body => body,
               :algorithm => self.mac_algorithm
-            ).verify!(request.body_hash)
+            ).verify!(request.ext)
           end
+
           Signature.new(
             :secret      => self.mac_key,
             :algorithm   => self.mac_algorithm,
@@ -33,7 +36,7 @@ module Rack
             :request_uri => request.fullpath,
             :host        => request.host,
             :port        => request.port,
-            :body_hash   => request.body_hash,
+            :ts          => request.ts,
             :ext         => request.ext
           ).verify!(request.signature)
         rescue Verifier::VerificationFailed => e
@@ -42,12 +45,14 @@ module Rack
 
         def authenticate(request)
           @nonce = generate_nonce
-          if request.contenttype == 'application/x-www-form-urlencoded'
-            @body_hash = BodyHash.new(
+
+          if self.ext_verifier.present?
+            @ext = self.ext_verifier.new(
               :raw_body => request.body,
               :algorithm => self.mac_algorithm
             ).calculate
           end
+
           @signature = Signature.new(
             :secret      => self.mac_key,
             :algorithm   => self.mac_algorithm,
@@ -56,26 +61,27 @@ module Rack
             :request_uri => request.header.create_query_uri,
             :host        => request.header.request_uri.host,
             :port        => request.header.request_uri.port,
-            :body_hash   => self.body_hash,
-            :ext         => self.ext
+            :ts          => self.ts,
+            :ext         => @ext
           ).calculate
+
           request.header['Authorization'] = authorization_header
         end
 
         private
 
         def authorization_header
-          header = "MAC"
-          header << " id=\"#{access_token}\","
-          header << " nonce=\"#{nonce}\","
-          header << " bodyhash=\"#{body_hash}\"," if body_hash.present?
-          header << " ext=\"#{ext}\"," if ext.present?
-          header << " mac=\"#{signature}\""
+          header = "MAC id=\"#{access_token}\""
+          header << ", nonce=\"#{nonce}\""
+          header << ", ts=\"#{ts.to_i}\""
+          header << ", mac=\"#{signature}\""
+          header << ", ext=\"#{ext}\"" if @ext.present?
+          header
         end
 
         def generate_nonce
           [
-            (Time.now.utc - @issued_at).to_i,
+            (Time.now.utc - @ts).to_i,
             SecureRandom.hex
           ].join(':')
         end
@@ -85,5 +91,5 @@ module Rack
 end
 
 require 'rack/oauth2/access_token/mac/verifier'
-require 'rack/oauth2/access_token/mac/body_hash'
+require 'rack/oauth2/access_token/mac/sha256_hex_verifier'
 require 'rack/oauth2/access_token/mac/signature'
