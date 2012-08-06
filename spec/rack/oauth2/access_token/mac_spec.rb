@@ -1,15 +1,24 @@
 require 'spec_helper'
 
 describe Rack::OAuth2::AccessToken::MAC do
+  let(:ts) { 1305820234 }
   let :token do
     Rack::OAuth2::AccessToken::MAC.new(
       :access_token => 'access_token',
       :mac_key => 'secret',
       :mac_algorithm => 'hmac-sha-256',
-      :issued_at => issued_at
+      :ts => ts
     )
   end
-  let(:issued_at) { 1305820455 }
+  let :token_with_ext_verifier do
+    Rack::OAuth2::AccessToken::MAC.new(
+      :access_token => 'access_token',
+      :mac_key => 'secret',
+      :mac_algorithm => 'hmac-sha-256',
+      :ts => ts,
+      :ext_verifier => Rack::OAuth2::AccessToken::MAC::Sha256HexVerifier
+    )
+  end
   let(:nonce) { '1000:51e74de734c05613f37520872e68db5f' }
   let(:resource_endpoint) { 'https://server.example.com/resources/fake' }
   subject { token }
@@ -32,17 +41,18 @@ describe Rack::OAuth2::AccessToken::MAC do
   describe 'verify!' do
     let(:request) { Rack::OAuth2::Server::Resource::MAC::Request.new(env) }
 
-    context 'when no body_hash is given' do
+    context 'when no ext_verifier is given' do
       let(:env) do
         Rack::MockRequest.env_for(
           '/protected_resources',
-          'HTTP_AUTHORIZATION' => %{MAC id="access_token", nonce="#{nonce}", mac="#{signature}"}
+          'HTTP_AUTHORIZATION' => %{MAC id="access_token", nonce="#{nonce}", ts="#{ts}" mac="#{signature}"}
         )
       end
 
       context 'when signature is valid' do
-        let(:signature) { 'nbQj0NdvSBKdwvw1yX6wpQ4EwrQKBg/r3lqwJGcthDU=' }
+        let(:signature) { 'BgooS/voPOZWLwoVfx4+zbC3xAVKW3jtjhKYOfIGZOA=' }
         it do
+
           token.verify!(request.setup!).should == :verified
         end
       end
@@ -58,7 +68,7 @@ describe Rack::OAuth2::AccessToken::MAC do
       end
     end
 
-    context 'when body_hash is given' do
+    context 'when ext_verifier is given' do
       let(:env) do
         Rack::MockRequest.env_for(
           '/protected_resources',
@@ -66,29 +76,30 @@ describe Rack::OAuth2::AccessToken::MAC do
           :params => {
             :key1 => 'value1'
           },
-          'HTTP_AUTHORIZATION' => %{MAC id="access_token", nonce="#{nonce}", bodyhash="#{body_hash}", mac="#{signature}"}
+          'HTTP_AUTHORIZATION' => %{MAC id="access_token", nonce="#{nonce}", ts="#{ts}", mac="#{signature}", ext="#{ext}"}
         )
       end
       let(:signature) { 'invalid' }
 
-      context 'when body_hash is invalid' do
-        let(:body_hash) { 'invalid' }
+      context 'when ext is invalid' do
+        let(:ext) { 'invalid' }
         it do
-          expect { token.verify!(request.setup!) }.should raise_error(
+          expect { token_with_ext_verifier.verify!(request.setup!) }.should raise_error(
             Rack::OAuth2::Server::Resource::MAC::Unauthorized,
-            'invalid_token :: BodyHash Invalid'
+            'invalid_token :: Sha256HexVerifier Invalid'
           )
         end
       end
 
-      context 'when body_hash is valid' do
-        let(:body_hash) { 'TPzUbFn1S16mpfmwXCi1L+8oZHRxlLX9/D1ZwAV781o=' }
+      context 'when ext is valid' do
+        let(:ext) { '4cfcd46c59f54b5ea6a5f9b05c28b52fef2864747194b5fdfc3d59c0057bf35a' }
 
         context 'when signature is valid' do
-          let(:signature) { 'ebFlQPMO3WzEZ3ncuIFnVK7IsVt+JEorQEEMJTiz/t8=' }
+          let(:signature) { 'dZYR54n+Lym5qCRRmDqmRZ71rG+bkjSWmqrOv8OjYHk=' }
           it do
             Time.fix(Time.at(1302361200)) do
-              token.verify!(request.setup!).should == :verified
+
+              token_with_ext_verifier.verify!(request.setup!).should == :verified
             end
           end
         end
@@ -107,13 +118,25 @@ describe Rack::OAuth2::AccessToken::MAC do
 
   describe '.authenticate' do
     let(:request) { HTTPClient.new.send(:create_request, :post, URI.parse(resource_endpoint), {}, {:hello => "world"}, {}) }
-    let(:body_hash) { 'PQEeCVAqhFUqD4rhEtAkzCwRVZfjpXfV9JAHkCwiHcU=' }
-    let(:signature) { 'aL2Oh8gWrCAtJ/Xu6XMtJb6ZsYQT+GxQTs/TgJDQ7ZY=' }
+    context 'when no ext_verifier is given' do
+      let(:signature) { 'pOBaL6HRawe4tUPmcU4vJEj1f2GJqrbQOlCcdAYgI/s=' }
 
-    it 'should set Authorization header' do
-      token.should_receive(:generate_nonce).and_return(nonce)
-      request.header.should_receive(:[]=).with('Authorization', "MAC id=\"access_token\", nonce=\"#{nonce}\", bodyhash=\"#{body_hash}\", mac=\"#{signature}\"")
-      token.authenticate(request)
+      it 'should set Authorization header' do
+        token.should_receive(:generate_nonce).and_return(nonce)
+        request.header.should_receive(:[]=).with('Authorization', "MAC id=\"access_token\", nonce=\"#{nonce}\", ts=\"#{ts.to_i}\", mac=\"#{signature}\"")
+        token.authenticate(request)
+      end
     end
+
+    context 'when ext_verifier is given' do
+      let(:signature) { 'vgU0fj6rSpwUCAoCOrXlu8pZBR8a5Q5xIVlB4MCvJeM=' }
+      let(:ext) { '3d011e09502a84552a0f8ae112d024cc2c115597e3a577d5f49007902c221dc5' }
+      it 'should set Authorization header with ext_verifier' do
+        token_with_ext_verifier.should_receive(:generate_nonce).and_return(nonce)
+        request.header.should_receive(:[]=).with('Authorization', "MAC id=\"access_token\", nonce=\"#{nonce}\", ts=\"#{ts.to_i}\", mac=\"#{signature}\", ext=\"#{ext}\"")
+        token_with_ext_verifier.authenticate(request)
+      end
+    end
+
   end
 end
