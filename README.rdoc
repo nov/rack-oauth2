@@ -9,8 +9,8 @@ http://tools.ietf.org/html/draft-ietf-oauth-v2-18
 The OAuth 2.0 Protocol: Bearer Tokens (draft 06)
 http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-06
 
-HTTP Authentication: MAC Access Authentication (draft 00)
-http://www.ietf.org/id/draft-ietf-oauth-v2-http-mac-00.txt
+HTTP Authentication: MAC Access Authentication (draft 01)
+http://www.ietf.org/id/draft-ietf-oauth-v2-http-mac-01.txt
 
 == Installation
 
