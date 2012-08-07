@@ -8,6 +8,7 @@ module Rack
 
         def initialize(attributes = {})
           super(attributes)
+          @issued_at = Time.now.utc
         end
 
         def token_response
@@ -79,7 +80,7 @@ module Rack
 
         def generate_nonce
           [
-            (Time.now.utc - @ts).to_i,
+            (Time.now.utc - @issued_at).to_i,
             SecureRandom.hex
           ].join(':')
         end
