@@ -15,7 +15,7 @@ describe Rack::OAuth2::Client::Grant::RefreshToken do
 
   context 'otherwise' do
     it do
-      expect { grant.new }.should raise_error AttrRequired::AttrMissing
+      expect { grant.new }.to raise_error AttrRequired::AttrMissing
     end
   end
 end

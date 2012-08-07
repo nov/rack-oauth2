@@ -37,7 +37,7 @@ describe Rack::OAuth2::Server::Authorize::Token do
         end
       end
       it do
-        expect { response }.should raise_error AttrRequired::AttrMissing
+        expect { response }.to raise_error AttrRequired::AttrMissing
       end
     end
 
@@ -49,7 +49,7 @@ describe Rack::OAuth2::Server::Authorize::Token do
         end
       end
       it do
-        expect { response }.should raise_error AttrRequired::AttrMissing
+        expect { response }.to raise_error AttrRequired::AttrMissing
       end
     end
   end

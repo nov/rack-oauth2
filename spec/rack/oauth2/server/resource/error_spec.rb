@@ -23,7 +23,7 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
 
   describe '#scheme' do
     it do
-      expect { error.scheme }.should raise_error(RuntimeError, 'Define me!')
+      expect { error.scheme }.to raise_error(RuntimeError, 'Define me!')
     end
   end
 
@@ -105,13 +105,13 @@ describe Rack::OAuth2::Server::Resource::Bearer::ErrorMethods do
 
   describe 'bad_request!' do
     it do
-      expect { request.bad_request! :invalid_request }.should raise_error bad_request
+      expect { request.bad_request! :invalid_request }.to raise_error bad_request
     end
   end
 
   describe 'unauthorized!' do
     it do
-      expect { request.unauthorized! :invalid_client }.should raise_error(RuntimeError, 'Define me!')
+      expect { request.unauthorized! :invalid_client }.to raise_error(RuntimeError, 'Define me!')
     end
   end
 
@@ -121,7 +121,7 @@ describe Rack::OAuth2::Server::Resource::Bearer::ErrorMethods do
     when :invalid_request
       describe method do
         it "should raise Rack::OAuth2::Server::Resource::BadRequest with error = :#{error_code}" do
-          expect { request.send method }.should raise_error(bad_request) { |error|
+          expect { request.send method }.to raise_error(bad_request) { |error|
             error.error.should       == error_code
             error.description.should == default_description[error_code]
           }
@@ -130,7 +130,7 @@ describe Rack::OAuth2::Server::Resource::Bearer::ErrorMethods do
     when :insufficient_scope
       describe method do
         it "should raise Rack::OAuth2::Server::Resource::Forbidden with error = :#{error_code}" do
-          expect { request.send method }.should raise_error(forbidden) { |error|
+          expect { request.send method }.to raise_error(forbidden) { |error|
             error.error.should       == error_code
             error.description.should == default_description[error_code]
           }
@@ -139,7 +139,7 @@ describe Rack::OAuth2::Server::Resource::Bearer::ErrorMethods do
     else
       describe method do
         it do
-          expect { request.send method }.should raise_error(RuntimeError, 'Define me!')
+          expect { request.send method }.to raise_error(RuntimeError, 'Define me!')
         end
       end
     end

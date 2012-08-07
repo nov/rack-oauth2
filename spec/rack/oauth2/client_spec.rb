@@ -18,7 +18,7 @@ describe Rack::OAuth2::Client do
 
   context 'when identifier is missing' do
     it do
-      expect { Rack::OAuth2::Client.new }.should raise_error AttrRequired::AttrMissing
+      expect { Rack::OAuth2::Client.new }.to raise_error AttrRequired::AttrMissing
     end
   end
 
@@ -211,7 +211,7 @@ describe Rack::OAuth2::Client do
         )
       end
       it do
-        expect { client.access_token! }.should raise_error(StandardError, 'Unknown Token Type')
+        expect { client.access_token! }.to raise_error(StandardError, 'Unknown Token Type')
       end
     end
 
@@ -225,7 +225,7 @@ describe Rack::OAuth2::Client do
         )
       end
       it do
-        expect { client.access_token! }.should raise_error Rack::OAuth2::Client::Error
+        expect { client.access_token! }.to raise_error Rack::OAuth2::Client::Error
       end
     end
   end
@@ -241,13 +241,13 @@ describe Rack::OAuth2::Client do
 
     describe '#authorization_uri' do
       it do
-        expect { client.authorization_uri }.should raise_error 'No Host Info'
+        expect { client.authorization_uri }.to raise_error 'No Host Info'
       end
     end
 
     describe '#access_token!' do
       it do
-        expect { client.access_token! }.should raise_error 'No Host Info'
+        expect { client.access_token! }.to raise_error 'No Host Info'
       end
     end
   end

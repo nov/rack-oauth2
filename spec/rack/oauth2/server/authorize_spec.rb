@@ -8,25 +8,25 @@ describe Rack::OAuth2::Server::Authorize do
 
   context 'when response_type is missing' do
     it do
-      expect { request.get "/?client_id=client&redirect_uri=#{redirect_uri}" }.should raise_error bad_request
+      expect { request.get "/?client_id=client&redirect_uri=#{redirect_uri}" }.to raise_error bad_request
     end
   end
 
   context 'when redirect_uri is missing' do
     it do
-      expect { request.get "/?response_type=code&client_id=client" }.should_not raise_error
+      expect { request.get "/?response_type=code&client_id=client" }.not_to raise_error
     end
   end
 
   context 'when client_id is missing' do
     it do
-      expect { request.get "/?response_type=code&redirect_uri=#{redirect_uri}" }.should raise_error bad_request
+      expect { request.get "/?response_type=code&redirect_uri=#{redirect_uri}" }.to raise_error bad_request
     end
   end
 
   context 'when unknown response_type is given' do
     it do
-      expect { request.get "/?response_type=unknown&client_id=client&redirect_uri=#{redirect_uri}" }.should raise_error bad_request
+      expect { request.get "/?response_type=unknown&client_id=client&redirect_uri=#{redirect_uri}" }.to raise_error bad_request
     end
   end
 
@@ -40,8 +40,8 @@ describe Rack::OAuth2::Server::Authorize do
   end
 
   describe Rack::OAuth2::Server::Authorize::Request do
-    let(:env)            { Rack::MockRequest.env_for("/authorize?client_id=client&redirect_uri=#{redirect_uri}") }
-    let(:request)        { Rack::OAuth2::Server::Authorize::Request.new env }
+    let(:env)     { Rack::MockRequest.env_for("/authorize?client_id=client&redirect_uri=#{redirect_uri}") }
+    let(:request) { Rack::OAuth2::Server::Authorize::Request.new env }
 
     describe '#varified_redirect_uri' do
       context 'when an Array of pre-registered URIs are given' do
@@ -68,7 +68,7 @@ describe Rack::OAuth2::Server::Authorize do
           it do
             expect do
               request.verify_redirect_uri!(pre_registered)
-            end.should raise_error Rack::OAuth2::Server::Authorize::BadRequest
+            end.to raise_error Rack::OAuth2::Server::Authorize::BadRequest
           end
         end
       end
@@ -93,7 +93,7 @@ describe Rack::OAuth2::Server::Authorize do
           it do
             expect do
               request.verify_redirect_uri!(pre_registered)
-            end.should raise_error Rack::OAuth2::Server::Authorize::BadRequest
+            end.to raise_error Rack::OAuth2::Server::Authorize::BadRequest
           end
         end
       end
@@ -103,7 +103,7 @@ describe Rack::OAuth2::Server::Authorize do
         it do
           expect do
             request.verify_redirect_uri!(pre_registered)
-          end.should raise_error Rack::OAuth2::Server::Authorize::BadRequest
+          end.to raise_error Rack::OAuth2::Server::Authorize::BadRequest
         end
       end
 
@@ -151,7 +151,7 @@ describe Rack::OAuth2::Server::Authorize do
       it do
         expect do
           app.send(:response_type_for, request)
-        end.should raise_error bad_request
+        end.to raise_error bad_request
       end
     end
 
