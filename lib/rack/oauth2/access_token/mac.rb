@@ -8,7 +8,6 @@ module Rack
 
         def initialize(attributes = {})
           super(attributes)
-          @ts ||= Time.now.utc
         end
 
         def token_response
@@ -19,7 +18,6 @@ module Rack
         end
 
         def verify!(request)          
-
           body = request.body.read
           if self.ext_verifier.present?
             self.ext_verifier.new(
@@ -61,7 +59,7 @@ module Rack
             :request_uri => request.header.create_query_uri,
             :host        => request.header.request_uri.host,
             :port        => request.header.request_uri.port,
-            :ts          => self.ts,
+            :ts          => self.ts || Time.now.utc,
             :ext         => @ext
           ).calculate
 
