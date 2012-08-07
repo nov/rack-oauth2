@@ -43,8 +43,8 @@ module Rack
       _http_client_ = HTTPClient.new(
         :agent_name => agent_name
       )
-      _http_client_.request_filter << Debugger::RequestFilter.new if debugging?
       http_config.try(:call, _http_client_)
+      _http_client_.request_filter << Debugger::RequestFilter.new if debugging?
       _http_client_
     end
     def self.http_config(&block)
