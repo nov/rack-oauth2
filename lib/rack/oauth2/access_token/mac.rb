@@ -44,6 +44,7 @@ module Rack
 
         def authenticate(request)
           @nonce = generate_nonce
+          @ts_generated = @ts || Time.now.utc
 
           if self.ext_verifier.present?
             @ext = self.ext_verifier.new(
@@ -60,7 +61,7 @@ module Rack
             :request_uri => request.header.create_query_uri,
             :host        => request.header.request_uri.host,
             :port        => request.header.request_uri.port,
-            :ts          => self.ts || Time.now.utc,
+            :ts          => @ts_generated,
             :ext         => @ext
           ).calculate
 
@@ -72,7 +73,7 @@ module Rack
         def authorization_header
           header = "MAC id=\"#{access_token}\""
           header << ", nonce=\"#{nonce}\""
-          header << ", ts=\"#{ts.to_i}\""
+          header << ", ts=\"#{@ts_generated.to_i}\""
           header << ", mac=\"#{signature}\""
           header << ", ext=\"#{ext}\"" if @ext.present?
           header
