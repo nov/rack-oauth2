@@ -22,11 +22,6 @@ module Rack
         def verify!(request)          
           body = request.body.read
           if self.ext_verifier.present?
-            puts self.ext_verifier.new(
-              :raw_body => body,
-              :algorithm => self.mac_algorithm
-            ).calculate
-
             self.ext_verifier.new(
               :raw_body => body,
               :algorithm => self.mac_algorithm
