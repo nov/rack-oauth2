@@ -20,14 +20,14 @@ describe Rack::OAuth2::Client::Grant::Password do
 
     context 'otherwise' do
       it do
-        expect { grant.new attributes }.should raise_error AttrRequired::AttrMissing
+        expect { grant.new attributes }.to raise_error AttrRequired::AttrMissing
       end
     end
   end
 
   context 'otherwise' do
     it do
-      expect { grant.new }.should raise_error AttrRequired::AttrMissing
+      expect { grant.new }.to raise_error AttrRequired::AttrMissing
     end
   end
 end

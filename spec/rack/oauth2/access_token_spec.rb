@@ -33,7 +33,7 @@ describe Rack::OAuth2::AccessToken do
           :expires_in => 3600,
           :scope => [:scope1, :scope2]
         )
-      end.should raise_error AttrRequired::AttrMissing
+      end.to raise_error AttrRequired::AttrMissing
     end
   end
 
@@ -43,7 +43,7 @@ describe Rack::OAuth2::AccessToken do
         Rack::OAuth2::AccessToken::Bearer.new(
           :access_token => 'access_token'
         )
-      end.should_not raise_error
+      end.not_to raise_error
     end
   end
 

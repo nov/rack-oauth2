@@ -96,7 +96,7 @@ describe Rack::OAuth2::Server::Token do
         Rack::OAuth2::Server::Token.new
       end
       it do
-        expect { request.post('/', :params => params) }.should raise_error AttrRequired::AttrMissing
+        expect { request.post('/', :params => params) }.to raise_error AttrRequired::AttrMissing
       end
     end
   end

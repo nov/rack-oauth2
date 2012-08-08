@@ -11,13 +11,13 @@ describe Rack::OAuth2::Server::Resource::Request do
 
   describe '#setup!' do
     it do
-      expect { request.setup! }.should raise_error(RuntimeError, 'Define me!')
+      expect { request.setup! }.to raise_error(RuntimeError, 'Define me!')
     end
   end
 
   describe '#oauth2?' do
     it do
-      expect { request.oauth2? }.should raise_error(RuntimeError, 'Define me!')
+      expect { request.oauth2? }.to raise_error(RuntimeError, 'Define me!')
     end
   end
 end

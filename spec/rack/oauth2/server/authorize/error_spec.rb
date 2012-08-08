@@ -50,7 +50,7 @@ describe Rack::OAuth2::Server::Authorize::BadRequest do
 
     context 'otherwise' do
       it 'should raise itself' do
-        expect { error.finish }.should raise_error(klass) { |e|
+        expect { error.finish }.to raise_error(klass) { |e|
           e.should == error
         }
       end
@@ -69,12 +69,12 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
 
   describe 'bad_request!' do
     it do
-      expect { request.bad_request! }.should raise_error klass
+      expect { request.bad_request! }.to raise_error klass
     end
 
     context 'when response_type = :code' do
       it 'should set protocol_params_location = :query' do
-        expect { request_for_code.bad_request! }.should raise_error(klass) { |e|
+        expect { request_for_code.bad_request! }.to raise_error(klass) { |e|
           e.protocol_params_location.should == :query
         }
       end
@@ -82,7 +82,7 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
 
     context 'when response_type = :token' do
       it 'should set protocol_params_location = :fragment' do
-        expect { request_for_token.bad_request! }.should raise_error(klass) { |e|
+        expect { request_for_token.bad_request! }.to raise_error(klass) { |e|
           e.protocol_params_location.should == :fragment
         }
       end
@@ -93,7 +93,7 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
     method = "#{error_code}!"
     describe method do
       it "should raise Rack::OAuth2::Server::Authorize::BadRequest with error = :#{error_code}" do
-        expect { request.send method }.should raise_error(klass) { |error|
+        expect { request.send method }.to raise_error(klass) { |error|
           error.error.should       == error_code
           error.description.should == default_description[error_code]
         }

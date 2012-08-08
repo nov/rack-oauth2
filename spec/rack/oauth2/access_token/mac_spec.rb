@@ -60,7 +60,7 @@ describe Rack::OAuth2::AccessToken::MAC do
       context 'otherwise' do
         let(:signature) { 'invalid' }
         it do
-          expect { token.verify!(request.setup!) }.should raise_error(
+          expect { token.verify!(request.setup!) }.to raise_error(
             Rack::OAuth2::Server::Resource::MAC::Unauthorized,
             'invalid_token :: Signature Invalid'
           )
@@ -84,7 +84,7 @@ describe Rack::OAuth2::AccessToken::MAC do
       context 'when ext is invalid' do
         let(:ext) { 'invalid' }
         it do
-          expect { token_with_ext_verifier.verify!(request.setup!) }.should raise_error(
+          expect { token_with_ext_verifier.verify!(request.setup!) }.to raise_error(
             Rack::OAuth2::Server::Resource::MAC::Unauthorized,
             'invalid_token :: Sha256HexVerifier Invalid'
           )
@@ -98,7 +98,6 @@ describe Rack::OAuth2::AccessToken::MAC do
           let(:signature) { 'dZYR54n+Lym5qCRRmDqmRZ71rG+bkjSWmqrOv8OjYHk=' }
           it do
             Time.fix(Time.at(1302361200)) do
-
               token_with_ext_verifier.verify!(request.setup!).should == :verified
             end
           end
@@ -106,7 +105,7 @@ describe Rack::OAuth2::AccessToken::MAC do
 
         context 'otherwise' do
           it do
-            expect { token.verify!(request.setup!) }.should raise_error(
+            expect { token.verify!(request.setup!) }.to raise_error(
               Rack::OAuth2::Server::Resource::MAC::Unauthorized,
               'invalid_token :: Signature Invalid'
             )

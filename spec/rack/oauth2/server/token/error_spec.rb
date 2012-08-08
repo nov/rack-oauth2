@@ -41,13 +41,13 @@ describe Rack::OAuth2::Server::Token::ErrorMethods do
 
   describe 'bad_request!' do
     it do
-      expect { request.bad_request! :invalid_request }.should raise_error bad_request
+      expect { request.bad_request! :invalid_request }.to raise_error bad_request
     end
   end
 
   describe 'unauthorized!' do
     it do
-      expect { request.unauthorized! :invalid_client }.should raise_error unauthorized
+      expect { request.unauthorized! :invalid_client }.to raise_error unauthorized
     end
   end
 
@@ -57,7 +57,7 @@ describe Rack::OAuth2::Server::Token::ErrorMethods do
     when :invalid_client
       describe method do
         it "should raise Rack::OAuth2::Server::Token::Unauthorized with error = :#{error_code}" do
-          expect { request.send method }.should raise_error(unauthorized) { |error|
+          expect { request.send method }.to raise_error(unauthorized) { |error|
             error.error.should       == error_code
             error.description.should == default_description[error_code]
           }
@@ -66,7 +66,7 @@ describe Rack::OAuth2::Server::Token::ErrorMethods do
     else
       describe method do
         it "should raise Rack::OAuth2::Server::Token::BadRequest with error = :#{error_code}" do
-          expect { request.send method }.should raise_error(bad_request) { |error|
+          expect { request.send method }.to raise_error(bad_request) { |error|
             error.error.should       == error_code
             error.description.should == default_description[error_code]
           }

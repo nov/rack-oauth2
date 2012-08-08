@@ -40,14 +40,14 @@ describe Rack::OAuth2::Util do
       it do
         expect do
           util.parse_uri '::'
-        end.should raise_error URI::InvalidURIError
+        end.to raise_error URI::InvalidURIError
       end
     end
 
     context 'otherwise' do
       it do
-        expect { util.parse_uri nil }.should raise_error StandardError
-        expect { util.parse_uri 123 }.should raise_error StandardError
+        expect { util.parse_uri nil }.to raise_error StandardError
+        expect { util.parse_uri 123 }.to raise_error StandardError
       end
     end
   end

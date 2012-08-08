@@ -27,7 +27,7 @@ describe Rack::OAuth2::Server::Resource::MAC::ErrorMethods do
 
   describe 'unauthorized!' do
     it do
-      expect { request.unauthorized! :invalid_client }.should raise_error unauthorized
+      expect { request.unauthorized! :invalid_client }.to raise_error unauthorized
     end
   end
 
@@ -41,7 +41,7 @@ describe Rack::OAuth2::Server::Resource::MAC::ErrorMethods do
     else
       describe method do
         it "should raise Rack::OAuth2::Server::Resource::Bearer::Unauthorized with error = :#{error_code}" do
-          expect { request.send method }.should raise_error(unauthorized) { |error|
+          expect { request.send method }.to raise_error(unauthorized) { |error|
             error.error.should       == error_code
             error.description.should == default_description[error_code]
           }
