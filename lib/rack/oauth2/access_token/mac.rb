@@ -3,12 +3,13 @@ module Rack
     class AccessToken
       class MAC < AccessToken
         attr_required :mac_key, :mac_algorithm
-        attr_optional :ts, :ext_verifier
+        attr_optional :ts, :ext_verifier, :ts_expires_in
         attr_reader :nonce, :signature, :ext
 
         def initialize(attributes = {})
           super(attributes)
           @issued_at = Time.now.utc
+          @ts_expires_in ||= 5.minutes
         end
 
         def token_response
@@ -21,11 +22,21 @@ module Rack
         def verify!(request)          
           body = request.body.read
           if self.ext_verifier.present?
+            puts self.ext_verifier.new(
+              :raw_body => body,
+              :algorithm => self.mac_algorithm
+            ).calculate
+
             self.ext_verifier.new(
               :raw_body => body,
               :algorithm => self.mac_algorithm
             ).verify!(request.ext)
           end
+
+          now = Time.now.utc.to_i
+          now = @ts.to_i if @ts.present?
+                    
+          raise Rack::OAuth2::AccessToken::MAC::Verifier::VerificationFailed.new("Request ts expired") if now - request.ts.to_i > @ts_expires_in.to_i
 
           Signature.new(
             :secret      => self.mac_key,
