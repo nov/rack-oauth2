@@ -19,7 +19,8 @@ describe Rack::OAuth2::Server::Resource::MAC do
     Rack::OAuth2::AccessToken::MAC.new(
       :access_token => 'valid_token',
       :mac_key => 'secret',
-      :mac_algorithm => 'hmac-sha-256'
+      :mac_algorithm => 'hmac-sha-256',
+      :ts => 1305820230 # fix verification time
     )
   end
   let(:access_token) { env[Rack::OAuth2::Server::Resource::ACCESS_TOKEN] }
@@ -79,6 +80,11 @@ describe Rack::OAuth2::Server::Resource::MAC do
     context 'when all required params are valid' do
       let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC id="valid_token", nonce="51e74de734c05613f37520872e68db5f", ts="1305820234", mac="26JP6MMZyAHLHeMU8+m+NbVJgZbikp5SlT86/a62pwg="') }
       it_behaves_like :authenticated_mac_request
+    end
+
+    context 'when all required params are valid and ts is expired' do
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'MAC id="valid_token", nonce="51e74de734c05613f37520872e68db5f", ts="1305819234", mac="nuo4765MZrVL/qMsAtuTczhqZAE5y02ChaLCyOiVU68="') }
+      it_behaves_like :unauthorized_mac_request
     end
   end
 

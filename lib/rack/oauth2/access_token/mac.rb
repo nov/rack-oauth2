@@ -3,12 +3,13 @@ module Rack
     class AccessToken
       class MAC < AccessToken
         attr_required :mac_key, :mac_algorithm
-        attr_optional :ts, :ext_verifier
+        attr_optional :ts, :ext_verifier, :ts_expires_in
         attr_reader :nonce, :signature, :ext
 
         def initialize(attributes = {})
           super(attributes)
-          @ts ||= Time.now.utc
+          @issued_at = Time.now.utc
+          @ts_expires_in ||= 5.minutes
         end
 
         def token_response
@@ -19,7 +20,6 @@ module Rack
         end
 
         def verify!(request)          
-
           body = request.body.read
           if self.ext_verifier.present?
             self.ext_verifier.new(
@@ -27,6 +27,11 @@ module Rack
               :algorithm => self.mac_algorithm
             ).verify!(request.ext)
           end
+
+          now = Time.now.utc.to_i
+          now = @ts.to_i if @ts.present?
+                    
+          raise Rack::OAuth2::AccessToken::MAC::Verifier::VerificationFailed.new("Request ts expired") if now - request.ts.to_i > @ts_expires_in.to_i
 
           Signature.new(
             :secret      => self.mac_key,
@@ -45,6 +50,7 @@ module Rack
 
         def authenticate(request)
           @nonce = generate_nonce
+          @ts_generated = @ts || Time.now.utc
 
           if self.ext_verifier.present?
             @ext = self.ext_verifier.new(
@@ -61,7 +67,7 @@ module Rack
             :request_uri => request.header.create_query_uri,
             :host        => request.header.request_uri.host,
             :port        => request.header.request_uri.port,
-            :ts          => self.ts,
+            :ts          => @ts_generated,
             :ext         => @ext
           ).calculate
 
@@ -73,7 +79,7 @@ module Rack
         def authorization_header
           header = "MAC id=\"#{access_token}\""
           header << ", nonce=\"#{nonce}\""
-          header << ", ts=\"#{ts.to_i}\""
+          header << ", ts=\"#{@ts_generated.to_i}\""
           header << ", mac=\"#{signature}\""
           header << ", ext=\"#{ext}\"" if @ext.present?
           header
@@ -81,7 +87,7 @@ module Rack
 
         def generate_nonce
           [
-            (Time.now.utc - @ts).to_i,
+            (Time.now.utc - @issued_at).to_i,
             SecureRandom.hex
           ].join(':')
         end
