@@ -15,4 +15,14 @@ describe Rack::OAuth2::AccessToken::MAC::Sha256HexVerifier do
   end
 
 
+  context 'when raw_body is empty' do
+    subject do
+      Rack::OAuth2::AccessToken::MAC::Sha256HexVerifier.new(
+        :algorithm => 'hmac-sha-256',
+        :raw_body => ''
+      )
+    end
+    its(:calculate) { should be_nil }
+  end
+
 end
