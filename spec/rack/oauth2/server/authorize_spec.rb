@@ -120,8 +120,19 @@ describe Rack::OAuth2::Server::Authorize do
         context 'when pre-registered redirect_uri is an Array' do
           context 'when only 1' do
             let(:pre_registered) { [redirect_uri] }
-            it 'should use pre-registered redirect_uri' do
-              request.verify_redirect_uri!(pre_registered).should == pre_registered.first
+
+            context 'when partial match allowed' do
+              it do
+                expect do
+                  request.verify_redirect_uri!(pre_registered, :allow_partial_match)
+                end.to raise_error Rack::OAuth2::Server::Authorize::BadRequest
+              end
+            end
+
+            context 'otherwise' do
+              it 'should use pre-registered redirect_uri' do
+                request.verify_redirect_uri!(pre_registered).should == pre_registered.first
+              end
             end
           end
 
