@@ -60,8 +60,8 @@ module Rack
               else
                 bad_request! 'Invalid redirect_uri is given'
               end
-            elsif pre_registered.present?
-              pre_registered
+            elsif pre_registered.present? && Array(pre_registered).size == 1
+              Array(pre_registered).first
             else
               bad_request! 'No redirect_uri is given'
             end

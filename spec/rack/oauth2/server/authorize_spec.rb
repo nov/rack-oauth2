@@ -108,10 +108,31 @@ describe Rack::OAuth2::Server::Authorize do
       end
 
       context 'when redirect_uri is missing' do
-        let(:pre_registered) { redirect_uri }
         let(:env) { Rack::MockRequest.env_for("/authorize?client_id=client") }
-        it 'should use pre-registered redirect_uri' do
-          request.verify_redirect_uri!(pre_registered).should == pre_registered
+
+        context 'when pre-registered redirect_uri is a String' do
+          let(:pre_registered) { redirect_uri }
+          it 'should use pre-registered redirect_uri' do
+            request.verify_redirect_uri!(pre_registered).should == pre_registered
+          end
+        end
+
+        context 'when pre-registered redirect_uri is an Array' do
+          context 'when only 1' do
+            let(:pre_registered) { [redirect_uri] }
+            it 'should use pre-registered redirect_uri' do
+              request.verify_redirect_uri!(pre_registered).should == pre_registered.first
+            end
+          end
+
+          context 'when more than 2' do
+            let(:pre_registered) { [redirect_uri, 'http://client.example.com/callback2'] }
+            it do
+              expect do
+                request.verify_redirect_uri!(pre_registered)
+              end.to raise_error Rack::OAuth2::Server::Authorize::BadRequest
+            end
+          end
         end
       end
     end
