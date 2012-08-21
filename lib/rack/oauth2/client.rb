@@ -89,7 +89,7 @@ module Rack
       end
 
       def handle_success_response(response)
-        token_hash = JSON.parse(response.body).with_indifferent_access
+        token_hash = MultiJson.load(response.body).with_indifferent_access
         case token_hash[:token_type].try(:downcase)
         when 'bearer'
           AccessToken::Bearer.new(token_hash)
@@ -100,15 +100,15 @@ module Rack
         else
           raise 'Unknown Token Type'
         end
-      rescue JSON::ParserError
+      rescue MultiJson::DecodeError
         # NOTE: Facebook support (They don't use JSON as token response)
         AccessToken::Legacy.new Rack::Utils.parse_nested_query(response.body).with_indifferent_access
       end
 
       def handle_error_response(response)
-        error = JSON.parse(response.body).with_indifferent_access
+        error = MultiJson.load(response.body).with_indifferent_access
         raise Error.new(response.status, error)
-      rescue JSON::ParserError
+      rescue MultiJson::DecodeError
         raise Error.new(response.status, :error => 'Unknown', :error_description => response.body)
       end
     end
