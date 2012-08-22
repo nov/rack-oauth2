@@ -28,7 +28,7 @@ module Rack
             yield response if block_given?
             unless response.redirect?
               response.header['Content-Type'] = 'application/json'
-              response.write Util.compact_hash(protocol_params).to_json
+              response.write MultiJson.dump(Util.compact_hash(protocol_params))
             end
             response.finish
           end

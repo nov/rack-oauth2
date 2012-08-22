@@ -64,7 +64,7 @@ module Rack
 
           def finish
             attr_missing!
-            write Util.compact_hash(protocol_params).to_json
+            write MultiJson.dump(Util.compact_hash(protocol_params))
             header['Content-Type'] = 'application/json'
             header['Cache-Control'] = 'no-store'
             header['Pragma'] = 'no-cache'

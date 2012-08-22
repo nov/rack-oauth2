@@ -1,5 +1,5 @@
 require 'rack'
-require 'json'
+require 'multi_json'
 require 'httpclient'
 require 'logger'
 require 'active_support/core_ext'
