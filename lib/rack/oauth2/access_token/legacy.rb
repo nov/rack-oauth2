@@ -4,7 +4,10 @@ module Rack
       class Legacy < AccessToken
         def initialize(attributes = {})
           super
-          self.expires_in = self.expires_in.try(:to_i)
+          self.expires_in = (
+            self.expires_in ||
+            attributes[:expires]
+          ).try(:to_i)
         end
 
         def to_s # This is for fb_graph
