@@ -3,9 +3,10 @@ module Rack
     module Server
       module Abstract
         class Error < StandardError
-          attr_accessor :status, :error, :description, :uri, :realm
+          attr_accessor :status, :error, :description, :uri, :realm, :header
 
           def initialize(status, error, description = nil, options = {})
+            @header      = {}
             @status      = status
             @error       = error
             @description = description
@@ -27,8 +28,13 @@ module Rack
             response.status = status
             yield response if block_given?
             unless response.redirect?
-              response.header['Content-Type'] = 'application/json'
-              response.write MultiJson.dump(Util.compact_hash(protocol_params))
+              if header['Content-Type'] == 'application/xml'
+                response.header['Content-Type'] = 'application/xml'
+                response.write Util.compact_hash(protocol_params).to_xml(:root => 'OAuth')
+              else
+                response.header['Content-Type'] = 'application/json'
+                response.write Util.compact_hash(protocol_params).to_json
+              end
             end
             response.finish
           end

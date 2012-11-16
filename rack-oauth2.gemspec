@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = "rack-oauth2"
   s.version = File.read("VERSION")
-  s.required_rubygems_version = Gem::Requirement.new(">= 1.3.6") if s.respond_to? :required_rubygems_version=
+  s.required_rubygems_version = Gem::Requirement.new(">= 1.3.6") if s.respond_to?(:required_rubygems_version=)
   s.authors = ["nov matake"]
   s.description = %q{OAuth 2.0 Server & Client Library. Both Bearer and MAC token type are supported.}
   s.summary = %q{OAuth 2.0 Server & Client Library - Both Bearer and MAC token type are supported}
@@ -17,9 +17,10 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "multi_json", ">= 1.3.6"
   s.add_runtime_dependency "httpclient", ">= 2.2.0.2"
   s.add_runtime_dependency "activesupport", ">= 2.3"
-  s.add_runtime_dependency "i18n"
   s.add_runtime_dependency "attr_required", ">= 0.0.5"
+  s.add_runtime_dependency "builder"
   s.add_development_dependency "rake", ">= 0.8"
+  s.add_runtime_dependency "httpclient", ">= 2.2.0.2"
   if RUBY_VERSION >= '1.9'
     s.add_development_dependency "cover_me", ">= 1.2.0"
   else

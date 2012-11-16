@@ -17,7 +17,9 @@ module Rack
                 response.redirect Util.redirect_uri(redirect_uri, protocol_params_location, protocol_params)
               end
             else
-              raise self
+              super do |response|
+                response.header['WWW-Authenticate'] = 'Basic realm="OAuth2 Token Endpoint"'
+              end
             end
           end
         end
