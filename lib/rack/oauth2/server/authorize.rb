@@ -106,7 +106,7 @@ module Rack
               attr_missing!
               redirect redirect_uri_with_credentials
             end
-            if header['Content-Type'] = 'application/xml'
+            if header['Content-Type'] == 'application/xml'
               write Util.compact_hash(protocol_params).to_xml(:root => "OAuth")
             else
               header['Content-Type'] = 'application/json'

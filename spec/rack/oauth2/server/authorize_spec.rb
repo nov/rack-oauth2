@@ -31,7 +31,7 @@ describe Rack::OAuth2::Server::Authorize do
 
     context "when response_type = :token" do
       let(:app) { Rack::OAuth2::Server::Authorize.new {|req, res| res.access_token = bearer_token} }
-      subject { request.get "/?response_type=token&client_id=client&redirect_uri=#{redirect_uri}" }
+      subject { request.get "/?response_type=token&client_id=client&redirect_uri=#{redirect_uri}", 'HTTP_ACCEPT' => 'application/xml' }
       its(:status) { should == 200 }
       its(:body) { should match "<OAuth>" }
       its(:body) { should match "<access-token>access_token</access-token>" }
