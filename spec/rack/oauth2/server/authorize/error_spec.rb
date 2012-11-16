@@ -50,9 +50,9 @@ describe Rack::OAuth2::Server::Authorize::BadRequest do
 
     context 'otherwise' do
       it 'should raise itself' do
-        expect { error.finish }.to raise_error(klass) { |e|
-          e.should == error
-        }
+        state, header, response = error.finish
+        state.should eql 400
+        response.body.should include %q{{"error":"invalid_request"}}
       end
     end
   end

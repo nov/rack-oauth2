@@ -4,8 +4,11 @@ module Rack
       class Authorize < Abstract::Handler
         def call(env)
           request = Request.new(env)
-          response_type_for(request).new(&@authenticator).call(env).finish
+          response = response_type_for(request).new(&@authenticator).call(env)
+          response.header['Content-Type'] = request.env['HTTP_ACCEPT']
+          response.finish
         rescue Rack::OAuth2::Server::Abstract::Error => e
+          e.header['Content-Type'] = env['HTTP_ACCEPT']
           e.finish
         end
 
@@ -22,7 +25,7 @@ module Rack
             request.attr_missing!
           else
             extensions.detect do |extension|
-              extension.response_type_for? response_type
+              extension.response_type_for?(response_type)
             end || request.unsupported_response_type!
           end
         end
@@ -102,6 +105,12 @@ module Rack
             if approved?
               attr_missing!
               redirect redirect_uri_with_credentials
+            end
+            if header['Content-Type'] == 'application/xml'
+              write Util.compact_hash(protocol_params).to_xml(:root => "OAuth")
+            else
+              header['Content-Type'] = 'application/json'
+              write Util.compact_hash(protocol_params).to_json
             end
             super
           end

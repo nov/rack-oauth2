@@ -6,8 +6,11 @@ module Rack
       class Token < Abstract::Handler
         def call(env)
           request = Request.new(env)
-          grant_type_for(request).new(&@authenticator).call(env).finish
+          response = grant_type_for(request).new(&@authenticator).call(env)
+          response.header['Content-Type'] = request.env['HTTP_ACCEPT']
+          response.finish
         rescue Rack::OAuth2::Server::Abstract::Error => e
+          e.header['Content-Type'] = env['HTTP_ACCEPT']
           e.finish
         end
 
@@ -64,8 +67,12 @@ module Rack
 
           def finish
             attr_missing!
-            write MultiJson.dump(Util.compact_hash(protocol_params))
-            header['Content-Type'] = 'application/json'
+            if header['Content-Type'] == 'application/xml'
+              write Util.compact_hash(protocol_params).to_xml(:root => 'OAuth')
+            else
+              header['Content-Type'] = 'application/json'
+              write Util.compact_hash(protocol_params).to_json
+            end
             header['Cache-Control'] = 'no-store'
             header['Pragma'] = 'no-cache'
             super

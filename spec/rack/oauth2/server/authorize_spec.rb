@@ -1,41 +1,41 @@
 require 'spec_helper.rb'
 
 describe Rack::OAuth2::Server::Authorize do
+  let(:access_token) { 'access_token' }
+  let(:bearer_token) { Rack::OAuth2::AccessToken::Bearer.new(:access_token => access_token) }
   let(:app)          { Rack::OAuth2::Server::Authorize.new }
   let(:request)      { Rack::MockRequest.new app }
   let(:redirect_uri) { 'http://client.example.com/callback' }
   let(:bad_request)  { Rack::OAuth2::Server::Authorize::BadRequest }
 
   context 'when response_type is missing' do
-    it do
-      expect { request.get "/?client_id=client&redirect_uri=#{redirect_uri}" }.to raise_error bad_request
-    end
-  end
-
-  context 'when redirect_uri is missing' do
-    it do
-      expect { request.get "/?response_type=code&client_id=client" }.not_to raise_error
-    end
+    subject { request.get "/?client_id=client&redirect_uri=#{redirect_uri}" }
+    it { expect(subject.body).to include "invalid_request" }
   end
 
   context 'when client_id is missing' do
-    it do
-      expect { request.get "/?response_type=code&redirect_uri=#{redirect_uri}" }.to raise_error bad_request
-    end
+    subject { request.get "/?response_type=code&redirect_uri=#{redirect_uri}" }
+    it { expect(subject.body).to include "bad_request" }
   end
 
   context 'when unknown response_type is given' do
-    it do
-      expect { request.get "/?response_type=unknown&client_id=client&redirect_uri=#{redirect_uri}" }.to raise_error bad_request
-    end
+    subject { request.get "/?response_type=unknown&client_id=client&redirect_uri=#{redirect_uri}"}
+    it { expect(subject.body).to include "unsupported_response_type" }
   end
 
   context 'when all required parameters are valid' do
-    [:code, :token].each do |request_type|
-      context "when response_type = :#{request_type}" do
-        subject { request.get "/?response_type=#{request_type}&client_id=client&redirect_uri=#{redirect_uri}" }
-        its(:status) { should == 200 }
-      end
+    context "when response_type = :code" do
+      subject { request.get "/?response_type=code&client_id=client&redirect_uri=#{redirect_uri}" }
+      its(:status) { should == 200 }
+    end
+
+    context "when response_type = :token" do
+      let(:app) { Rack::OAuth2::Server::Authorize.new {|req, res| res.access_token = bearer_token} }
+      subject { request.get "/?response_type=token&client_id=client&redirect_uri=#{redirect_uri}", 'HTTP_ACCEPT' => 'application/xml' }
+      its(:status) { should == 200 }
+      its(:body) { should match "<OAuth>" }
+      its(:body) { should match "<access-token>access_token</access-token>" }
+      its(:body) { should match %q{<token-type type="symbol">bearer</token-type>} }
     end
   end
 

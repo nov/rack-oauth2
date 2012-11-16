@@ -19,3 +19,8 @@ rdoc
 pkg
 
 ## PROJECT::SPECIFIC
+.bundle
+Gemfile.lock
+pkg/*
+*.un~
+*.log
