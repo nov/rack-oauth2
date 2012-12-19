@@ -41,7 +41,7 @@ module Rack
           def initialize(env)
             super
             # NOTE: Raise before redirect_uri is saved not to redirect back to unverified redirect_uri.
-            bad_request! if client_id.blank?
+            invalid_request! if client_id.blank?
             @redirect_uri = Util.parse_uri(params['redirect_uri']) if params['redirect_uri']
             @state = params['state']
           end
@@ -58,12 +58,12 @@ module Rack
               if verified
                 redirect_uri
               else
-                bad_request! 'Invalid redirect_uri is given'
+                invalid_request! 'Invalid redirect_uri is given'
               end
             elsif pre_registered.present? && Array(pre_registered).size == 1 && !allow_partial_match
               Array(pre_registered).first
             else
-              bad_request! 'No redirect_uri is given'
+              invalid_request! 'No redirect_uri is given'
             end
             self.verified_redirect_uri.to_s
           end
