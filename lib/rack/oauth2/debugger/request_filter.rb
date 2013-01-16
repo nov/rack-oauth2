@@ -6,7 +6,7 @@ module Rack
         # request:: HTTP::Message
         def filter_request(request)
           started = "======= [Rack::OAuth2] HTTP REQUEST STARTED ======="
-          OAuth2.logger.info [started, request.dump].join("\n")
+          log started, request.dump
         end
 
         # Callback called in HTTPClient (after received a response)
@@ -14,7 +14,15 @@ module Rack
         # response:: HTTP::Message
         def filter_response(request, response)
           finished = "======= [Rack::OAuth2] HTTP REQUEST FINISHED ======="
-          OAuth2.logger.info ['-' * 50, response.dump, finished].join("\n")
+          log '-' * 50, response.dump, finished
+        end
+
+        private
+
+        def log(*outputs)
+          outputs.each do |output|
+            OAuth2.logger.info output
+          end
         end
       end
     end
