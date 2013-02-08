@@ -24,7 +24,7 @@ module Rack
             end
 
             def oauth2?
-              @auth_header.provided? && @auth_header.scheme == :mac
+              @auth_header.provided? && @auth_header.scheme.to_s == 'mac'
             end
           end
         end
