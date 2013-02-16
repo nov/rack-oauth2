@@ -228,6 +228,22 @@ describe Rack::OAuth2::Client do
         expect { client.access_token! }.to raise_error Rack::OAuth2::Client::Error
       end
     end
+
+    context 'when no body given' do
+      context 'when error given' do
+        before do
+          mock_response(
+            :post,
+            'https://server.example.com/oauth2/token',
+            'blank',
+            :status => 400
+          )
+        end
+        it do
+          expect { client.access_token! }.to raise_error Rack::OAuth2::Client::Error
+        end
+      end
+    end
   end
 
   context 'when no host info' do

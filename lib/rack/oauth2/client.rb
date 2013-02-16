@@ -89,7 +89,7 @@ module Rack
       end
 
       def handle_success_response(response)
-        token_hash = MultiJson.load(response.body).with_indifferent_access
+        token_hash = parse_json response.body
         case token_hash[:token_type].try(:downcase)
         when 'bearer'
           AccessToken::Bearer.new(token_hash)
@@ -106,10 +106,14 @@ module Rack
       end
 
       def handle_error_response(response)
-        error = MultiJson.load(response.body).with_indifferent_access
+        error = parse_json response.body
         raise Error.new(response.status, error)
       rescue MultiJson::DecodeError
         raise Error.new(response.status, :error => 'Unknown', :error_description => response.body)
+      end
+
+      def parse_json(raw_json)
+        MultiJson.load(raw_json).try(:with_indifferent_access) || {}
       end
     end
   end
