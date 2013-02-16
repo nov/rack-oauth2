@@ -100,7 +100,7 @@ module Rack
         else
           raise 'Unknown Token Type'
         end
-      rescue MultiJson::DecodeError
+      rescue MultiJson::LoadError
         # NOTE: Facebook support (They don't use JSON as token response)
         AccessToken::Legacy.new Rack::Utils.parse_nested_query(response.body).with_indifferent_access
       end
@@ -108,11 +108,12 @@ module Rack
       def handle_error_response(response)
         error = parse_json response.body
         raise Error.new(response.status, error)
-      rescue MultiJson::DecodeError
+      rescue MultiJson::LoadError
         raise Error.new(response.status, :error => 'Unknown', :error_description => response.body)
       end
 
       def parse_json(raw_json)
+        # MultiJson.parse('') returns nil when using MultiJson::Adapters::JsonGem
         MultiJson.load(raw_json).try(:with_indifferent_access) || {}
       end
     end
