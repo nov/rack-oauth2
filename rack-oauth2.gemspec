@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "multi_json", ">= 1.3.6"
   s.add_runtime_dependency "httpclient", ">= 2.2.0.2"
   s.add_runtime_dependency "activesupport", ">= 2.3"
-  s.add_runtime_dependency "i18n"
   s.add_runtime_dependency "attr_required", ">= 0.0.5"
   s.add_development_dependency "rake", ">= 0.8"
   if RUBY_VERSION >= '1.9'
