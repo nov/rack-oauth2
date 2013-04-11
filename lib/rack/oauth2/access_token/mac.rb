@@ -20,8 +20,10 @@ module Rack
         end
 
         def verify!(request)          
-          body = request.body.read
           if self.ext_verifier.present?
+            body = request.body.read
+            request.body.rewind # for future use
+
             self.ext_verifier.new(
               :raw_body => body,
               :algorithm => self.mac_algorithm
