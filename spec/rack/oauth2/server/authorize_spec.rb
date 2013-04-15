@@ -68,7 +68,7 @@ describe Rack::OAuth2::Server::Authorize do
           it do
             expect do
               request.verify_redirect_uri!(pre_registered)
-            end.to raise_error Rack::OAuth2::Server::Authorize::BadRequest
+            end.to raise_error bad_request
           end
         end
       end
@@ -93,7 +93,7 @@ describe Rack::OAuth2::Server::Authorize do
           it do
             expect do
               request.verify_redirect_uri!(pre_registered)
-            end.to raise_error Rack::OAuth2::Server::Authorize::BadRequest
+            end.to raise_error bad_request
           end
         end
       end
@@ -103,7 +103,7 @@ describe Rack::OAuth2::Server::Authorize do
         it do
           expect do
             request.verify_redirect_uri!(pre_registered)
-          end.to raise_error Rack::OAuth2::Server::Authorize::BadRequest
+          end.to raise_error bad_request
         end
       end
 
@@ -125,7 +125,7 @@ describe Rack::OAuth2::Server::Authorize do
               it do
                 expect do
                   request.verify_redirect_uri!(pre_registered, :allow_partial_match)
-                end.to raise_error Rack::OAuth2::Server::Authorize::BadRequest
+                end.to raise_error bad_request
               end
             end
 
@@ -141,7 +141,7 @@ describe Rack::OAuth2::Server::Authorize do
             it do
               expect do
                 request.verify_redirect_uri!(pre_registered)
-              end.to raise_error Rack::OAuth2::Server::Authorize::BadRequest
+              end.to raise_error bad_request
             end
           end
         end

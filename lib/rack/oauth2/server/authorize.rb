@@ -58,12 +58,12 @@ module Rack
               if verified
                 redirect_uri
               else
-                bad_request! 'Invalid redirect_uri is given'
+                bad_request!
               end
             elsif pre_registered.present? && Array(pre_registered).size == 1 && !allow_partial_match
               Array(pre_registered).first
             else
-              bad_request! 'No redirect_uri is given'
+              bad_request!
             end
             self.verified_redirect_uri.to_s
           end
