@@ -27,7 +27,7 @@ module Rack
             end
 
             def access_token_in_header
-              if @auth_header.provided? && @auth_header.scheme.to_s == 'bearer'
+              if @auth_header.provided? && %w[bearer oauth oauth2 token].include?(@auth_header.scheme.to_s)
                 @auth_header.params
               else
                 nil

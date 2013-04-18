@@ -54,8 +54,25 @@ describe Rack::OAuth2::Server::Resource::Bearer do
 
   context 'when valid_token is given' do
     context 'when token is in Authorization header' do
-      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'Bearer valid_token') }
-      it_behaves_like :authenticated_bearer_request
+      context 'when the OAuth access token type name is set to "Bearer"' do
+        let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'Bearer valid_token') }
+        it_behaves_like :authenticated_bearer_request
+      end
+
+      context 'when the OAuth access token type name is set to "Oauth"' do
+        let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'Oauth valid_token') }
+        it_behaves_like :authenticated_bearer_request
+      end
+
+      context 'when the OAuth access token type name is set to "Oauth2"' do
+        let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'Oauth2 valid_token') }
+        it_behaves_like :authenticated_bearer_request
+      end
+
+      context 'when the OAuth access token type name is set to "Token"' do
+        let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => 'Token valid_token') }
+        it_behaves_like :authenticated_bearer_request
+      end
     end
 
     context 'when token is in params' do
