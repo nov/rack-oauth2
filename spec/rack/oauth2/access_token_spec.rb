@@ -56,5 +56,14 @@ describe Rack::OAuth2::AccessToken do
         token.send method, resource_endpoint
       end
     end
+
+    context 'in debug mode' do
+      it do
+        Rack::OAuth2.debug do
+          token.httpclient.request_filter[-2].should be_a Rack::OAuth2::AccessToken::Authenticator
+          token.httpclient.request_filter.last.should be_a Rack::OAuth2::Debugger::RequestFilter
+        end
+      end
+    end
   end
 end

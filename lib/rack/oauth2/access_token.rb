@@ -11,8 +11,9 @@ module Rack
           self.send :"#{key}=", attributes[key]
         end
         @token_type = self.class.name.demodulize.underscore.to_sym
-        @httpclient = Rack::OAuth2.http_client("#{self.class} (#{VERSION})")
-        @httpclient.request_filter << Authenticator.new(self)
+        @httpclient = Rack::OAuth2.http_client("#{self.class} (#{VERSION})") do |config|
+          config.request_filter << Authenticator.new(self)
+        end
         attr_missing!
       end
 
