@@ -3,6 +3,7 @@ module Rack
     class Client
       class Grant
         class ClientCredentials < Grant
+          attr_optional :scope
         end
       end
     end
