@@ -45,6 +45,10 @@ module Rack
         )
       end
 
+      def scope=(scope)
+        @grant.scope = scope.join ' '
+      end
+
       def access_token!(client_auth_method = :basic)
         headers, params = {}, @grant.as_json
         if secret && client_auth_method == :basic

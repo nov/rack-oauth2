@@ -76,6 +76,12 @@ describe Rack::OAuth2::Client do
     it { should be_instance_of Rack::OAuth2::Client::Grant::RefreshToken }
   end
 
+  describe '#scope=' do
+    before  { client.scope = %w(foo bar) }
+    subject { client.instance_variable_get('@grant') }
+    its(:scope) { should eq('foo bar') }
+  end
+
   describe '#access_token!' do
     subject { client.access_token! }
 

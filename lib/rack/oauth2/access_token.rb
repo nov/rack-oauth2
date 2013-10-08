@@ -4,7 +4,7 @@ module Rack
       include AttrRequired, AttrOptional
       attr_required :access_token, :token_type, :httpclient
       attr_optional :refresh_token, :expires_in, :scope
-      delegate :get, :post, :put, :delete, :to => :httpclient
+      delegate :get, :post, :put, :delete, :request, :to => :httpclient
 
       def initialize(attributes = {})
         (required_attributes + optional_attributes).each do |key|
