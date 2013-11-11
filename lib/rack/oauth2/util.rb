@@ -41,13 +41,7 @@ module Rack
         end
 
         def uri_match?(base, given)
-          base = parse_uri(base)
-          given = parse_uri(given)
-          base.path = '/' if base.path.blank?
-          given.path = '/' if given.path.blank?
-          [:scheme, :host, :port].all? do |key|
-            base.send(key) == given.send(key)
-          end && /^#{base.path}/ =~ given.path
+          base == given
         rescue
           false
         end
