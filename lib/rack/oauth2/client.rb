@@ -45,8 +45,17 @@ module Rack
         )
       end
 
-      def access_token!(client_auth_method = :basic)
+      def access_token!(*args)
         headers, params = {}, @grant.as_json
+
+        # NOTE:
+        #  Using Array#estract_options! for backward compatibility.
+        #  Until v1.0.5, the first argument was 'client_auth_method' in scalar.
+        options = args.extract_options!
+        client_auth_method = args.first || options[:client_auth_method] || :basic
+
+        params[:scope] = Array(options[:scope]).join(' ') if options[:scope].present?
+
         if secret && client_auth_method == :basic
           cred = ["#{identifier}:#{secret}"].pack('m').tr("\n", '')
           headers.merge!(

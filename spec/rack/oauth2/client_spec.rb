@@ -96,7 +96,7 @@ describe Rack::OAuth2::Client do
         client.access_token!
       end
 
-      context 'when' do
+      context 'when other auth method specified' do
         it do
           mock_response(
             :post,
@@ -111,6 +111,23 @@ describe Rack::OAuth2::Client do
             }
           )
           client.access_token! :client_auth_body
+        end
+      end
+    end
+
+    describe 'scopes' do
+      context 'when scope option given' do
+        it 'should specify given scope' do
+          mock_response(
+            :post,
+            'https://server.example.com/oauth2/token',
+            'tokens/bearer.json',
+            :params => {
+              :grant_type => 'client_credentials',
+              :scope => 'a b'
+            }
+          )
+          client.access_token! :scope => [:a, :b]
         end
       end
     end
