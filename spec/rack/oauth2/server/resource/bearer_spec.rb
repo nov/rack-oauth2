@@ -42,14 +42,17 @@ describe Rack::OAuth2::Server::Resource::Bearer do
       access_token.should be_nil
     end
   end
-
-  context 'when no access token is given' do
-    let(:env) { Rack::MockRequest.env_for('/protected_resource') }
+  shared_examples_for :skipped_authentication_request do
     it 'should skip OAuth 2.0 authentication' do
       status, header, response = request
       status.should == 200
       access_token.should be_nil
     end
+  end
+
+  context 'when no access token is given' do
+    let(:env) { Rack::MockRequest.env_for('/protected_resource') }
+    it_behaves_like :skipped_authentication_request
   end
 
   context 'when valid_token is given' do
@@ -62,6 +65,11 @@ describe Rack::OAuth2::Server::Resource::Bearer do
       let(:env) { Rack::MockRequest.env_for('/protected_resource', :params => {:access_token => 'valid_token'}) }
       it_behaves_like :authenticated_bearer_request
     end
+  end
+
+  context 'when invalid authorization header is given' do
+    let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_AUTHORIZATION' => '') }
+    it_behaves_like :skipped_authentication_request
   end
 
   context 'when invalid_token is given' do
