@@ -16,6 +16,8 @@ module Rack
               @access_token = case Array(tokens).size
               when 1
                 tokens.first
+              when 0
+                invalid_request!('Either Authorization header or payload must include access token.')
               else
                 invalid_request!('Both Authorization header and payload includes access token.')
               end

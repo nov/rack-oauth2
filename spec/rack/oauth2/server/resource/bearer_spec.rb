@@ -120,4 +120,36 @@ describe Rack::OAuth2::Server::Resource::Bearer do
       it_behaves_like :bad_bearer_request
     end
   end
+
+  describe 'Request object' do
+    let(:request_object) { Rack::OAuth2::Server::Resource::Bearer::Request.new env }
+    describe '#setup!' do
+      context 'when no access token is given' do
+        let(:env) { Rack::MockRequest.env_for('/protected_resource') }
+        it 'should set the correct error message' do
+          expect { request_object.setup! }.to raise_error(
+            Rack::OAuth2::Server::Resource::BadRequest,
+            'invalid_request :: Either Authorization header or payload must include access token.'
+          )
+        end
+      end
+
+      context 'when token is in Authorization header and params' do
+        let(:env) do
+          Rack::MockRequest.env_for(
+            '/protected_resource',
+            'HTTP_AUTHORIZATION' => 'Bearer valid_token',
+            :params => {:access_token => 'valid_token'}
+          )
+        end
+
+        it 'should set the correct error message' do
+          expect { request_object.setup! }.to raise_error(
+            Rack::OAuth2::Server::Resource::BadRequest,
+            'invalid_request :: Both Authorization header and payload includes access token.'
+          )
+        end
+      end
+    end
+  end
 end
