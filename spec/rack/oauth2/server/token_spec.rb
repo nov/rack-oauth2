@@ -72,10 +72,13 @@ describe Rack::OAuth2::Server::Token do
   end
 
   Rack::OAuth2::Server::Token::ErrorMethods::DEFAULT_DESCRIPTION.each do |error, default_message|
-    status = if error == :invalid_client
-      401
-    else
+    status = case error
+    when :invalid_request,:unsupported_grant_type
       400
+    when :invalid_scope
+      403
+    else
+      401
     end
     context "when #{error}" do
       let(:app) do

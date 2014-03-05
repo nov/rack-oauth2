@@ -34,6 +34,7 @@ end
 describe Rack::OAuth2::Server::Token::ErrorMethods do
   let(:bad_request)         { Rack::OAuth2::Server::Token::BadRequest }
   let(:unauthorized)        { Rack::OAuth2::Server::Token::Unauthorized }
+  let(:forbidden)           { Rack::OAuth2::Server::Token::Forbidden }
   let(:redirect_uri)        { 'http://client.example.com/callback' }
   let(:default_description) { Rack::OAuth2::Server::Token::ErrorMethods::DEFAULT_DESCRIPTION }
   let(:env)                 { Rack::MockRequest.env_for("/authorize?client_id=client_id") }
@@ -54,10 +55,19 @@ describe Rack::OAuth2::Server::Token::ErrorMethods do
   Rack::OAuth2::Server::Token::ErrorMethods::DEFAULT_DESCRIPTION.keys.each do |error_code|
     method = "#{error_code}!"
     case error_code
-    when :invalid_client
+    when :invalid_request,:unsupported_grant_type
       describe method do
         it "should raise Rack::OAuth2::Server::Token::Unauthorized with error = :#{error_code}" do
-          expect { request.send method }.to raise_error(unauthorized) { |error|
+          expect { request.send method }.to raise_error(bad_request) { |error|
+            error.error.should       == error_code
+            error.description.should == default_description[error_code]
+          }
+        end
+      end
+    when :invalid_scope
+      describe method do
+        it "should raise Rack::OAuth2::Server::Token::Unauthorized with error = :#{error_code}" do
+          expect { request.send method }.to raise_error(forbidden) { |error|
             error.error.should       == error_code
             error.description.should == default_description[error_code]
           }
@@ -66,7 +76,7 @@ describe Rack::OAuth2::Server::Token::ErrorMethods do
     else
       describe method do
         it "should raise Rack::OAuth2::Server::Token::BadRequest with error = :#{error_code}" do
-          expect { request.send method }.to raise_error(bad_request) { |error|
+          expect { request.send method }.to raise_error(unauthorized) { |error|
             error.error.should       == error_code
             error.description.should == default_description[error_code]
           }
