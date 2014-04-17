@@ -2,7 +2,7 @@ require 'rack'
 require 'multi_json'
 require 'httpclient'
 require 'logger'
-require 'active_support/core_ext'
+require 'active_support/all'
 require 'attr_required'
 require 'attr_optional'
 
