@@ -21,7 +21,7 @@ module Rack
         params[:scope] = Array(params[:scope]).join(' ')
         Util.redirect_uri absolute_uri_for(authorization_endpoint), :query, params.merge(
           :client_id => self.identifier,
-          :redirect_uri => self.redirect_uri
+          :redirect_uri => params[:redirect_uri] || self.redirect_uri
         )
       end
 
