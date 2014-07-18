@@ -73,24 +73,24 @@ describe Rack::OAuth2::Util do
   describe '.uri_match?' do
     context 'when invalid URI is given' do
       it do
-        util.uri_match?('::', '::').should be_false
-        util.uri_match?(123, 'http://client.example.com/other').should be_false
-        util.uri_match?('http://client.example.com/other', nil).should be_false
+        util.uri_match?('::', '::').should == false
+        util.uri_match?(123, 'http://client.example.com/other').should == false
+        util.uri_match?('http://client.example.com/other', nil).should == false
       end
     end
 
     context 'when exactry same' do
-      it { util.uri_match?(uri, uri).should be_true }
+      it { util.uri_match?(uri, uri).should == true }
     end
 
     context 'when path prefix matches' do
-      it { util.uri_match?(uri, "#{uri}/deep_path").should be_true }
+      it { util.uri_match?(uri, "#{uri}/deep_path").should == true }
     end
 
     context 'otherwise' do
       it do
-        util.uri_match?(uri, 'http://client.example.com/other').should be_false
-        util.uri_match?(uri, 'http://attacker.example.com/callback').should be_false
+        util.uri_match?(uri, 'http://client.example.com/other').should == false
+        util.uri_match?(uri, 'http://attacker.example.com/callback').should == false
       end
     end
   end

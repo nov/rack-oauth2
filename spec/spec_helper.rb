@@ -5,7 +5,15 @@ SimpleCov.start do
 end
 
 require 'rspec'
+require 'rspec/its'
 require 'rack/oauth2'
+
+RSpec.configure do |config|
+  config.expect_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
+end
+
 require 'helpers/time'
 require 'helpers/webmock_helper'
 

@@ -47,7 +47,7 @@ module Rack
           given.path = '/' if given.path.blank?
           [:scheme, :host, :port].all? do |key|
             base.send(key) == given.send(key)
-          end && /^#{base.path}/ =~ given.path
+          end && !!(/^#{base.path}/ =~ given.path)
         rescue
           false
         end
