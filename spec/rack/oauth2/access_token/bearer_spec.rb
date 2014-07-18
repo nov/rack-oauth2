@@ -11,7 +11,7 @@ describe Rack::OAuth2::AccessToken::Bearer do
 
   describe '.authenticate' do
     it 'should set Authorization header' do
-      request.header.should_receive(:[]=).with('Authorization', 'Bearer access_token')
+      expect(request.header).to receive(:[]=).with('Authorization', 'Bearer access_token')
       token.authenticate(request)
     end
   end

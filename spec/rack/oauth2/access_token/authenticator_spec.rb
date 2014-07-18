@@ -7,7 +7,7 @@ describe Rack::OAuth2::AccessToken::Authenticator do
 
   shared_examples_for :authenticator do
     it 'should let the token authenticate the request' do
-      token.should_receive(:authenticate).with(request)
+      expect(token).to receive(:authenticate).with(request)
       authenticator.filter_request(request)
     end
   end

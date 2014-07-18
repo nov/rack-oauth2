@@ -121,8 +121,8 @@ describe Rack::OAuth2::AccessToken::MAC do
       let(:signature) { 'pOBaL6HRawe4tUPmcU4vJEj1f2GJqrbQOlCcdAYgI/s=' }
 
       it 'should set Authorization header' do
-        token.should_receive(:generate_nonce).and_return(nonce)
-        request.header.should_receive(:[]=).with('Authorization', "MAC id=\"access_token\", nonce=\"#{nonce}\", ts=\"#{ts.to_i}\", mac=\"#{signature}\"")
+        expect(token).to receive(:generate_nonce).and_return(nonce)
+        expect(request.header).to receive(:[]=).with('Authorization', "MAC id=\"access_token\", nonce=\"#{nonce}\", ts=\"#{ts.to_i}\", mac=\"#{signature}\"")
         token.authenticate(request)
       end
     end
@@ -131,8 +131,8 @@ describe Rack::OAuth2::AccessToken::MAC do
       let(:signature) { 'vgU0fj6rSpwUCAoCOrXlu8pZBR8a5Q5xIVlB4MCvJeM=' }
       let(:ext) { '3d011e09502a84552a0f8ae112d024cc2c115597e3a577d5f49007902c221dc5' }
       it 'should set Authorization header with ext_verifier' do
-        token_with_ext_verifier.should_receive(:generate_nonce).and_return(nonce)
-        request.header.should_receive(:[]=).with('Authorization', "MAC id=\"access_token\", nonce=\"#{nonce}\", ts=\"#{ts.to_i}\", mac=\"#{signature}\", ext=\"#{ext}\"")
+        expect(token_with_ext_verifier).to receive(:generate_nonce).and_return(nonce)
+        expect(request.header).to receive(:[]=).with('Authorization', "MAC id=\"access_token\", nonce=\"#{nonce}\", ts=\"#{ts.to_i}\", mac=\"#{signature}\", ext=\"#{ext}\"")
         token_with_ext_verifier.authenticate(request)
       end
     end
