@@ -6,7 +6,7 @@ describe Rack::OAuth2::Server::Authorize::BadRequest do
   let(:redirect_uri) { 'http://client.example.com/callback' }
 
   subject { error }
-  it { should be_a Rack::OAuth2::Server::Abstract::BadRequest }
+  it { is_expected.to be_a Rack::OAuth2::Server::Abstract::BadRequest }
   its(:protocol_params) do
     should == {
       :error             => :invalid_request,
@@ -24,8 +24,8 @@ describe Rack::OAuth2::Server::Authorize::BadRequest do
         before { error.protocol_params_location = :query }
         it 'should redirect with error in query' do
           state, header, response = error.finish
-          state.should == 302
-          header["Location"].should == "#{redirect_uri}?error=invalid_request"
+          expect(state).to eq(302)
+          expect(header["Location"]).to eq("#{redirect_uri}?error=invalid_request")
         end
       end
 
@@ -33,8 +33,8 @@ describe Rack::OAuth2::Server::Authorize::BadRequest do
         before { error.protocol_params_location = :fragment }
         it 'should redirect with error in fragment' do
           state, header, response = error.finish
-          state.should == 302
-          header["Location"].should == "#{redirect_uri}#error=invalid_request"
+          expect(state).to eq(302)
+          expect(header["Location"]).to eq("#{redirect_uri}#error=invalid_request")
         end
       end
 
@@ -42,8 +42,8 @@ describe Rack::OAuth2::Server::Authorize::BadRequest do
         before { error.protocol_params_location = :other }
         it 'should redirect without error' do
           state, header, response = error.finish
-          state.should == 302
-          header["Location"].should == redirect_uri
+          expect(state).to eq(302)
+          expect(header["Location"]).to eq(redirect_uri)
         end
       end
     end
@@ -51,7 +51,7 @@ describe Rack::OAuth2::Server::Authorize::BadRequest do
     context 'otherwise' do
       it 'should raise itself' do
         expect { error.finish }.to raise_error(klass) { |e|
-          e.should == error
+          expect(e).to eq(error)
         }
       end
     end
@@ -75,7 +75,7 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
     context 'when response_type = :code' do
       it 'should set protocol_params_location = :query' do
         expect { request_for_code.bad_request! }.to raise_error(klass) { |e|
-          e.protocol_params_location.should == :query
+          expect(e.protocol_params_location).to eq(:query)
         }
       end
     end
@@ -83,7 +83,7 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
     context 'when response_type = :token' do
       it 'should set protocol_params_location = :fragment' do
         expect { request_for_token.bad_request! }.to raise_error(klass) { |e|
-          e.protocol_params_location.should == :fragment
+          expect(e.protocol_params_location).to eq(:fragment)
         }
       end
     end
@@ -94,8 +94,8 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
     describe method do
       it "should raise Rack::OAuth2::Server::Authorize::BadRequest with error = :#{error_code}" do
         expect { request.send method }.to raise_error(klass) { |error|
-          error.error.should       == error_code
-          error.description.should == default_description[error_code]
+          expect(error.error).to       eq(error_code)
+          expect(error.description).to eq(default_description[error_code])
         }
       end
     end

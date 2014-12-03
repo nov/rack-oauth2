@@ -29,8 +29,8 @@ describe Rack::OAuth2::Server::Token do
       end
       it 'should fail with unsupported_grant_type' do
         status, header, response = app.call(env)
-        status.should == 400
-        response.body.first.should include '"error":"invalid_request"'
+        expect(status).to eq(400)
+        expect(response.body.first).to include '"error":"invalid_request"'
       end
     end
 
@@ -44,7 +44,7 @@ describe Rack::OAuth2::Server::Token do
       end
       it 'should ignore duplicates' do
         status, header, response = app.call(env)
-        status.should == 200
+        expect(status).to eq(200)
       end
     end
   end
@@ -125,9 +125,9 @@ describe Rack::OAuth2::Server::Token do
       end
 
       it do
-        app.send(
+        expect(app.send(
           :grant_type_for, request
-        ).should == Rack::OAuth2::Server::Token::Extension::JWT
+        )).to eq(Rack::OAuth2::Server::Token::Extension::JWT)
       end
     end
   end

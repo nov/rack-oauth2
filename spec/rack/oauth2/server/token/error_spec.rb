@@ -3,14 +3,14 @@ require 'spec_helper.rb'
 describe Rack::OAuth2::Server::Token::BadRequest do
   let(:error) { Rack::OAuth2::Server::Token::BadRequest.new(:invalid_request) }
 
-  it { should be_a Rack::OAuth2::Server::Abstract::BadRequest }
+  it { is_expected.to be_a Rack::OAuth2::Server::Abstract::BadRequest }
 
   describe '#finish' do
     it 'should respond in JSON' do
       status, header, response = error.finish
-      status.should == 400
-      header['Content-Type'].should == 'application/json'
-      response.body.should == ['{"error":"invalid_request"}']
+      expect(status).to eq(400)
+      expect(header['Content-Type']).to eq('application/json')
+      expect(response.body).to eq(['{"error":"invalid_request"}'])
     end
   end
 end
@@ -18,15 +18,15 @@ end
 describe Rack::OAuth2::Server::Token::Unauthorized do
   let(:error) { Rack::OAuth2::Server::Token::Unauthorized.new(:invalid_request) }
 
-  it { should be_a Rack::OAuth2::Server::Abstract::Unauthorized }
+  it { is_expected.to be_a Rack::OAuth2::Server::Abstract::Unauthorized }
 
   describe '#finish' do
     it 'should respond in JSON' do
       status, header, response = error.finish
-      status.should == 401
-      header['Content-Type'].should == 'application/json'
-      header['WWW-Authenticate'].should == 'Basic realm="OAuth2 Token Endpoint"'
-      response.body.should == ['{"error":"invalid_request"}']
+      expect(status).to eq(401)
+      expect(header['Content-Type']).to eq('application/json')
+      expect(header['WWW-Authenticate']).to eq('Basic realm="OAuth2 Token Endpoint"')
+      expect(response.body).to eq(['{"error":"invalid_request"}'])
     end
   end
 end
@@ -58,8 +58,8 @@ describe Rack::OAuth2::Server::Token::ErrorMethods do
       describe method do
         it "should raise Rack::OAuth2::Server::Token::Unauthorized with error = :#{error_code}" do
           expect { request.send method }.to raise_error(unauthorized) { |error|
-            error.error.should       == error_code
-            error.description.should == default_description[error_code]
+            expect(error.error).to       eq(error_code)
+            expect(error.description).to eq(default_description[error_code])
           }
         end
       end
@@ -67,8 +67,8 @@ describe Rack::OAuth2::Server::Token::ErrorMethods do
       describe method do
         it "should raise Rack::OAuth2::Server::Token::BadRequest with error = :#{error_code}" do
           expect { request.send method }.to raise_error(bad_request) { |error|
-            error.error.should       == error_code
-            error.description.should == default_description[error_code]
+            expect(error.error).to       eq(error_code)
+            expect(error.description).to eq(default_description[error_code])
           }
         end
       end

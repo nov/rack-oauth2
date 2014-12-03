@@ -11,28 +11,28 @@ describe Rack::OAuth2::Util do
 
   describe '.rfc3986_encode' do
     subject { util.rfc3986_encode '=+ .-/' }
-    it { should == '%3D%2B%20.-%2F' }
+    it { is_expected.to eq('%3D%2B%20.-%2F') }
   end
 
   describe '.base64_encode' do
     subject { util.base64_encode '=+ .-/' }
-    it { should == 'PSsgLi0v' }
+    it { is_expected.to eq('PSsgLi0v') }
   end
 
   describe '.compact_hash' do
     subject { util.compact_hash :k1 => 'v1', :k2 => '', :k3 => nil }
-    it { should == {:k1 => 'v1'} }
+    it { is_expected.to eq({:k1 => 'v1'}) }
   end
 
   describe '.parse_uri' do
     context 'when String is given' do
-      it { util.parse_uri(uri).should be_a URI::Generic }
+      it { expect(util.parse_uri(uri)).to be_a URI::Generic }
     end
 
     context 'when URI is given' do
       it 'should be itself' do
         _uri_ = URI.parse uri
-        util.parse_uri(_uri_).should be _uri_
+        expect(util.parse_uri(_uri_)).to be _uri_
       end
     end
 
@@ -61,36 +61,36 @@ describe Rack::OAuth2::Util do
 
     context 'when location = :fragment' do
       let(:location) { :fragment }
-      it { should == "#{base_uri}##{util.compact_hash(params).to_query}" }
+      it { is_expected.to eq("#{base_uri}##{util.compact_hash(params).to_query}") }
     end
 
     context 'when location = :query' do
       let(:location) { :query }
-      it { should == "#{base_uri}?#{util.compact_hash(params).to_query}" }
+      it { is_expected.to eq("#{base_uri}?#{util.compact_hash(params).to_query}") }
     end
   end
 
   describe '.uri_match?' do
     context 'when invalid URI is given' do
       it do
-        util.uri_match?('::', '::').should == false
-        util.uri_match?(123, 'http://client.example.com/other').should == false
-        util.uri_match?('http://client.example.com/other', nil).should == false
+        expect(util.uri_match?('::', '::')).to eq(false)
+        expect(util.uri_match?(123, 'http://client.example.com/other')).to eq(false)
+        expect(util.uri_match?('http://client.example.com/other', nil)).to eq(false)
       end
     end
 
     context 'when exactry same' do
-      it { util.uri_match?(uri, uri).should == true }
+      it { expect(util.uri_match?(uri, uri)).to eq(true) }
     end
 
     context 'when path prefix matches' do
-      it { util.uri_match?(uri, "#{uri}/deep_path").should == true }
+      it { expect(util.uri_match?(uri, "#{uri}/deep_path")).to eq(true) }
     end
 
     context 'otherwise' do
       it do
-        util.uri_match?(uri, 'http://client.example.com/other').should == false
-        util.uri_match?(uri, 'http://attacker.example.com/callback').should == false
+        expect(util.uri_match?(uri, 'http://client.example.com/other')).to eq(false)
+        expect(util.uri_match?(uri, 'http://attacker.example.com/callback')).to eq(false)
       end
     end
   end

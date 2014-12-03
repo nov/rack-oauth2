@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "attr_required", ">= 0.0.5"
   s.add_development_dependency "rake", ">= 0.8"
   s.add_development_dependency "simplecov"
-  s.add_development_dependency "rspec"
+  s.add_development_dependency "rspec", ">= 3.0"
   s.add_development_dependency "rspec-its"
   s.add_development_dependency "webmock", ">= 1.6.2"
 end

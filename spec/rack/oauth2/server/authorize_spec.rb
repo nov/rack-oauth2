@@ -54,7 +54,7 @@ describe Rack::OAuth2::Server::Authorize do
             ]
           end
           it 'should be valid' do
-            request.verify_redirect_uri!(pre_registered).should == redirect_uri
+            expect(request.verify_redirect_uri!(pre_registered)).to eq(redirect_uri)
           end
         end
 
@@ -76,7 +76,7 @@ describe Rack::OAuth2::Server::Authorize do
       context 'when exact mathed redirect_uri is given' do
         let(:pre_registered) { redirect_uri }
         it 'should be valid' do
-          request.verify_redirect_uri!(pre_registered).should == redirect_uri
+          expect(request.verify_redirect_uri!(pre_registered)).to eq(redirect_uri)
         end
       end
 
@@ -85,7 +85,7 @@ describe Rack::OAuth2::Server::Authorize do
 
         context 'when partial matching allowed' do
           it 'should be valid' do
-            request.verify_redirect_uri!(pre_registered, :allow_partial_match).should == redirect_uri
+            expect(request.verify_redirect_uri!(pre_registered, :allow_partial_match)).to eq(redirect_uri)
           end
         end
 
@@ -113,7 +113,7 @@ describe Rack::OAuth2::Server::Authorize do
         context 'when pre-registered redirect_uri is a String' do
           let(:pre_registered) { redirect_uri }
           it 'should use pre-registered redirect_uri' do
-            request.verify_redirect_uri!(pre_registered).should == pre_registered
+            expect(request.verify_redirect_uri!(pre_registered)).to eq(pre_registered)
           end
         end
 
@@ -131,7 +131,7 @@ describe Rack::OAuth2::Server::Authorize do
 
             context 'otherwise' do
               it 'should use pre-registered redirect_uri' do
-                request.verify_redirect_uri!(pre_registered).should == pre_registered.first
+                expect(request.verify_redirect_uri!(pre_registered)).to eq(pre_registered.first)
               end
             end
           end
@@ -163,18 +163,18 @@ describe Rack::OAuth2::Server::Authorize do
     describe 'code token' do
       let(:response_type) { 'code%20token' }
       it do
-        app.send(
+        expect(app.send(
           :response_type_for, request
-        ).should == Rack::OAuth2::Server::Authorize::Extension::CodeAndToken
+        )).to eq(Rack::OAuth2::Server::Authorize::Extension::CodeAndToken)
       end
     end
 
     describe 'token code' do
       let(:response_type) { 'token%20code' }
       it do
-        app.send(
+        expect(app.send(
           :response_type_for, request
-        ).should == Rack::OAuth2::Server::Authorize::Extension::CodeAndToken
+        )).to eq(Rack::OAuth2::Server::Authorize::Extension::CodeAndToken)
       end
     end
 
@@ -205,9 +205,9 @@ describe Rack::OAuth2::Server::Authorize do
 
       let(:response_type) { 'id_token' }
       it do
-        app.send(
+        expect(app.send(
           :response_type_for, request
-        ).should == Rack::OAuth2::Server::Authorize::Extension::IdToken
+        )).to eq(Rack::OAuth2::Server::Authorize::Extension::IdToken)
       end
     end
   end

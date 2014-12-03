@@ -15,17 +15,17 @@ describe Rack::OAuth2 do
   describe '.debug' do
     it 'should enable debugging within given block' do
       Rack::OAuth2.debug do
-        Rack::OAuth2.debugging?.should == true
+        expect(Rack::OAuth2.debugging?).to eq(true)
       end
-      Rack::OAuth2.debugging?.should == false
+      expect(Rack::OAuth2.debugging?).to eq(false)
     end
 
     it 'should not force disable debugging' do
       Rack::OAuth2.debug!
       Rack::OAuth2.debug do
-        Rack::OAuth2.debugging?.should == true
+        expect(Rack::OAuth2.debugging?).to eq(true)
       end
-      Rack::OAuth2.debugging?.should == true
+      expect(Rack::OAuth2.debugging?).to eq(true)
     end
   end
 
@@ -39,7 +39,7 @@ describe Rack::OAuth2 do
           Rack::OAuth2.http_config do |config|
             config.request_filter << Proc.new {}
           end
-          Rack::OAuth2.http_client.request_filter.last.should be_instance_of Rack::OAuth2::Debugger::RequestFilter
+          expect(Rack::OAuth2.http_client.request_filter.last).to be_instance_of Rack::OAuth2::Debugger::RequestFilter
         end
 
         it 'should reset_http_config' do
@@ -49,7 +49,7 @@ describe Rack::OAuth2 do
           end
           size = Rack::OAuth2.http_client.request_filter.size
           Rack::OAuth2.reset_http_config!
-          Rack::OAuth2.http_client.request_filter.size.should == size - 1
+          expect(Rack::OAuth2.http_client.request_filter.size).to eq(size - 1)
         end
 
       end
@@ -65,8 +65,8 @@ describe Rack::OAuth2 do
         end
         clnt3 = Rack::OAuth2.http_client
 
-        clnt1.request_filter.size.should == clnt3.request_filter.size
-        clnt1.request_filter.size.should == clnt2.request_filter.size - 1
+        expect(clnt1.request_filter.size).to eq(clnt3.request_filter.size)
+        expect(clnt1.request_filter.size).to eq(clnt2.request_filter.size - 1)
 
       end
     end
