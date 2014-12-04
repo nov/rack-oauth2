@@ -53,7 +53,7 @@ describe Rack::OAuth2::AccessToken::MAC do
         let(:signature) { 'BgooS/voPOZWLwoVfx4+zbC3xAVKW3jtjhKYOfIGZOA=' }
         it do
 
-          token.verify!(request.setup!).should == :verified
+          expect(token.verify!(request.setup!)).to eq(:verified)
         end
       end
 
@@ -98,7 +98,7 @@ describe Rack::OAuth2::AccessToken::MAC do
           let(:signature) { 'dZYR54n+Lym5qCRRmDqmRZ71rG+bkjSWmqrOv8OjYHk=' }
           it do
             Time.fix(Time.at(1302361200)) do
-              token_with_ext_verifier.verify!(request.setup!).should == :verified
+              expect(token_with_ext_verifier.verify!(request.setup!)).to eq(:verified)
             end
           end
         end

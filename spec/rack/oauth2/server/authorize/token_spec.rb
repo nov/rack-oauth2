@@ -62,12 +62,12 @@ describe Rack::OAuth2::Server::Authorize::Token do
       end
     end
     it 'should redirect with error in fragment' do
-      response.status.should == 302
+      expect(response.status).to eq(302)
       error_message = {
         :error => :access_denied,
         :error_description => Rack::OAuth2::Server::Authorize::ErrorMethods::DEFAULT_DESCRIPTION[:access_denied]
       }
-      response.location.should == "#{redirect_uri}##{error_message.to_query}&state=state"
+      expect(response.location).to eq("#{redirect_uri}##{error_message.to_query}&state=state")
     end
   end
 end

@@ -24,8 +24,8 @@ describe Rack::OAuth2::Server::Token::AuthorizationCode do
   its(:body)         { should include '"token_type":"bearer"' }
 
   it 'should prevent to be cached' do
-    response.header['Cache-Control'].should == 'no-store'
-    response.header['Pragma'].should == 'no-cache'
+    expect(response.header['Cache-Control']).to eq('no-store')
+    expect(response.header['Pragma']).to eq('no-cache')
   end
 
   [:code].each do |required|

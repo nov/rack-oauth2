@@ -3,14 +3,14 @@ require 'spec_helper.rb'
 describe Rack::OAuth2::Server::Resource::BadRequest do
   let(:error) { Rack::OAuth2::Server::Resource::BadRequest.new(:invalid_request) }
 
-  it { should be_a Rack::OAuth2::Server::Abstract::BadRequest }
+  it { is_expected.to be_a Rack::OAuth2::Server::Abstract::BadRequest }
 
   describe '#finish' do
     it 'should respond in JSON' do
       status, header, response = error.finish
-      status.should == 400
-      header['Content-Type'].should == 'application/json'
-      response.body.should == ['{"error":"invalid_request"}']
+      expect(status).to eq(400)
+      expect(header['Content-Type']).to eq('application/json')
+      expect(response.body).to eq(['{"error":"invalid_request"}'])
     end
   end
 end
@@ -19,7 +19,7 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
   let(:error) { Rack::OAuth2::Server::Resource::Unauthorized.new(:invalid_token) }
   let(:realm) { Rack::OAuth2::Server::Resource::DEFAULT_REALM }
 
-  it { should be_a Rack::OAuth2::Server::Abstract::Unauthorized }
+  it { is_expected.to be_a Rack::OAuth2::Server::Abstract::Unauthorized }
 
   describe '#scheme' do
     it do
@@ -41,10 +41,10 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
     describe '#finish' do
       it 'should respond in JSON' do
         status, header, response = error_with_scheme.finish
-        status.should == 401
-        header['Content-Type'].should == 'application/json'
-        header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\", error=\"invalid_token\""
-        response.body.should == ['{"error":"invalid_token"}']
+        expect(status).to eq(401)
+        expect(header['Content-Type']).to eq('application/json')
+        expect(header['WWW-Authenticate']).to eq("Scheme realm=\"#{realm}\", error=\"invalid_token\"")
+        expect(response.body).to eq(['{"error":"invalid_token"}'])
       end
 
       context 'when error_code is not invalid_token' do
@@ -52,8 +52,8 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
 
         it 'should have error_code in body but not in WWW-Authenticate header' do
           status, header, response = error_with_scheme.finish
-          header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\""
-          response.body.first.should include '"error":"something"'
+          expect(header['WWW-Authenticate']).to eq("Scheme realm=\"#{realm}\"")
+          expect(response.body.first).to include '"error":"something"'
         end
       end
 
@@ -63,8 +63,8 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
 
         it 'should use given realm' do
           status, header, response = error_with_scheme.finish
-          header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\""
-          response.body.first.should include '"error":"something"'
+          expect(header['WWW-Authenticate']).to eq("Scheme realm=\"#{realm}\"")
+          expect(response.body.first).to include '"error":"something"'
         end
       end
     end
@@ -74,14 +74,14 @@ end
 describe Rack::OAuth2::Server::Resource::Forbidden do
   let(:error) { Rack::OAuth2::Server::Resource::Forbidden.new(:insufficient_scope) }
 
-  it { should be_a Rack::OAuth2::Server::Abstract::Forbidden }
+  it { is_expected.to be_a Rack::OAuth2::Server::Abstract::Forbidden }
 
   describe '#finish' do
     it 'should respond in JSON' do
       status, header, response = error.finish
-      status.should == 403
-      header['Content-Type'].should == 'application/json'
-      response.body.should == ['{"error":"insufficient_scope"}']
+      expect(status).to eq(403)
+      expect(header['Content-Type']).to eq('application/json')
+      expect(response.body).to eq(['{"error":"insufficient_scope"}'])
     end
   end
 
@@ -90,7 +90,7 @@ describe Rack::OAuth2::Server::Resource::Forbidden do
 
     it 'should have blank WWW-Authenticate header' do
       status, header, response = error.finish
-      response.body.first.should include '"scope":"scope1 scope2"'
+      expect(response.body.first).to include '"scope":"scope1 scope2"'
     end
   end
 end
@@ -122,8 +122,8 @@ describe Rack::OAuth2::Server::Resource::Bearer::ErrorMethods do
       describe method do
         it "should raise Rack::OAuth2::Server::Resource::BadRequest with error = :#{error_code}" do
           expect { request.send method }.to raise_error(bad_request) { |error|
-            error.error.should       == error_code
-            error.description.should == default_description[error_code]
+            expect(error.error).to       eq(error_code)
+            expect(error.description).to eq(default_description[error_code])
           }
         end
       end
@@ -131,8 +131,8 @@ describe Rack::OAuth2::Server::Resource::Bearer::ErrorMethods do
       describe method do
         it "should raise Rack::OAuth2::Server::Resource::Forbidden with error = :#{error_code}" do
           expect { request.send method }.to raise_error(forbidden) { |error|
-            error.error.should       == error_code
-            error.description.should == default_description[error_code]
+            expect(error.error).to       eq(error_code)
+            expect(error.description).to eq(default_description[error_code])
           }
         end
       end
