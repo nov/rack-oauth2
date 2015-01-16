@@ -47,16 +47,35 @@ module Rack
 
           def self.included(klass)
             DEFAULT_DESCRIPTION.each do |error, default_description|
-              klass.class_eval <<-ERROR
-                def #{error}!(description = "#{default_description}", options = {})
-                  bad_request! :#{error}, description, options
-                end
-              ERROR
+              case error
+              when :server_error, :temporarily_unavailable
+                # NOTE: defined below
+              else
+                klass.class_eval <<-ERROR
+                  def #{error}!(description = "#{default_description}", options = {})
+                    bad_request! :#{error}, description, options
+                  end
+                ERROR
+              end
             end
           end
 
           def bad_request!(error = :bad_request, description = nil, options = {})
-            exception = BadRequest.new error, description, options
+            error! BadRequest, error, description, options
+          end
+
+          def server_error!(description = DEFAULT_DESCRIPTION[:server_error], options = {})
+            error! ServerError, :server_error, description, options
+          end
+
+          def temporarily_unavailable!(description = DEFAULT_DESCRIPTION[:temporarily_unavailable], options = {})
+            error! TemporarilyUnavailable, :temporarily_unavailable, description, options
+          end
+
+          private
+
+          def error!(klass, error, description, options)
+            exception = klass.new error, description, options
             exception.protocol_params_location = error_params_location
             exception.state = state
             exception.redirect_uri = verified_redirect_uri

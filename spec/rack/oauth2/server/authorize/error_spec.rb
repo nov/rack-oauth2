@@ -91,8 +91,17 @@ describe Rack::OAuth2::Server::Authorize::ErrorMethods do
 
   Rack::OAuth2::Server::Authorize::ErrorMethods::DEFAULT_DESCRIPTION.keys.each do |error_code|
     method = "#{error_code}!"
+    klass = case error_code
+    when :server_error
+      Rack::OAuth2::Server::Authorize::ServerError
+    when :temporarily_unavailable
+      Rack::OAuth2::Server::Authorize::TemporarilyUnavailable
+    else
+      Rack::OAuth2::Server::Authorize::BadRequest
+    end
     describe method do
-      it "should raise Rack::OAuth2::Server::Authorize::BadRequest with error = :#{error_code}" do
+      it "should raise #{klass} with error = :#{error_code}" do
+        klass =
         expect { request.send method }.to raise_error(klass) { |error|
           error.error.should       == error_code
           error.description.should == default_description[error_code]
