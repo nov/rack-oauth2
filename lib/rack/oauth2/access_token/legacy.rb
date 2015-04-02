@@ -10,10 +10,6 @@ module Rack
           ).try(:to_i)
         end
 
-        def to_s # This is for fb_graph
-          self.access_token
-        end
-
         def authenticate(request)
           request.header["Authorization"] = "OAuth #{access_token}"
         end

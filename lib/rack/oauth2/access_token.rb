@@ -6,6 +6,8 @@ module Rack
       attr_optional :refresh_token, :expires_in, :scope
       delegate :get, :post, :put, :delete, :to => :httpclient
 
+      alias_method :to_s, :access_token
+
       def initialize(attributes = {})
         (required_attributes + optional_attributes).each do |key|
           self.send :"#{key}=", attributes[key]
