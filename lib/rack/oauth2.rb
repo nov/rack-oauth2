@@ -11,7 +11,7 @@ module Rack
   module OAuth2
     VERSION = ::File.read(
       ::File.join(::File.dirname(__FILE__), '../../VERSION')
-    )
+    ).strip
 
     def self.logger
       @@logger
