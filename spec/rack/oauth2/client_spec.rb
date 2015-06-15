@@ -3,10 +3,10 @@ require 'spec_helper.rb'
 describe Rack::OAuth2::Client do
   let :client do
     Rack::OAuth2::Client.new(
-      :identifier => 'client_id',
-      :secret => 'client_secret',
-      :host => 'server.example.com',
-      :redirect_uri => 'https://client.example.com/callback'
+      identifier: 'client_id',
+      secret: 'client_secret',
+      host: 'server.example.com',
+      redirect_uri: 'https://client.example.com/callback'
     )
   end
   subject { client }
@@ -43,17 +43,17 @@ describe Rack::OAuth2::Client do
     end
 
     context 'when response_type is token' do
-      subject { client.authorization_uri(:response_type => :token) }
+      subject { client.authorization_uri(response_type: :token) }
       it { should include 'response_type=token' }
     end
 
     context 'when response_type is an Array' do
-      subject { client.authorization_uri(:response_type => [:token, :code]) }
+      subject { client.authorization_uri(response_type: [:token, :code]) }
       it { should include 'response_type=token+code' }
     end
 
     context 'when scope is given' do
-      subject { client.authorization_uri(:scope => [:scope1, :scope2]) }
+      subject { client.authorization_uri(scope: [:scope1, :scope2]) }
       it { should include 'scope=scope1+scope2' }
     end
   end
@@ -79,55 +79,91 @@ describe Rack::OAuth2::Client do
   describe '#access_token!' do
     subject { client.access_token! }
 
-    describe 'client authentication method' do
-      before do
-        client.authorization_code = 'code'
-      end
+      context 'when *args given' do
 
-      it 'should be Basic auth as default' do
-        mock_response(
-          :post,
-          'https://server.example.com/oauth2/token',
-          'tokens/bearer.json',
-          :request_header => {
-            'Authorization' => 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ='
-          }
-        )
-        client.access_token!
-      end
+      describe 'client authentication method' do
+        before do
+          client.authorization_code = 'code'
+        end
 
-      context 'when other auth method specified' do
-        it do
+        it 'should be Basic auth as default' do
           mock_response(
             :post,
             'https://server.example.com/oauth2/token',
             'tokens/bearer.json',
-            :params => {
-              :client_id => 'client_id',
-              :client_secret => 'client_secret',
-              :code => 'code',
-              :grant_type => 'authorization_code',
-              :redirect_uri => 'https://client.example.com/callback'
+            request_header: {
+              'Authorization': 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ='
             }
           )
-          client.access_token! :client_auth_body
+          client.access_token!
+        end
+
+        context 'when other auth method specified' do
+          it 'should be body params' do
+            mock_response(
+              :post,
+              'https://server.example.com/oauth2/token',
+              'tokens/bearer.json',
+              params: {
+                client_id: 'client_id',
+                client_secret: 'client_secret',
+                code: 'code',
+                grant_type: 'authorization_code',
+                redirect_uri: 'https://client.example.com/callback'
+              }
+            )
+            client.access_token! :client_auth_body
+          end
+        end
+
+        context 'when auth method is specified as Hash' do
+          it 'should be removed before sending request' do
+            mock_response(
+              :post,
+              'https://server.example.com/oauth2/token',
+              'tokens/bearer.json',
+              params: {
+                client_id: 'client_id',
+                client_secret: 'client_secret',
+                code: 'code',
+                grant_type: 'authorization_code',
+                redirect_uri: 'https://client.example.com/callback'
+              }
+            )
+            client.access_token! client_auth_method: :body
+          end
         end
       end
-    end
 
-    describe 'scopes' do
-      context 'when scope option given' do
-        it 'should specify given scope' do
+      describe 'scopes' do
+        context 'when scope option given' do
+          it 'should specify given scope' do
+            mock_response(
+              :post,
+              'https://server.example.com/oauth2/token',
+              'tokens/bearer.json',
+              params: {
+                grant_type: 'client_credentials',
+                scope: 'a b'
+              }
+            )
+            client.access_token! scope: [:a, :b]
+          end
+        end
+      end
+
+      describe 'unknown params' do
+        it 'should be included in body params' do
           mock_response(
             :post,
             'https://server.example.com/oauth2/token',
             'tokens/bearer.json',
-            :params => {
-              :grant_type => 'client_credentials',
-              :scope => 'a b'
+            params: {
+              grant_type: 'client_credentials',
+              resource: 'something'
             }
           )
-          client.access_token! :scope => [:a, :b]
+          client.access_token! resource: :something
         end
       end
     end
@@ -238,7 +274,7 @@ describe Rack::OAuth2::Client do
           :post,
           'https://server.example.com/oauth2/token',
           'errors/invalid_request.json',
-          :status => 400
+          status: 400
         )
       end
       it do
@@ -253,7 +289,7 @@ describe Rack::OAuth2::Client do
             :post,
             'https://server.example.com/oauth2/token',
             'blank',
-            :status => 400
+            status: 400
           )
         end
         it do
@@ -266,9 +302,9 @@ describe Rack::OAuth2::Client do
   context 'when no host info' do
     let :client do
       Rack::OAuth2::Client.new(
-        :identifier => 'client_id',
-        :secret => 'client_secret',
-        :redirect_uri => 'https://client.example.com/callback'
+        identifier: 'client_id',
+        secret: 'client_secret',
+        redirect_uri: 'https://client.example.com/callback'
       )
     end
 

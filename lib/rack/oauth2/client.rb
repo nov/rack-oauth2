@@ -52,9 +52,10 @@ module Rack
         #  Using Array#estract_options! for backward compatibility.
         #  Until v1.0.5, the first argument was 'client_auth_method' in scalar.
         options = args.extract_options!
-        client_auth_method = args.first || options[:client_auth_method] || :basic
+        client_auth_method = args.first || options.delete(:client_auth_method) || :basic
 
-        params[:scope] = Array(options[:scope]).join(' ') if options[:scope].present?
+        params[:scope] = Array(options.delete(:scope)).join(' ') if options[:scope].present?
+        params.merge! options
 
         if secret && client_auth_method == :basic
           cred = ["#{identifier}:#{secret}"].pack('m').tr("\n", '')
