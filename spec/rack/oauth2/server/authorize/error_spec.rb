@@ -9,10 +9,10 @@ describe Rack::OAuth2::Server::Authorize::BadRequest do
   it { should be_a Rack::OAuth2::Server::Abstract::BadRequest }
   its(:protocol_params) do
     should == {
-      :error             => :invalid_request,
-      :error_description => nil,
-      :error_uri         => nil,
-      :state             => nil
+      error:             :invalid_request,
+      error_description: nil,
+      error_uri:         nil,
+      state:             nil
     }
   end
 

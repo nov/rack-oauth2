@@ -16,4 +16,4 @@ task :spec do
   Rake::Task[:'coverage:report'].invoke unless ENV['TRAVIS_RUBY_VERSION']
 end
 
-task :default => :spec
+task default: :spec

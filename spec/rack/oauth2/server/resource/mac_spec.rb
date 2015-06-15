@@ -17,10 +17,10 @@ describe Rack::OAuth2::Server::Resource::MAC do
   end
   let(:mac_token) do
     Rack::OAuth2::AccessToken::MAC.new(
-      :access_token => 'valid_token',
-      :mac_key => 'secret',
-      :mac_algorithm => 'hmac-sha-256',
-      :ts => 1305820230 # fix verification time
+      access_token: 'valid_token',
+      mac_key: 'secret',
+      mac_algorithm: 'hmac-sha-256',
+      ts: 1305820230 # fix verification time
     )
   end
   let(:access_token) { env[Rack::OAuth2::Server::Resource::ACCESS_TOKEN] }

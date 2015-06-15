@@ -32,15 +32,15 @@ module Rack
           end
 
           def protocol_params
-            super.merge(:scope => Array(scope).join(' '))
+            super.merge(scope: Array(scope).join(' '))
           end
         end
 
         module ErrorMethods
           DEFAULT_DESCRIPTION = {
-            :invalid_request => "The request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, uses more than one method for including an access token, or is otherwise malformed.",
-            :invalid_token => "The access token provided is expired, revoked, malformed or invalid for other reasons.",
-            :insufficient_scope => "The request requires higher privileges than provided by the access token."
+            invalid_request: "The request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, uses more than one method for including an access token, or is otherwise malformed.",
+            invalid_token: "The access token provided is expired, revoked, malformed or invalid for other reasons.",
+            insufficient_scope: "The request requires higher privileges than provided by the access token."
           }
 
           def self.included(klass)

@@ -19,7 +19,7 @@ module Rack
             end
             attr_missing_without_error_handling!
           rescue AttrRequired::AttrMissing => e
-            invalid_request! e.message, :state => @state, :redirect_uri => @redirect_uri
+            invalid_request! e.message, state: @state, redirect_uri: @redirect_uri
           end
           alias_method_chain :attr_missing!, :error_handling
         end

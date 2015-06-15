@@ -3,7 +3,7 @@ require 'spec_helper.rb'
 describe Rack::OAuth2::Server::Authorize::Code do
   let(:request)            { Rack::MockRequest.new app }
   let(:redirect_uri)       { 'http://client.example.com/callback' }
-  let(:authorization_code) { 'authorization_code' }  
+  let(:authorization_code) { 'authorization_code' }
   let(:response)           { request.get "/?response_type=code&client_id=client&redirect_uri=#{redirect_uri}&state=state" }
 
   context 'when approved' do
@@ -48,8 +48,8 @@ describe Rack::OAuth2::Server::Authorize::Code do
     it 'should redirect with error in query' do
       response.status.should == 302
       error_message = {
-        :error => :access_denied,
-        :error_description => Rack::OAuth2::Server::Authorize::ErrorMethods::DEFAULT_DESCRIPTION[:access_denied]
+        error: :access_denied,
+        error_description: Rack::OAuth2::Server::Authorize::ErrorMethods::DEFAULT_DESCRIPTION[:access_denied]
       }
       response.location.should == "#{redirect_uri}?#{error_message.to_query}&state=state"
     end

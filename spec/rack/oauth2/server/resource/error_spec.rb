@@ -59,7 +59,7 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
 
       context 'when realm is specified' do
         let(:realm) { 'server.example.com' }
-        let(:error) { Rack::OAuth2::Server::Resource::Bearer::Unauthorized.new(:something, nil, :realm => realm) }
+        let(:error) { Rack::OAuth2::Server::Resource::Bearer::Unauthorized.new(:something, nil, realm: realm) }
 
         it 'should use given realm' do
           status, header, response = error_with_scheme.finish
@@ -86,7 +86,7 @@ describe Rack::OAuth2::Server::Resource::Forbidden do
   end
 
   context 'when scope option is given' do
-    let(:error) { Rack::OAuth2::Server::Resource::Bearer::Forbidden.new(:insufficient_scope, 'Desc', :scope => [:scope1, :scope2]) }
+    let(:error) { Rack::OAuth2::Server::Resource::Bearer::Forbidden.new(:insufficient_scope, 'Desc', scope: [:scope1, :scope2]) }
 
     it 'should have blank WWW-Authenticate header' do
       status, header, response = error.finish

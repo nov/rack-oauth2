@@ -3,9 +3,9 @@ require 'spec_helper.rb'
 describe Rack::OAuth2::Client::Error do
   let :error do
     {
-      :error => :invalid_request,
-      :error_description => 'Include invalid parameters',
-      :error_uri => 'http://server.example.com/error/invalid_request'
+      error: :invalid_request,
+      error_description: 'Include invalid parameters',
+      error_uri: 'http://server.example.com/error/invalid_request'
     }
   end
   subject do

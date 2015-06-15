@@ -16,9 +16,9 @@ module Rack
 
           def protocol_params
             {
-              :error             => error,
-              :error_description => description,
-              :error_uri         => uri
+              error:             error,
+              error_description: description,
+              error_uri:         uri
             }
           end
 

@@ -4,7 +4,7 @@ describe Rack::OAuth2::Server::Abstract::Error do
 
   context 'when full attributes are given' do
     subject do
-      Rack::OAuth2::Server::Abstract::Error.new 400, :invalid_request, 'Missing some required params', :uri => 'http://server.example.com/error'
+      Rack::OAuth2::Server::Abstract::Error.new 400, :invalid_request, 'Missing some required params', uri: 'http://server.example.com/error'
     end
     its(:status)      { should == 400 }
     its(:error)       { should == :invalid_request }
@@ -12,9 +12,9 @@ describe Rack::OAuth2::Server::Abstract::Error do
     its(:uri)         { should == 'http://server.example.com/error' }
     its(:protocol_params) do
       should == {
-        :error             => :invalid_request,
-        :error_description => 'Missing some required params',
-        :error_uri         => 'http://server.example.com/error'
+        error:             :invalid_request,
+        error_description: 'Missing some required params',
+        error_uri:         'http://server.example.com/error'
       }
     end
   end
@@ -29,9 +29,9 @@ describe Rack::OAuth2::Server::Abstract::Error do
     its(:uri)         { should be_nil }
     its(:protocol_params) do
       should == {
-        :error             => :invalid_request,
-        :error_description => nil,
-        :error_uri         => nil
+        error:             :invalid_request,
+        error_description: nil,
+        error_uri:         nil
       }
     end
   end

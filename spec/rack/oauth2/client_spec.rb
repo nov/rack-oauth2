@@ -92,7 +92,7 @@ describe Rack::OAuth2::Client do
             'https://server.example.com/oauth2/token',
             'tokens/bearer.json',
             request_header: {
-              'Authorization': 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ='
+              'Authorization' => 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ='
             }
           )
           client.access_token!

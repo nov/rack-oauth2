@@ -19,6 +19,6 @@ require 'helpers/webmock_helper'
 
 def simple_app
   lambda do |env|
-    [ 200, {'Content-Type' => 'text/plain'}, ["HELLO"] ]
+    [ 200, {'Content-Type': 'text/plain'}, ["HELLO"] ]
   end
 end

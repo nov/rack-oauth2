@@ -4,7 +4,7 @@ module Rack
       include AttrRequired, AttrOptional
       attr_required :access_token, :token_type, :httpclient
       attr_optional :refresh_token, :expires_in, :scope
-      delegate :get, :post, :put, :delete, :to => :httpclient
+      delegate :get, :post, :put, :delete, to: :httpclient
 
       alias_method :to_s, :access_token
 
@@ -21,11 +21,11 @@ module Rack
 
       def token_response(options = {})
         {
-          :access_token => access_token,
-          :refresh_token => refresh_token,
-          :token_type => token_type,
-          :expires_in => expires_in,
-          :scope => Array(scope).join(' ')
+          access_token: access_token,
+          refresh_token: refresh_token,
+          token_type: token_type,
+          expires_in: expires_in,
+          scope: Array(scope).join(' ')
         }
       end
     end

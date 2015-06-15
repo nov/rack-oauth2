@@ -20,8 +20,8 @@ describe Rack::OAuth2::Util do
   end
 
   describe '.compact_hash' do
-    subject { util.compact_hash :k1 => 'v1', :k2 => '', :k3 => nil }
-    it { should == {:k1 => 'v1'} }
+    subject { util.compact_hash k1: 'v1', k2: '', k3: nil }
+    it { should == {k1: 'v1'} }
   end
 
   describe '.parse_uri' do
@@ -55,7 +55,7 @@ describe Rack::OAuth2::Util do
   describe '.redirect_uri' do
     let(:base_uri) { 'http://client.example.com' }
     let(:params) do
-      {:k1 => :v1, :k2 => ''}
+      {k1: :v1, k2: ''}
     end
     subject { util.redirect_uri base_uri, location, params }
 

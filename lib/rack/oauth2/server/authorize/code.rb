@@ -25,7 +25,7 @@ module Rack
             attr_required :code
 
             def protocol_params
-              super.merge(:code => code)
+              super.merge(code: code)
             end
 
             def protocol_params_location

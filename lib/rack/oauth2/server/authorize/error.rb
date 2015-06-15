@@ -8,7 +8,7 @@ module Rack
           end
 
           def protocol_params
-            super.merge(:state => state)
+            super.merge(state: state)
           end
 
           def finish
@@ -36,13 +36,13 @@ module Rack
 
         module ErrorMethods
           DEFAULT_DESCRIPTION = {
-            :invalid_request => "The request is missing a required parameter, includes an unsupported parameter or parameter value, or is otherwise malformed.",
-            :unauthorized_client => "The client is not authorized to use the requested response type.",
-            :access_denied => "The end-user or authorization server denied the request.",
-            :unsupported_response_type => "The requested response type is not supported by the authorization server.",
-            :invalid_scope => "The requested scope is invalid, unknown, or malformed.",
-            :server_error => "Internal Server Error",
-            :temporarily_unavailable => "Service Unavailable"
+            invalid_request: "The request is missing a required parameter, includes an unsupported parameter or parameter value, or is otherwise malformed.",
+            unauthorized_client: "The client is not authorized to use the requested response type.",
+            access_denied: "The end-user or authorization server denied the request.",
+            unsupported_response_type: "The requested response type is not supported by the authorization server.",
+            invalid_scope: "The requested scope is invalid, unknown, or malformed.",
+            server_error: "Internal Server Error",
+            temporarily_unavailable: "Service Unavailable"
           }
 
           def self.included(klass)

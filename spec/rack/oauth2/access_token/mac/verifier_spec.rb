@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Rack::OAuth2::AccessToken::MAC::Verifier do
-  let(:verifier) { Rack::OAuth2::AccessToken::MAC::Verifier.new(:algorithm => algorithm) }
+  let(:verifier) { Rack::OAuth2::AccessToken::MAC::Verifier.new(algorithm: algorithm) }
   subject { verifier }
 
   context 'when "hmac-sha-1" is specified' do
@@ -21,5 +21,5 @@ describe Rack::OAuth2::AccessToken::MAC::Verifier do
     end
   end
 
-  
+
 end

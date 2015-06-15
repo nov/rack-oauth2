@@ -8,7 +8,7 @@ describe Rack::OAuth2::Server::Authorize::Token do
 
   context "when approved" do
     subject { response }
-    let(:bearer_token) { Rack::OAuth2::AccessToken::Bearer.new(:access_token => access_token) }
+    let(:bearer_token) { Rack::OAuth2::AccessToken::Bearer.new(access_token: access_token) }
     let :app do
       Rack::OAuth2::Server::Authorize.new do |request, response|
         response.redirect_uri = redirect_uri
@@ -22,8 +22,8 @@ describe Rack::OAuth2::Server::Authorize::Token do
     context 'when refresh_token is given' do
       let :bearer_token do
         Rack::OAuth2::AccessToken::Bearer.new(
-          :access_token => access_token,
-          :refresh_token => 'refresh'
+          access_token: access_token,
+          refresh_token: 'refresh'
         )
       end
       its(:location) { should == "#{redirect_uri}#access_token=#{access_token}&state=state&token_type=bearer" }
@@ -64,8 +64,8 @@ describe Rack::OAuth2::Server::Authorize::Token do
     it 'should redirect with error in fragment' do
       response.status.should == 302
       error_message = {
-        :error => :access_denied,
-        :error_description => Rack::OAuth2::Server::Authorize::ErrorMethods::DEFAULT_DESCRIPTION[:access_denied]
+        error: :access_denied,
+        error_description: Rack::OAuth2::Server::Authorize::ErrorMethods::DEFAULT_DESCRIPTION[:access_denied]
       }
       response.location.should == "#{redirect_uri}##{error_message.to_query}&state=state"
     end

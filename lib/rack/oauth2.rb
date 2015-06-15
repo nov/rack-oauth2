@@ -42,7 +42,7 @@ module Rack
 
     def self.http_client(agent_name = "Rack::OAuth2 (#{VERSION})", &local_http_config)
       _http_client_ = HTTPClient.new(
-        :agent_name => agent_name
+        agent_name: agent_name
       )
       http_config.try(:call, _http_client_)
       local_http_config.try(:call, _http_client_) unless local_http_config.nil?

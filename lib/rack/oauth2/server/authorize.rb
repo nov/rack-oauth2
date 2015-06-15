@@ -91,7 +91,7 @@ module Rack
           end
 
           def protocol_params
-            {:state => state}
+            {state: state}
           end
 
           def redirect_uri_with_credentials

@@ -4,17 +4,17 @@ describe Rack::OAuth2::Server::Token::RefreshToken do
   let(:request) { Rack::MockRequest.new app }
   let(:app) do
     Rack::OAuth2::Server::Token.new do |request, response|
-      response.access_token = Rack::OAuth2::AccessToken::Bearer.new(:access_token => 'access_token')
+      response.access_token = Rack::OAuth2::AccessToken::Bearer.new(access_token: 'access_token')
     end
   end
   let(:params) do
     {
-      :grant_type => "refresh_token",
-      :client_id => "client_id",
-      :refresh_token => "refresh_token"
+      grant_type: "refresh_token",
+      client_id: "client_id",
+      refresh_token: "refresh_token"
     }
   end
-  subject { request.post('/', :params => params) }
+  subject { request.post('/', params: params) }
 
   its(:status)       { should == 200 }
   its(:content_type) { should == 'application/json' }

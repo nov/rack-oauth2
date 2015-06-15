@@ -13,7 +13,7 @@ module Rack
 
         def as_json(options = {})
           (required_attributes + optional_attributes).inject({
-            :grant_type => self.class.name.demodulize.underscore.to_sym
+            grant_type: self.class.name.demodulize.underscore.to_sym
           }) do |hash, key|
             hash.merge! key => self.send(key)
           end

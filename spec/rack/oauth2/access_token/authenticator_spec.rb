@@ -15,7 +15,7 @@ describe Rack::OAuth2::AccessToken::Authenticator do
   context 'when Legacy token is given' do
     let(:token) do
       Rack::OAuth2::AccessToken::Legacy.new(
-        :access_token => 'access_token'
+        access_token: 'access_token'
       )
     end
     it_behaves_like :authenticator
@@ -24,7 +24,7 @@ describe Rack::OAuth2::AccessToken::Authenticator do
   context 'when Bearer token is given' do
     let(:token) do
       Rack::OAuth2::AccessToken::Bearer.new(
-        :access_token => 'access_token'
+        access_token: 'access_token'
       )
     end
     it_behaves_like :authenticator
@@ -33,9 +33,9 @@ describe Rack::OAuth2::AccessToken::Authenticator do
   context 'when MAC token is given' do
     let(:token) do
       Rack::OAuth2::AccessToken::MAC.new(
-        :access_token => 'access_token',
-        :mac_key => 'secret',
-        :mac_algorithm => 'hmac-sha-256'
+        access_token: 'access_token',
+        mac_key: 'secret',
+        mac_algorithm: 'hmac-sha-256'
       )
     end
     it_behaves_like :authenticator

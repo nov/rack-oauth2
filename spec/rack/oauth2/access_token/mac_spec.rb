@@ -4,19 +4,19 @@ describe Rack::OAuth2::AccessToken::MAC do
   let(:ts) { 1305820234 }
   let :token do
     Rack::OAuth2::AccessToken::MAC.new(
-      :access_token => 'access_token',
-      :mac_key => 'secret',
-      :mac_algorithm => 'hmac-sha-256',
-      :ts => ts
+      access_token: 'access_token',
+      mac_key: 'secret',
+      mac_algorithm: 'hmac-sha-256',
+      ts: ts
     )
   end
   let :token_with_ext_verifier do
     Rack::OAuth2::AccessToken::MAC.new(
-      :access_token => 'access_token',
-      :mac_key => 'secret',
-      :mac_algorithm => 'hmac-sha-256',
-      :ts => ts,
-      :ext_verifier => Rack::OAuth2::AccessToken::MAC::Sha256HexVerifier
+      access_token: 'access_token',
+      mac_key: 'secret',
+      mac_algorithm: 'hmac-sha-256',
+      ts: ts,
+      ext_verifier: Rack::OAuth2::AccessToken::MAC::Sha256HexVerifier
     )
   end
   let(:nonce) { '1000:51e74de734c05613f37520872e68db5f' }
@@ -27,13 +27,13 @@ describe Rack::OAuth2::AccessToken::MAC do
   its(:mac_algorithm) { should == 'hmac-sha-256' }
   its(:token_response) do
     should == {
-      :access_token => 'access_token',
-      :refresh_token => nil,
-      :token_type => :mac,
-      :expires_in => nil,
-      :scope => '',
-      :mac_key => 'secret',
-      :mac_algorithm => 'hmac-sha-256'
+      access_token: 'access_token',
+      refresh_token: nil,
+      token_type: :mac,
+      expires_in: nil,
+      scope: '',
+      mac_key: 'secret',
+      mac_algorithm: 'hmac-sha-256'
     }
   end
   its(:generate_nonce) { should be_a String }
@@ -72,9 +72,9 @@ describe Rack::OAuth2::AccessToken::MAC do
       let(:env) do
         Rack::MockRequest.env_for(
           '/protected_resources',
-          :method => :POST,
-          :params => {
-            :key1 => 'value1'
+          method: :POST,
+          params: {
+            key1: 'value1'
           },
           'HTTP_AUTHORIZATION' => %{MAC id="access_token", nonce="#{nonce}", ts="#{ts}", mac="#{signature}", ext="#{ext}"}
         )
@@ -116,7 +116,7 @@ describe Rack::OAuth2::AccessToken::MAC do
   end
 
   describe '.authenticate' do
-    let(:request) { HTTPClient.new.send(:create_request, :post, URI.parse(resource_endpoint), {}, {:hello => "world"}, {}) }
+    let(:request) { HTTPClient.new.send(:create_request, :post, URI.parse(resource_endpoint), {}, {hello: "world"}, {}) }
     context 'when no ext_verifier is given' do
       let(:signature) { 'pOBaL6HRawe4tUPmcU4vJEj1f2GJqrbQOlCcdAYgI/s=' }
 

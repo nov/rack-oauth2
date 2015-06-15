@@ -6,17 +6,17 @@ describe Rack::OAuth2::Client::Grant::AuthorizationCode do
 
   context 'when code is given' do
     let :attributes do
-      {:code => 'code'}
+      {code: 'code'}
     end
 
     context 'when redirect_uri is given' do
       let :attributes do
-        {:code => 'code', :redirect_uri => redirect_uri}
+        {code: 'code', redirect_uri: redirect_uri}
       end
       subject { grant.new attributes }
       its(:redirect_uri) { should == redirect_uri }
       its(:as_json) do
-        should == {:grant_type => :authorization_code, :code => 'code', :redirect_uri => redirect_uri}
+        should == {grant_type: :authorization_code, code: 'code', redirect_uri: redirect_uri}
       end
     end
 
@@ -24,7 +24,7 @@ describe Rack::OAuth2::Client::Grant::AuthorizationCode do
       subject { grant.new attributes }
       its(:redirect_uri) { should be_nil }
       its(:as_json) do
-        should == {:grant_type => :authorization_code, :code => 'code', :redirect_uri => nil}
+        should == {grant_type: :authorization_code, code: 'code', redirect_uri: nil}
       end
     end
   end

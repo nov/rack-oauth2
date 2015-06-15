@@ -20,28 +20,28 @@ module Rack
         params[:response_type] = Array(params[:response_type]).join(' ')
         params[:scope] = Array(params[:scope]).join(' ')
         Util.redirect_uri absolute_uri_for(authorization_endpoint), :query, params.merge(
-          :client_id => self.identifier,
-          :redirect_uri => self.redirect_uri
+          client_id: self.identifier,
+          redirect_uri: self.redirect_uri
         )
       end
 
       def authorization_code=(code)
         @grant = Grant::AuthorizationCode.new(
-          :code => code,
-          :redirect_uri => self.redirect_uri
+          code: code,
+          redirect_uri: self.redirect_uri
         )
       end
 
       def resource_owner_credentials=(credentials)
         @grant = Grant::Password.new(
-          :username => credentials.first,
-          :password => credentials.last
+          username: credentials.first,
+          password: credentials.last
         )
       end
 
       def refresh_token=(token)
         @grant = Grant::RefreshToken.new(
-          :refresh_token => token
+          refresh_token: token
         )
       end
 
@@ -64,8 +64,8 @@ module Rack
           )
         else
           params.merge!(
-            :client_id => identifier,
-            :client_secret => secret
+            client_id: identifier,
+            client_secret: secret
           )
         end
         handle_response do
@@ -119,7 +119,7 @@ module Rack
         error = parse_json response.body
         raise Error.new(response.status, error)
       rescue MultiJson::DecodeError
-        raise Error.new(response.status, :error => 'Unknown', :error_description => response.body)
+        raise Error.new(response.status, error: 'Unknown', error_description: response.body)
       end
 
       def parse_json(raw_json)

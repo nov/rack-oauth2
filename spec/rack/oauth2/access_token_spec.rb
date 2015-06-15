@@ -3,10 +3,10 @@ require 'spec_helper'
 describe Rack::OAuth2::AccessToken do
   let :token do
     Rack::OAuth2::AccessToken::Bearer.new(
-      :access_token => 'access_token',
-      :refresh_token => 'refresh_token',
-      :expires_in => 3600,
-      :scope => [:scope1, :scope2]
+      access_token: 'access_token',
+      refresh_token: 'refresh_token',
+      expires_in: 3600,
+      scope: [:scope1, :scope2]
     )
   end
   subject { token }
@@ -17,11 +17,11 @@ describe Rack::OAuth2::AccessToken do
   its(:scope)         { should == [:scope1, :scope2] }
   its(:token_response) do
     should == {
-      :token_type => :bearer,
-      :access_token => 'access_token',
-      :refresh_token => 'refresh_token',
-      :expires_in => 3600,
-      :scope => 'scope1 scope2'
+      token_type: :bearer,
+      access_token: 'access_token',
+      refresh_token: 'refresh_token',
+      expires_in: 3600,
+      scope: 'scope1 scope2'
     }
   end
 
@@ -29,9 +29,9 @@ describe Rack::OAuth2::AccessToken do
     it do
       expect do
         Rack::OAuth2::AccessToken::Bearer.new(
-          :refresh_token => 'refresh_token',
-          :expires_in => 3600,
-          :scope => [:scope1, :scope2]
+          refresh_token: 'refresh_token',
+          expires_in: 3600,
+          scope: [:scope1, :scope2]
         )
       end.to raise_error AttrRequired::AttrMissing
     end
@@ -41,7 +41,7 @@ describe Rack::OAuth2::AccessToken do
     it do
       expect do
         Rack::OAuth2::AccessToken::Bearer.new(
-          :access_token => 'access_token'
+          access_token: 'access_token'
         )
       end.not_to raise_error
     end
