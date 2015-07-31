@@ -65,5 +65,16 @@ describe Rack::OAuth2::AccessToken do
         end
       end
     end
+
+    context 'when extension params given' do
+      subject do
+        Rack::OAuth2::AccessToken::Bearer.new(
+          access_token: 'access_token',
+          ex_key: :ex_value
+        )
+      end
+
+      its(:raw_attributes) { should include :ex_key }
+    end
   end
 end
