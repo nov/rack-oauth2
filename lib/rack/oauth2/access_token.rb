@@ -1,11 +1,12 @@
 module Rack
   module OAuth2
     class AccessToken
+      extend Forwardable
       include AttrRequired, AttrOptional
       attr_required :access_token, :token_type, :httpclient
       attr_optional :refresh_token, :expires_in, :scope
       attr_accessor :raw_attributes
-      delegate :get, :post, :put, :delete, to: :httpclient
+      delegate [:get, :post, :put, :delete] => :@httpclient
 
       alias_method :to_s, :access_token
 
@@ -14,7 +15,7 @@ module Rack
           self.send :"#{key}=", attributes[key]
         end
         @raw_attributes = attributes
-        @token_type = self.class.name.demodulize.underscore.to_sym
+        @token_type = type
         @httpclient = Rack::OAuth2.http_client("#{self.class} (#{VERSION})") do |config|
           config.request_filter << Authenticator.new(self)
         end
@@ -23,12 +24,18 @@ module Rack
 
       def token_response(options = {})
         {
-          access_token: access_token,
+          access_token:  access_token,
           refresh_token: refresh_token,
-          token_type: token_type,
-          expires_in: expires_in,
-          scope: Array(scope).join(' ')
+          token_type:    token_type,
+          expires_in:    expires_in,
+          scope:         Array(scope).join(' ')
         }
+      end
+
+      private
+
+      def type
+        raise 'Define me!'
       end
     end
   end

@@ -13,7 +13,7 @@ module WebMockHelper
 
   def request_for(method, options = {})
     request = {}
-    params = options.try(:[], :params) || {}
+    params = options[:params] || {}
     case method
     when :post, :put, :delete
       request[:body] = params

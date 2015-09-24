@@ -7,7 +7,9 @@ class Time
         now_without_fixed_time
       end
     end
-    alias_method_chain :now, :fixed_time
+
+    alias_method :now_without_fixed_time, :now
+    alias_method :now, :now_with_fixed_time
 
     def fix(time = Time.now)
       @fixed_time = time

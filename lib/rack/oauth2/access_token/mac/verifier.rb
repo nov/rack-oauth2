@@ -6,7 +6,7 @@ module Rack
           include AttrRequired, AttrOptional
           attr_required :algorithm
 
-          class VerificationFailed < StandardError; end
+          VerificationFailed = Class.new StandardError
 
           def initialize(attributes = {})
             (required_attributes + optional_attributes).each do |key|
@@ -14,14 +14,14 @@ module Rack
             end
             attr_missing!
           rescue AttrRequired::AttrMissing => e
-            raise VerificationFailed.new("#{self.class.name.demodulize} Invalid: #{e.message}")
+            raise VerificationFailed.new "#{self.class.name.split('::').last} Invalid: #{e.message}"
           end
 
           def verify!(expected)
             if expected == self.calculate
               :verified
             else
-              raise VerificationFailed.new("#{self.class.name.demodulize} Invalid")
+              raise VerificationFailed.new "#{self.class.name.split('::').last} Invalid"
             end
           end
 

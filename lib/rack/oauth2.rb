@@ -2,10 +2,10 @@ require 'rack'
 require 'multi_json'
 require 'httpclient'
 require 'logger'
-require 'active_support'
-require 'active_support/core_ext'
 require 'attr_required'
 require 'attr_optional'
+require 'fast_blank'
+require 'hashie'
 
 module Rack
   module OAuth2
@@ -44,8 +44,8 @@ module Rack
       _http_client_ = HTTPClient.new(
         agent_name: agent_name
       )
-      http_config.try(:call, _http_client_)
-      local_http_config.try(:call, _http_client_) unless local_http_config.nil?
+      http_config.call _http_client_       if http_config.respond_to? :call
+      local_http_config.call _http_client_ if local_http_config.respond_to? :call
       _http_client_.request_filter << Debugger::RequestFilter.new if debugging?
       _http_client_
     end

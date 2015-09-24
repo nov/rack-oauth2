@@ -14,14 +14,16 @@ module Rack
           end
 
           def attr_missing_with_error_handling!
-            if params['client_id'].present? && @client_id != params['client_id']
+            if Util.check_presence_of(params['client_id']) && @client_id != params['client_id']
               invalid_request! 'Multiple client credentials are provided.'
             end
             attr_missing_without_error_handling!
           rescue AttrRequired::AttrMissing => e
             invalid_request! e.message, state: @state, redirect_uri: @redirect_uri
           end
-          alias_method_chain :attr_missing!, :error_handling
+
+          alias_method :attr_missing_without_error_handling!, :attr_missing!
+          alias_method :attr_missing!, :attr_missing_with_error_handling!
         end
       end
     end

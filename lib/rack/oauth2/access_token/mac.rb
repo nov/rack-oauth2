@@ -9,7 +9,7 @@ module Rack
         def initialize(attributes = {})
           super(attributes)
           @issued_at = Time.now.utc
-          @ts_expires_in ||= 5.minutes
+          @ts_expires_in ||= 5 * 60
         end
 
         def token_response
@@ -20,7 +20,7 @@ module Rack
         end
 
         def verify!(request)
-          if self.ext_verifier.present?
+          if Util.check_presence_of self.ext_verifier
             body = request.body.read
             request.body.rewind # for future use
 
@@ -31,7 +31,7 @@ module Rack
           end
 
           now = Time.now.utc.to_i
-          now = @ts.to_i if @ts.present?
+          now = @ts.to_i if Util.check_presence_of @ts
 
           raise Rack::OAuth2::AccessToken::MAC::Verifier::VerificationFailed.new("Request ts expired") if now - request.ts.to_i > @ts_expires_in.to_i
 
@@ -54,7 +54,7 @@ module Rack
           @nonce = generate_nonce
           @ts_generated = @ts || Time.now.utc
 
-          if self.ext_verifier.present?
+          if Util.check_presence_of self.ext_verifier
             @ext = self.ext_verifier.new(
               raw_body: request.body,
               algorithm: self.mac_algorithm
@@ -78,12 +78,16 @@ module Rack
 
         private
 
+        def type
+          :mac
+        end
+
         def authorization_header
           header = "MAC id=\"#{access_token}\""
           header << ", nonce=\"#{nonce}\""
           header << ", ts=\"#{@ts_generated.to_i}\""
           header << ", mac=\"#{signature}\""
-          header << ", ext=\"#{ext}\"" if @ext.present?
+          header << ", ext=\"#{ext}\"" if Util.check_presence_of @ext
           header
         end
 

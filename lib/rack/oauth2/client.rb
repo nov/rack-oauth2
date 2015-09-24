@@ -20,7 +20,7 @@ module Rack
         params[:response_type] = Array(params[:response_type]).join(' ')
         params[:scope] = Array(params[:scope]).join(' ')
         Util.redirect_uri absolute_uri_for(authorization_endpoint), :query, params.merge(
-          client_id: self.identifier,
+          client_id:    self.identifier,
           redirect_uri: self.redirect_uri
         )
       end
@@ -51,10 +51,10 @@ module Rack
         # NOTE:
         #  Using Array#estract_options! for backward compatibility.
         #  Until v1.0.5, the first argument was 'client_auth_method' in scalar.
-        options = args.extract_options!
+        options = args.last.is_a?(Hash) ? args.pop : {}
         client_auth_method = args.first || options.delete(:client_auth_method) || :basic
 
-        params[:scope] = Array(options.delete(:scope)).join(' ') if options[:scope].present?
+        params[:scope] = Array(options.delete(:scope)).join(' ') if Util.check_presence_of options[:scope]
         params.merge! options
 
         if secret && client_auth_method == :basic
@@ -100,7 +100,9 @@ module Rack
 
       def handle_success_response(response)
         token_hash = parse_json response.body
-        case token_hash[:token_type].try(:downcase)
+        token_type = token_hash[:token_type]
+        token_type = token_type.downcase if token_type.is_a? String
+        case token_type
         when 'bearer'
           AccessToken::Bearer.new(token_hash)
         when 'mac'
@@ -112,7 +114,7 @@ module Rack
         end
       rescue MultiJson::DecodeError
         # NOTE: Facebook support (They don't use JSON as token response)
-        AccessToken::Legacy.new Rack::Utils.parse_nested_query(response.body).with_indifferent_access
+        AccessToken::Legacy.new Util::IndifferentAccessHash[Rack::Utils.parse_nested_query response.body]
       end
 
       def handle_error_response(response)
@@ -124,7 +126,7 @@ module Rack
 
       def parse_json(raw_json)
         # MultiJson.parse('') returns nil when using MultiJson::Adapters::JsonGem
-        MultiJson.load(raw_json).try(:with_indifferent_access) || {}
+        Util::IndifferentAccessHash[MultiJson.load(raw_json)]
       end
     end
   end

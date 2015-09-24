@@ -9,6 +9,9 @@ describe Rack::OAuth2::Server::Authorize::Extension::CodeAndToken do
   let(:response) do
     request.get("/?response_type=code%20token&client_id=client&redirect_uri=#{redirect_uri}")
   end
+  let :util do
+    Rack::OAuth2::Util
+  end
 
   context "when approved" do
     subject { response }
@@ -54,7 +57,7 @@ describe Rack::OAuth2::Server::Authorize::Extension::CodeAndToken do
         error: :access_denied,
         error_description: Rack::OAuth2::Server::Authorize::ErrorMethods::DEFAULT_DESCRIPTION[:access_denied]
       }
-      response.location.should == "#{redirect_uri}##{error_message.to_query}"
+      response.location.should == "#{redirect_uri}##{util.to_query error_message}"
     end
   end
 end

@@ -5,6 +5,12 @@ module Rack
         def authenticate(request)
           request.header["Authorization"] = "Bearer #{access_token}"
         end
+
+        private
+
+        def type
+          :bearer
+        end
       end
     end
   end

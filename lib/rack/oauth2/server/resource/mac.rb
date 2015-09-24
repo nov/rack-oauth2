@@ -14,7 +14,7 @@ module Rack
             attr_reader :nonce, :ts, :ext, :signature
 
             def setup!
-              auth_params = Rack::Auth::Digest::Params.parse(@auth_header.params).with_indifferent_access
+              auth_params = Util::IndifferentAccessHash[Rack::Auth::Digest::Params.parse(@auth_header.params)]
               @access_token = auth_params[:id]
               @nonce = auth_params[:nonce]
               @ts = auth_params[:ts]

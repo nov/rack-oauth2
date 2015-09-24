@@ -4,6 +4,12 @@ module Rack
       class Grant
         class RefreshToken < Grant
           attr_required :refresh_token
+
+          private
+
+          def type
+            :refresh_token
+          end
         end
       end
     end

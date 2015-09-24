@@ -23,7 +23,7 @@ module Rack
             end
 
             def oauth2?
-              (access_token_in_header || access_token_in_payload).present?
+              Util.check_presence_of access_token_in_header || access_token_in_payload
             end
 
             def access_token_in_header

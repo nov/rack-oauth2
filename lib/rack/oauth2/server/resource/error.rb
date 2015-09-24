@@ -16,8 +16,8 @@ module Rack
               header = response.header['WWW-Authenticate'] = "#{scheme} realm=\"#{realm}\""
               if ErrorMethods::DEFAULT_DESCRIPTION.keys.include?(error)
                 header << ", error=\"#{error}\""
-                header << ", error_description=\"#{description}\"" if description.present?
-                header << ", error_uri=\"#{uri}\""                 if uri.present?
+                header << ", error_description=\"#{description}\"" if Util.check_presence_of description
+                header << ", error_uri=\"#{uri}\""                 if Util.check_presence_of uri
               end
             end
           end

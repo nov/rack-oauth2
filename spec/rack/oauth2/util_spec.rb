@@ -52,6 +52,68 @@ describe Rack::OAuth2::Util do
     end
   end
 
+  describe '.is_blank?' do
+    context 'when argument is nil' do
+      it do
+        expect(util.is_blank?(nil)).to be true
+      end
+    end
+
+    context 'when argument is empty array' do
+      it do
+        expect(util.is_blank?([])).to be true
+      end
+    end
+
+    context 'when argument is nonempty array' do
+      it do
+        expect(util.is_blank?([1, 2])).to be false
+      end
+    end
+
+    context 'when argument is empty hash' do
+      it do
+        expect(util.is_blank?({})).to be true
+      end
+    end
+
+    context 'when argument is nonempty hash' do
+      it do
+        expect(util.is_blank?(a: 1)).to be false
+      end
+    end
+
+    context 'when argument is empty string' do
+      it do
+        expect(util.is_blank?('')).to be true
+      end
+
+      it do
+        expect(util.is_blank?("\n")).to be true
+      end
+
+      it do
+        expect(util.is_blank?("  ")).to be true
+      end
+    end
+
+    context 'when argument is nonempty string' do
+      it do
+        expect(util.is_blank?('a')).to be false
+      end
+    end
+  end
+
+  describe '.to_query' do
+    let(:params) do
+      {k1: :v1, k2: :v2}
+    end
+
+    it 'should return valid URI query' do
+      expect(util.to_query(params)).to eq "k1=v1&k2=v2"
+    end
+  end
+
   describe '.redirect_uri' do
     let(:base_uri) { 'http://client.example.com' }
     let(:params) do
@@ -61,12 +123,12 @@ describe Rack::OAuth2::Util do
 
     context 'when location = :fragment' do
       let(:location) { :fragment }
-      it { should == "#{base_uri}##{util.compact_hash(params).to_query}" }
+      it { should == "#{base_uri}##{util.to_query util.compact_hash params}" }
     end
 
     context 'when location = :query' do
       let(:location) { :query }
-      it { should == "#{base_uri}?#{util.compact_hash(params).to_query}" }
+      it { should == "#{base_uri}?#{util.to_query util.compact_hash params}" }
     end
   end
 
