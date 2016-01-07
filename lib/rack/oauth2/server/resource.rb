@@ -9,7 +9,7 @@ module Rack
         def initialize(app, realm = nil, &authenticator)
           @app = app
           @realm = realm
-          super &authenticator
+          super(&authenticator)
         end
 
         def call(env)
