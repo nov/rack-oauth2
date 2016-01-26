@@ -1,13 +1,15 @@
 class Time
   class << self
-    def now_with_fixed_time
-      if @fixed_time
-        @fixed_time.dup
-      else
-        now_without_fixed_time
+    module NowWithFixedTime
+      def now
+        if @fixed_time
+          @fixed_time.dup
+        else
+          super
+        end
       end
     end
-    alias_method_chain :now, :fixed_time
+    prepend NowWithFixedTime
 
     def fix(time = Time.now)
       @fixed_time = time
