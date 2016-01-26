@@ -13,15 +13,14 @@ module Rack
             @scope = Array(params['scope'].to_s.split(' '))
           end
 
-          def attr_missing_with_error_handling!
+          def attr_missing!
             if params['client_id'].present? && @client_id != params['client_id']
               invalid_request! 'Multiple client credentials are provided.'
             end
-            attr_missing_without_error_handling!
+            super
           rescue AttrRequired::AttrMissing => e
             invalid_request! e.message, state: @state, redirect_uri: @redirect_uri
           end
-          alias_method_chain :attr_missing!, :error_handling
         end
       end
     end
