@@ -5,7 +5,7 @@ module Rack
       attr_required :access_token, :token_type, :httpclient
       attr_optional :refresh_token, :expires_in, :scope
       attr_accessor :raw_attributes
-      delegate :get, :post, :put, :delete, to: :httpclient
+      delegate :get, :patch, :post, :put, :delete, to: :httpclient
 
       alias_method :to_s, :access_token
 
