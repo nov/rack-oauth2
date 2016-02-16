@@ -103,7 +103,7 @@ describe Rack::OAuth2::Server::Token do
 
   describe 'extensibility' do
     before do
-      require 'rack/oauth2/server/token/extension/jwt'
+      require 'rack/oauth2/server/token/extension/example'
     end
 
     subject { app }
@@ -114,12 +114,12 @@ describe Rack::OAuth2::Server::Token do
       )
     end
     let(:request) { Rack::OAuth2::Server::Token::Request.new env }
-    its(:extensions) { should == [Rack::OAuth2::Server::Token::Extension::JWT] }
+    its(:extensions) { should == [Rack::OAuth2::Server::Token::Extension::Example] }
 
     describe 'JWT assertion' do
       let(:params) do
         {
-          grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+          grant_type: 'urn:ietf:params:oauth:grant-type:example',
           assertion: 'header.payload.signature'
         }
       end
@@ -127,7 +127,7 @@ describe Rack::OAuth2::Server::Token do
       it do
         app.send(
           :grant_type_for, request
-        ).should == Rack::OAuth2::Server::Token::Extension::JWT
+        ).should == Rack::OAuth2::Server::Token::Extension::Example
       end
     end
   end

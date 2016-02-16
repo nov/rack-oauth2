@@ -23,6 +23,10 @@ module Rack
             ClientCredentials
           when 'refresh_token'
             RefreshToken
+          when 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+            JWTBearer
+          when 'urn:ietf:params:oauth:grant-type:saml2-bearer'
+            SAML2Bearer
           when ''
             request.attr_missing!
           else
@@ -80,5 +84,7 @@ require 'rack/oauth2/server/token/authorization_code'
 require 'rack/oauth2/server/token/password'
 require 'rack/oauth2/server/token/client_credentials'
 require 'rack/oauth2/server/token/refresh_token'
+require 'rack/oauth2/server/token/jwt_bearer'
+require 'rack/oauth2/server/token/saml2_bearer'
 require 'rack/oauth2/server/token/extension'
 require 'rack/oauth2/server/token/error'

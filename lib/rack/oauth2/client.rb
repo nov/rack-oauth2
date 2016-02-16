@@ -45,6 +45,18 @@ module Rack
         )
       end
 
+      def jwt_bearer=(assertion)
+        @grant = Grant::JWTBearer.new(
+          assertion: assertion
+        )
+      end
+
+      def saml2_bearer=(assertion)
+        @grant = Grant::SAML2Bearer.new(
+          assertion: assertion
+        )
+      end
+
       def access_token!(*args)
         headers, params = {}, @grant.as_json
 

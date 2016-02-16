@@ -3,8 +3,8 @@ module Rack
     module Server
       class Token
         module Extension
-          class JWT < Abstract::Handler
-            GRANT_TYPE_URN = 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+          class Example < Abstract::Handler
+            GRANT_TYPE_URN = 'urn:ietf:params:oauth:grant-type:example'
 
             class << self
               def grant_type_for?(grant_type)
