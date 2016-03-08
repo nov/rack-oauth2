@@ -15,7 +15,7 @@ module Rack
 
             def initialize(env)
               super
-              @grant_type = 'urn:ietf:params:oauth:grant-type:saml2-bearer'
+              @grant_type = URN::GrantType::SAML2_BEARER
               @assertion = params['assertion']
               attr_missing!
             end

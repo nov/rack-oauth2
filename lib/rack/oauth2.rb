@@ -61,6 +61,7 @@ module Rack
   end
 end
 
+require 'rack/oauth2/urn'
 require 'rack/oauth2/util'
 require 'rack/oauth2/server'
 require 'rack/oauth2/client'

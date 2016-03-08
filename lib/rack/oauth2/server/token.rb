@@ -23,9 +23,9 @@ module Rack
             ClientCredentials
           when 'refresh_token'
             RefreshToken
-          when 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+          when URN::GrantType::JWT_BEARER
             JWTBearer
-          when 'urn:ietf:params:oauth:grant-type:saml2-bearer'
+          when URN::GrantType::SAML2_BEARER
             SAML2Bearer
           when ''
             request.attr_missing!

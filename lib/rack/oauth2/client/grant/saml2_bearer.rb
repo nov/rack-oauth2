@@ -6,7 +6,7 @@ module Rack
           attr_required :assertion
 
           def grant_type
-            'urn:ietf:params:oauth:grant-type:saml2-bearer'
+            URN::GrantType::SAML2_BEARER
           end
         end
       end

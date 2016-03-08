@@ -57,6 +57,13 @@ module Rack
         )
       end
 
+      def subject_token=(subject_token, subject_token_type = URN::TokenType::JWT)
+        @grant = Grant::TokenExchange.new(
+          subject_token: subject_token,
+          subject_token_type: subject_token_type
+        )
+      end
+
       def access_token!(*args)
         headers, params = {}, @grant.as_json
 
