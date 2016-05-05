@@ -79,7 +79,7 @@ describe Rack::OAuth2::Util do
       end
     end
 
-    context 'when exactry same' do
+    context 'when exactly same' do
       it { util.uri_match?(uri, uri).should == true }
     end
 
