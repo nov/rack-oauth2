@@ -11,8 +11,13 @@ module Rack
             super.merge(state: state)
           end
 
+          def redirect?
+            redirect_uri.present? &&
+            protocol_params_location.present?
+          end
+
           def finish
-            if redirect_uri.present? && protocol_params_location.present?
+            if redirect?
               super do |response|
                 response.redirect Util.redirect_uri(redirect_uri, protocol_params_location, protocol_params)
               end

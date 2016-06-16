@@ -11,16 +11,20 @@ module Rack
           def call(env)
             prepare_oauth_env env
             @app.call env
+          rescue Rack::OAuth2::Server::Abstract::Error => e
+            e.finish
           end
 
           private
 
           def prepare_oauth_env(env)
-            request = Server::Authorize::Request.new(env)
-            env[REQUEST] = request
-            response = response_type_for(request).new.call(env)
-            response.extend ResponseExt
-            env[RESPONSE] = response
+            response_type = response_type_for(
+              Server::Authorize::Request.new(env)
+            ).new
+            response_type.call(env)
+            response_type.response.extend ResponseExt
+            env[REQUEST]  = response_type.request
+            env[RESPONSE] = response_type.response
           rescue Rack::OAuth2::Server::Abstract::Error => e
             env[ERROR] = e
           end
