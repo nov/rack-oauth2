@@ -10,6 +10,8 @@ module Rack
           end
 
           class Request < Token::Request
+            include Server::Extension::PKCE::TokenRequest
+
             attr_required :code
             attr_optional :redirect_uri
 

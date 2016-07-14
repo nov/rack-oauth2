@@ -9,7 +9,11 @@ module Rack
         end
 
         def base64_encode(text)
-          Base64.encode64(text).gsub(/\n/, '')
+          Base64.encode64(text).delete("\n")
+        end
+
+        def urlsafe_base64_encode(text)
+          Base64.urlsafe_encode64(text).delete('=')
         end
 
         def compact_hash(hash)

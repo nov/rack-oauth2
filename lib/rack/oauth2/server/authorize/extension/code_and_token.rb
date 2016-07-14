@@ -17,6 +17,8 @@ module Rack
             end
 
             class Request < Authorize::Token::Request
+              include Server::Extension::PKCE::AuthorizationRequest
+
               def initialize(env)
                 super
                 @response_type = [:code, :token]
