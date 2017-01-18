@@ -6,7 +6,8 @@ module Rack
         def initialize(status, response)
           @status = status
           @response = response
-          super response[:error_description]
+          message = [response[:error], response[:error_description]].compact.join(' :: ')
+          super message
         end
       end
     end
