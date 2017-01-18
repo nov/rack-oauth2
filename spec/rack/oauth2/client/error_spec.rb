@@ -13,6 +13,6 @@ describe Rack::OAuth2::Client::Error do
   end
 
   its(:status)   { should == 400 }
-  its(:message)  { should == error[:error_description] }
+  its(:message)  { should == [error[:error], error[:error_description]].join(' :: ') }
   its(:response) { should == error }
 end
