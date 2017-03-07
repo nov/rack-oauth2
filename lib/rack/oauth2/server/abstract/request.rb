@@ -20,11 +20,11 @@ module Rack
               @_coup_params = ActiveSupport::JSON.decode(env['RAW_POST_DATA'])
             end
           ensure
-            @_coup_params.to_h
+            @_coup_params
           end
 
           def params
-            params_from_post_json.merge!(super.to_h)
+            params_from_post_json.to_h.merge!(super.to_h)
           end
 
           def attr_missing!
