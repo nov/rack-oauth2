@@ -14,14 +14,13 @@ module Rack
           end
 
           def params_from_post_json
-            result = {}
+            @_coup_params = {}
 
             if env['RAW_POST_DATA'].to_s.length > 0 && env['CONTENT_TYPE'] == 'application/json'
-              result = ActiveSupport::JSON.decode(env['RAW_POST_DATA'])
+              @_coup_params = ActiveSupport::JSON.decode(env['RAW_POST_DATA'])
             end
-
           ensure
-            @_coup_params = result
+            @_coup_params.to_h
           end
 
           def params
