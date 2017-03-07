@@ -25,7 +25,7 @@ module Rack
           end
 
           def params
-            params_from_post_json.merge!(super)
+            params_from_post_json.merge!(super.to_h)
           end
 
           def attr_missing!
