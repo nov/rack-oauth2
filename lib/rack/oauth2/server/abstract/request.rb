@@ -9,18 +9,15 @@ module Rack
 
           def initialize(env)
             super
-            parse_json
-
             @client_id ||= params['client_id']
             @scope = Array(params['scope'].to_s.split(' '))
           end
 
-          def parse_json
+          def params_from_post_json
             result = {}
 
-            if body.size > 0 && env['CONTENT_TYPE'] == 'application/json'
-              body.rewind
-              result = ActiveSupport::JSON.decode(body.read)
+            if env['RAW_POST_DATA'].to_s.length > 0 && env['CONTENT_TYPE'] == 'application/json'
+              result = ActiveSupport::JSON.decode(env['RAW_POST_DATA'])
             end
 
           ensure
@@ -28,7 +25,7 @@ module Rack
           end
 
           def params
-            @_coup_params.merge!(super)
+            params_from_post_json.merge!(super)
           end
 
           def attr_missing!
