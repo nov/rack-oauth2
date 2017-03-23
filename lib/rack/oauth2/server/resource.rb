@@ -26,7 +26,7 @@ module Rack
         private
 
         def authenticate!(request)
-          @authenticator.dup.call(request)
+          @authenticator.call(request)
         end
 
         class Request < Rack::Request

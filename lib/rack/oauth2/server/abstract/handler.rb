@@ -18,7 +18,7 @@ module Rack
           end
 
           def _call(env)
-            @authenticator.dup.call(@request, @response) if @authenticator
+            @authenticator.call(@request, @response) if @authenticator
             @response
           end
         end
