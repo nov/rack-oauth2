@@ -2,7 +2,7 @@ module Rack
   module OAuth2
     module Server
       class Authorize < Abstract::Handler
-        def call(env)
+        def _call(env)
           request = Request.new(env)
           response_type_for(request).new(&@authenticator).call(env).finish
         rescue Rack::OAuth2::Server::Abstract::Error => e

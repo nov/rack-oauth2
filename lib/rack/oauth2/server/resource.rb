@@ -12,7 +12,7 @@ module Rack
           super(&authenticator)
         end
 
-        def call(env)
+        def _call(env)
           if request.oauth2?
             access_token = authenticate! request.setup!
             env[ACCESS_TOKEN] = access_token
