@@ -8,7 +8,7 @@ module Rack
             @app = app
           end
 
-          def call(env)
+          def _call(env)
             prepare_oauth_env env
             @app.call env
           rescue Rack::OAuth2::Server::Abstract::Error => e

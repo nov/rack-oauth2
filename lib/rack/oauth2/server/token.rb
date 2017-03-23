@@ -4,7 +4,7 @@ module Rack
   module OAuth2
     module Server
       class Token < Abstract::Handler
-        def call(env)
+        def _call(env)
           request = Request.new(env)
           grant_type_for(request).new(&@authenticator).call(env).finish
         rescue Rack::OAuth2::Server::Abstract::Error => e

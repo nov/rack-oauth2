@@ -10,7 +10,7 @@ module Rack
               end
             end
 
-            def call(env)
+            def _call(env)
               @request  = Request.new env
               @response = Response.new request
               super
