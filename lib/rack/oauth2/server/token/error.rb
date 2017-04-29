@@ -5,6 +5,9 @@ module Rack
         class BadRequest < Abstract::BadRequest
         end
 
+        class Forbidden < Abstract::Forbidden
+        end
+
         class Unauthorized < Abstract::Unauthorized
           def finish
             super do |response|
@@ -30,6 +33,14 @@ module Rack
               else
                 :bad_request!
               end
+              error_method = case error
+                when :invalid_request,:unsupported_grant_type
+                  :bad_request!
+                when :invalid_scope
+                  :forbidden!
+                else
+                  :unauthorized!
+              end
               klass.class_eval <<-ERROR
                 def #{error}!(description = "#{default_description}", options = {})
                   #{error_method} :#{error}, description, options
@@ -44,6 +55,10 @@ module Rack
 
           def unauthorized!(error, description = nil, options = {})
             raise Unauthorized.new(error, description, options)
+          end
+
+          def forbidden!(error, description = nil, options = {})
+            raise Forbidden.new(error, description, options)
           end
         end
 
