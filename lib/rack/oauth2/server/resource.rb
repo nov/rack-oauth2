@@ -14,7 +14,7 @@ module Rack
 
         def _call(env)
           if request.oauth2?
-            access_token = authenticate! request.setup!
+            access_token = authenticate!(request.setup!)
             env[ACCESS_TOKEN] = access_token
           end
           @app.call(env)
