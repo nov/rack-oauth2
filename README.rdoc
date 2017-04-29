@@ -24,6 +24,28 @@ http://tools.ietf.org/html/draft-ietf-oauth-v2-http-mac-01
 * Docs on GitHub (https://github.com/nov/rack-oauth2/wiki)
 * Report Issues on GitHub (https://github.com/nov/rack-oauth2/issues)
 
+== Configuration
+
+If you want to configure rack/oauth http_client's ssl_config, you use Rack::OAuth2.http_config to set it. A good position
+to do so, could be inside an initializer, since this configuration is cached in class variables and used on every new
+initialized oauth client.
+You can configure all ssl_config options from HTTPClient - see: http://www.rubydoc.info/gems/httpclient/2.5.3.3/HTTPClient/SSLConfig
+
+  Rack::OAuth2.http_config do |http_client|
+    http_client.ssl_config.set_client_cert_file client_cert_path, client_key_path
+    http_client.ssl_config.set_trust_ca trust_ca_file_or_hashed_dir
+    http_client.ssl_config.add_trust_ca another_trust_ca_file_or_hashed_dir
+  end
+
+If you need to change this configuration, first reset the cashed old configuration and use again Rack::OAuth2.http_config
+
+  Rack::OAuth2.reset_http_config!
+  Rack::OAuth2.http_config do |http_client|
+    http_client.ssl_config.set_client_cert_file client_cert_path, client_key_path
+    http_client.ssl_config.set_trust_ca only_this_trust_ca_file_or_hashed_dir
+  end
+
+
 == Sample Server Application (Rails3)
 
 === Bearer
@@ -61,6 +83,7 @@ https://gist.github.com/883575
 
 Resource Request (request both for resource owner resource and for client resource)
 https://gist.github.com/933885
+
 
 == Note on Patches/Pull Requests
 
