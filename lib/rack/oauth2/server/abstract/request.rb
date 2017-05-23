@@ -7,24 +7,35 @@ module Rack
           attr_required :client_id
           attr_optional :scope
 
+          # Constants
+          #
+          CONTENT_TYPE = 'CONTENT_TYPE'.freeze
+          POST_BODY = 'rack.input'.freeze
+          FORM_INPUT = 'rack.request.form_input'.freeze
+          FORM_HASH = 'rack.request.form_hash'.freeze
+
+          # Supported Content-Types
+          #
+          APPLICATION_JSON = 'application/json'.freeze
+
           def initialize(env)
             super
+            handle_json_payload_if_needed
             @client_id ||= params['client_id']
             @scope = Array(params['scope'].to_s.split(' '))
           end
 
-          def params_from_post_json
-            @_coup_params = {}
-
-            if env['RAW_POST_DATA'].to_s.length > 0 && env['CONTENT_TYPE'] == 'application/json'
-              @_coup_params = ActiveSupport::JSON.decode(env['RAW_POST_DATA'])
+          def handle_json_payload_if_needed
+            if Rack::Request.new(env).media_type == APPLICATION_JSON && (body = env[POST_BODY].read).length != 0
+              env[POST_BODY].rewind
+            elsif env['RAW_POST_DATA'].to_s.length > 0 && env['CONTENT_TYPE'] == 'application/json'
+              body = env['RAW_POST_DATA'] if env['RAW_POST_DATA'].length > 0
             end
-          ensure
-            @_coup_params
-          end
 
-          def params
-            params_from_post_json.to_h.merge!(super.to_h)
+            env.update(
+              FORM_HASH => ActiveSupport::JSON.decode(body),
+              FORM_INPUT => env[POST_BODY]
+            ) if body
           end
 
           def attr_missing!

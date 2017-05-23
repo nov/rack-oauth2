@@ -3,7 +3,7 @@ module Rack
     module Server
       class Resource
         class MAC < Resource
-          def call(env)
+          def _call(env)
             self.request = Request.new(env)
             super
           end

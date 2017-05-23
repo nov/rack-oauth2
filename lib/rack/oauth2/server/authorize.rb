@@ -2,9 +2,9 @@ module Rack
   module OAuth2
     module Server
       class Authorize < Abstract::Handler
-        def call(env)
+        def _call(env)
           request = Request.new(env)
-          response_type_for(request).new(&@authenticator).call(env).finish
+          response_type_for(request).new(&@authenticator)._call(env).finish
         rescue Rack::OAuth2::Server::Abstract::Error => e
           e.finish
         end
@@ -41,7 +41,7 @@ module Rack
           def initialize(env)
             super
             # NOTE: Raise before redirect_uri is saved not to redirect back to unverified redirect_uri.
-            bad_request! if client_id.blank?
+            invalid_request! '"client_id" missing' if client_id.blank?
             @redirect_uri = Util.parse_uri(params['redirect_uri']) if params['redirect_uri']
             @state = params['state']
           end
@@ -58,7 +58,7 @@ module Rack
               if verified
                 redirect_uri
               else
-                bad_request!
+                invalid_request! '"redirect_uri" mismatch'
               end
             elsif pre_registered.present? && Array(pre_registered).size == 1 && !allow_partial_match
               Array(pre_registered).first

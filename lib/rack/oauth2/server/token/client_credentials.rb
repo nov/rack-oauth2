@@ -3,7 +3,7 @@ module Rack
     module Server
       class Token
         class ClientCredentials < Abstract::Handler
-          def call(env)
+          def _call(env)
             @request  = Request.new(env)
             @response = Response.new(request)
             super
