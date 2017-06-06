@@ -65,6 +65,11 @@ describe Rack::OAuth2::Server::Resource::Bearer do
       let(:env) { Rack::MockRequest.env_for('/protected_resource', params: {access_token: 'valid_token'}) }
       it_behaves_like :authenticated_bearer_request
     end
+
+    context 'when token is in cookie' do
+      let(:env) { Rack::MockRequest.env_for('/protected_resource', 'HTTP_COOKIE' => 'Bearer=valid_token') }
+      it_behaves_like :authenticated_bearer_request
+    end
   end
 
   context 'when invalid authorization header is given' do
@@ -109,15 +114,16 @@ describe Rack::OAuth2::Server::Resource::Bearer do
   end
 
   context 'when multiple access_token is given' do
-    context 'when token is in Authorization header and params' do
+    context 'when token is in cookie, Authorization header and params' do
       let(:env) do
         Rack::MockRequest.env_for(
           '/protected_resource',
           'HTTP_AUTHORIZATION' => 'Bearer valid_token',
+          'HTTP_COOKIE' => 'Bearer=valid_token',
           params: {access_token: 'valid_token'}
         )
       end
-      it_behaves_like :bad_bearer_request
+      it_behaves_like :authenticated_bearer_request
     end
   end
 end

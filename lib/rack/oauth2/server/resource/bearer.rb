@@ -12,9 +12,8 @@ module Rack
 
           class Request < Resource::Request
             def setup!
-              tokens = [access_token_in_header, access_token_in_payload].compact
-              @access_token = case Array(tokens).size
-              when 1
+              tokens = [access_token_in_cookie, access_token_in_header, access_token_in_payload].compact
+              @access_token = if Array(tokens).size > 0
                 tokens.first
               else
                 invalid_request!('Both Authorization header and payload includes access token.')
@@ -23,7 +22,7 @@ module Rack
             end
 
             def oauth2?
-              (access_token_in_header || access_token_in_payload).present?
+              (access_token_in_cookie || access_token_in_header || access_token_in_payload).present?
             end
 
             def access_token_in_header
@@ -36,6 +35,10 @@ module Rack
 
             def access_token_in_payload
               params['access_token']
+            end
+
+            def access_token_in_cookie
+              cookies['Bearer']
             end
           end
         end
