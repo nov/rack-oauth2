@@ -13,10 +13,10 @@ module Rack
           class Request < Resource::Request
             def setup!
               tokens = [access_token_in_cookie, access_token_in_header, access_token_in_payload].compact
-              if tokens.kind_of?(Array) && tokens.size > 0
-                @access_token = tokens.first
+              @access_token = if Array(tokens).size > 0
+                tokens.first
               else
-                @access_token = invalid_request!('Both Authorization header and payload includes access token.')
+                invalid_request!('Both Authorization header and payload includes access token.')
               end
               self
             end
