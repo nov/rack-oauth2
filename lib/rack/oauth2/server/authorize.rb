@@ -35,7 +35,7 @@ module Rack
 
         class Request < Abstract::Request
           attr_required :response_type
-          attr_optional :redirect_uri, :state
+          attr_optional :redirect_uri, :state, :response_mode
           attr_accessor :verified_redirect_uri
 
           def initialize(env)
@@ -43,6 +43,7 @@ module Rack
             # NOTE: Raise before redirect_uri is saved not to redirect back to unverified redirect_uri.
             invalid_request! '"client_id" missing' if client_id.blank?
             @redirect_uri = Util.parse_uri(params['redirect_uri']) if params['redirect_uri']
+            @response_mode = params['response_mode']
             @state = params['state']
           end
 
