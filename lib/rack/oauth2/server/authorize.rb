@@ -34,8 +34,10 @@ module Rack
         end
 
         class Request < Abstract::Request
+          include Server::Extension::ResponseMode::AuthorizationRequest
+
           attr_required :response_type
-          attr_optional :redirect_uri, :state, :response_mode
+          attr_optional :redirect_uri, :state
           attr_accessor :verified_redirect_uri
 
           def initialize(env)
