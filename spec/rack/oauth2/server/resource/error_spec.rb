@@ -57,6 +57,16 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
         end
       end
 
+      context 'when no error_code is given' do
+        let(:error) { Rack::OAuth2::Server::Resource::Unauthorized.new }
+
+        it 'should have error_code in body but not in WWW-Authenticate header' do
+          status, header, response = error_with_scheme.finish
+          header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\""
+          response.body.first.should == '{"error":"unauthorized"}'
+        end
+      end
+
       context 'when realm is specified' do
         let(:realm) { 'server.example.com' }
         let(:error) { Rack::OAuth2::Server::Resource::Bearer::Unauthorized.new(:something, nil, realm: realm) }

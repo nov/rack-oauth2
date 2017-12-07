@@ -53,13 +53,13 @@ module Rack
         end
 
         class ServerError < Error
-          def initialize(error = :forbidden, description = nil, options = {})
+          def initialize(error = :server_error, description = nil, options = {})
             super 500, error, description, options
           end
         end
 
         class TemporarilyUnavailable < Error
-          def initialize(error = :forbidden, description = nil, options = {})
+          def initialize(error = :temporarily_unavailable, description = nil, options = {})
             super 503, error, description, options
           end
         end
