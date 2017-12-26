@@ -76,18 +76,16 @@ module Rack
         params[:scope] = Array(options.delete(:scope)).join(' ') if options[:scope].present?
         params.merge! options
 
-        if secret
-          if client_auth_method == :basic
-            cred = ["#{identifier}:#{secret}"].pack('m').tr("\n", '')
-            headers.merge!(
-              'Authorization' => "Basic #{cred}"
-            )
-          else
-            params.merge!(
-              client_id: identifier,
-              client_secret: secret
-            )
-          end
+        if client_auth_method == :basic
+          cred = ["#{identifier}:#{secret}"].pack('m').tr("\n", '')
+          headers.merge!(
+            'Authorization' => "Basic #{cred}"
+          )
+        else
+          params.merge!(
+            client_id: identifier,
+            client_secret: secret
+          )
         end
         handle_response do
           Rack::OAuth2.http_client.post(
