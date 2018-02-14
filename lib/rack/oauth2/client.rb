@@ -64,6 +64,10 @@ module Rack
         )
       end
 
+      def force_token_type!(token_type)
+        @forced_token_type = token_type.to_s
+      end
+
       def access_token!(*args)
         headers, params = {}, @grant.as_json
 
@@ -119,7 +123,7 @@ module Rack
 
       def handle_success_response(response)
         token_hash = parse_json response.body
-        case token_hash[:token_type].try(:downcase)
+        case (@forced_token_type || token_hash[:token_type]).try(:downcase)
         when 'bearer'
           AccessToken::Bearer.new(token_hash)
         when 'mac'

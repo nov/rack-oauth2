@@ -79,7 +79,7 @@ describe Rack::OAuth2::Client do
   describe '#access_token!' do
     subject { client.access_token! }
 
-      context 'when *args given' do
+    context 'when *args given' do
 
       describe 'client authentication method' do
         before do
@@ -169,7 +169,7 @@ describe Rack::OAuth2::Client do
     end
 
     context 'when bearer token is given' do
-      before  do
+      before do
         client.authorization_code = 'code'
         mock_response(
           :post,
@@ -184,7 +184,7 @@ describe Rack::OAuth2::Client do
       its(:expires_in) { should == 3600 }
 
       context 'when token type is "Bearer", not "bearer"' do
-        before  do
+        before do
           client.authorization_code = 'code'
           mock_response(
             :post,
@@ -198,7 +198,7 @@ describe Rack::OAuth2::Client do
     end
 
     context 'when mac token is given' do
-      before  do
+      before do
         client.authorization_code = 'code'
         mock_response(
           :post,
@@ -214,7 +214,7 @@ describe Rack::OAuth2::Client do
     end
 
     context 'when no-type token is given (JSON)' do
-      before  do
+      before do
         client.authorization_code = 'code'
         mock_response(
           :post,
@@ -227,6 +227,14 @@ describe Rack::OAuth2::Client do
       its(:access_token) { should == 'access_token' }
       its(:refresh_token) { should == 'refresh_token' }
       its(:expires_in) { should == 3600 }
+
+      context 'when token_type is forced' do
+        before do
+          client.force_token_type! :bearer
+        end
+        it { should be_instance_of Rack::OAuth2::AccessToken::Bearer }
+        its(:token_type) { should == :bearer }
+      end
     end
 
     context 'when no-type token is given (key-value)' do
@@ -255,7 +263,7 @@ describe Rack::OAuth2::Client do
     end
 
     context 'when unknown-type token is given' do
-      before  do
+      before do
         client.authorization_code = 'code'
         mock_response(
           :post,
