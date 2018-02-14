@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Rack::OAuth2::Debugger::RequestFilter do
   let(:resource_endpoint) { 'https://example.com/resources' }
   let(:request) { HTTP::Message.new_request(:get, URI.parse(resource_endpoint)) }
-  let(:response) { HTTP::Message.new_response(MultiJson.dump({hello: 'world'})) }
+  let(:response) { HTTP::Message.new_response({hello: 'world'}.to_json) }
   let(:request_filter) { Rack::OAuth2::Debugger::RequestFilter.new }
 
   describe '#filter_request' do
