@@ -80,10 +80,19 @@ module Rack
         params[:scope] = Array(options.delete(:scope)).join(' ') if options[:scope].present?
         params.merge! options
 
-        if client_auth_method == :basic
+        case client_auth_method
+        when :basic
           cred = ["#{identifier}:#{secret}"].pack('m').tr("\n", '')
           headers.merge!(
             'Authorization' => "Basic #{cred}"
+          )
+        when :jwt_bearer
+          params.merge!(
+            client_assertion_type: URN::ClientAssertionType::JWT_BEARER
+          )
+        when :saml2_bearer
+          params.merge!(
+            client_assertion_type: URN::ClientAssertionType::SAML2_BEARER
           )
         else
           params.merge!(
