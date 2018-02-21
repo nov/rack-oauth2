@@ -3,7 +3,7 @@ module Rack
     class Client
       include AttrRequired, AttrOptional
       attr_required :identifier
-      attr_optional :secret, :redirect_uri, :scheme, :host, :port, :authorization_endpoint, :token_endpoint
+      attr_optional :secret, :private_key, :redirect_uri, :scheme, :host, :port, :authorization_endpoint, :token_endpoint
 
       def initialize(attributes = {})
         (required_attributes + optional_attributes).each do |key|
@@ -90,6 +90,18 @@ module Rack
           params.merge!(
             client_assertion_type: URN::ClientAssertionType::JWT_BEARER
           )
+          # NOTE: optionally auto-generate client_assertion.
+          if params[:client_assertion].blank?
+            require 'json/jwt'
+            params[:client_assertion] = JSON::JWT.new(
+              iss: identifier,
+              sub: identifier,
+              aud: absolute_uri_for(token_endpoint),
+              jti: SecureRandom.hex(16),
+              iat: Time.now,
+              exp: 3.minutes.from_now
+            ).sign(private_key || secret).to_s
+          end
         when :saml2_bearer
           params.merge!(
             client_assertion_type: URN::ClientAssertionType::SAML2_BEARER
