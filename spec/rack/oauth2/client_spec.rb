@@ -79,8 +79,7 @@ describe Rack::OAuth2::Client do
   describe '#access_token!' do
     subject { client.access_token! }
 
-    context 'when *args given' do
-
+    context '*args handling' do
       describe 'client authentication method' do
         before do
           client.authorization_code = 'code'
@@ -96,6 +95,108 @@ describe Rack::OAuth2::Client do
             }
           )
           client.access_token!
+        end
+
+        context 'when jwt_bearer auth method specified' do
+          context 'when client_secret is given' do
+            it 'should be JWT bearer client assertion w/ auto-generated HS256-signed JWT assertion' do
+              mock_response(
+                :post,
+                'https://server.example.com/oauth2/token',
+                'tokens/bearer.json',
+                params: {
+                  client_assertion: /^eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9\..+/, # NOTE: HS256
+                  client_assertion_type: Rack::OAuth2::URN::ClientAssertionType::JWT_BEARER,
+                  code: 'code',
+                  grant_type: 'authorization_code',
+                  redirect_uri: 'https://client.example.com/callback'
+                }
+              )
+              client.access_token! :jwt_bearer
+            end
+          end
+
+          context 'when private_key is given' do
+            context 'when RSA key' do
+              let :client do
+                Rack::OAuth2::Client.new(
+                  identifier: 'client_id',
+                  private_key: OpenSSL::PKey::RSA.generate(2048),
+                  host: 'server.example.com',
+                  redirect_uri: 'https://client.example.com/callback'
+                )
+              end
+
+              it 'should be JWT bearer client assertion w/ auto-generated RS256-signed JWT assertion' do
+                mock_response(
+                  :post,
+                  'https://server.example.com/oauth2/token',
+                  'tokens/bearer.json',
+                  params: {
+                    client_assertion: /^eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9\..+/, # NOTE: RS256
+                    client_assertion_type: Rack::OAuth2::URN::ClientAssertionType::JWT_BEARER,
+                    code: 'code',
+                    grant_type: 'authorization_code',
+                    redirect_uri: 'https://client.example.com/callback'
+                  }
+                )
+                client.access_token! :jwt_bearer
+              end
+            end
+
+            context 'when EC key' do
+              let :client do
+                Rack::OAuth2::Client.new(
+                  identifier: 'client_id',
+                  private_key: OpenSSL::PKey::EC.new('prime256v1').generate_key,
+                  host: 'server.example.com',
+                  redirect_uri: 'https://client.example.com/callback'
+                )
+              end
+
+              it 'should be JWT bearer client assertion w/ auto-generated ES256-signed JWT assertion' do
+                mock_response(
+                  :post,
+                  'https://server.example.com/oauth2/token',
+                  'tokens/bearer.json',
+                  params: {
+                    client_assertion: /^eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9\..+/, # NOTE: ES256
+                    client_assertion_type: Rack::OAuth2::URN::ClientAssertionType::JWT_BEARER,
+                    code: 'code',
+                    grant_type: 'authorization_code',
+                    redirect_uri: 'https://client.example.com/callback'
+                  }
+                )
+                client.access_token! :jwt_bearer
+              end
+            end
+          end
+
+          context 'when client_assertion is explicitly given' do
+            let :client do
+              Rack::OAuth2::Client.new(
+                identifier: 'client_id',
+                host: 'server.example.com',
+                redirect_uri: 'https://client.example.com/callback'
+              )
+            end
+
+            it 'should be JWT bearer client assertion w/ specified assertion' do
+              mock_response(
+                :post,
+                'https://server.example.com/oauth2/token',
+                'tokens/bearer.json',
+                params: {
+                  client_assertion: 'any.jwt.assertion',
+                  client_assertion_type: Rack::OAuth2::URN::ClientAssertionType::JWT_BEARER,
+                  code: 'code',
+                  grant_type: 'authorization_code',
+                  redirect_uri: 'https://client.example.com/callback'
+                }
+              )
+              client.access_token! :jwt_bearer, client_assertion: 'any.jwt.assertion'
+            end
+          end
         end
 
         context 'when other auth method specified' do
