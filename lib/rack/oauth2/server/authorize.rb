@@ -78,7 +78,7 @@ module Rack
 
         class Response < Abstract::Response
           attr_required :redirect_uri
-          attr_optional :state, :approval
+          attr_optional :state, :session_state, :approval
 
           def initialize(request)
             @state = request.state
@@ -94,7 +94,7 @@ module Rack
           end
 
           def protocol_params
-            {state: state}
+            {state: state, session_state: session_state}
           end
 
           def redirect_uri_with_credentials
