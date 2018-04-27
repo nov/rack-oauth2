@@ -13,7 +13,7 @@ module Rack
         end
 
         def urlsafe_base64_encode(text)
-          Base64.urlsafe_encode64(text).delete('=')
+          Base64.urlsafe_encode64(text, padding: false)
         end
 
         def compact_hash(hash)
