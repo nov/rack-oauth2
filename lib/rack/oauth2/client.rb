@@ -3,7 +3,7 @@ module Rack
     class Client
       include AttrRequired, AttrOptional
       attr_required :identifier
-      attr_optional :secret, :private_key, :redirect_uri, :scheme, :host, :port, :authorization_endpoint, :token_endpoint
+      attr_optional :secret, :private_key, :certificate, :redirect_uri, :scheme, :host, :port, :authorization_endpoint, :token_endpoint
 
       def initialize(attributes = {})
         (required_attributes + optional_attributes).each do |key|
@@ -70,6 +70,7 @@ module Rack
 
       def access_token!(*args)
         headers, params = {}, @grant.as_json
+        http_client = Rack::OAuth2.http_client
 
         # NOTE:
         #  Using Array#estract_options! for backward compatibility.
@@ -106,6 +107,12 @@ module Rack
           params.merge!(
             client_assertion_type: URN::ClientAssertionType::SAML2_BEARER
           )
+        when :mtls
+          params.merge!(
+            client_id: identifier
+          )
+          http_client.ssl_config.client_key = private_key
+          http_client.ssl_config.client_cert = certificate
         else
           params.merge!(
             client_id: identifier,
@@ -113,7 +120,7 @@ module Rack
           )
         end
         handle_response do
-          Rack::OAuth2.http_client.post(
+          http_client.post(
             absolute_uri_for(token_endpoint),
             Util.compact_hash(params),
             headers
