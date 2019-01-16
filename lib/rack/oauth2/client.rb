@@ -3,7 +3,7 @@ module Rack
     class Client
       include AttrRequired, AttrOptional
       attr_required :identifier
-      attr_optional :secret, :private_key, :certificate, :redirect_uri, :scheme, :host, :port, :authorization_endpoint, :token_endpoint, :ssl_cert_file_or_dir
+      attr_optional :secret, :private_key, :certificate, :redirect_uri, :scheme, :host, :port, :authorization_endpoint, :token_endpoint, :ssl_cert_file_or_dir, :use_system_ssl
 
       def initialize(attributes = {})
         (required_attributes + optional_attributes).each do |key|
@@ -72,6 +72,7 @@ module Rack
         headers, params = {}, @grant.as_json
 
         http_client = Rack::OAuth2.http_client
+        http_client.ssl_config.set_default_paths if use_system_ssl
         http_client.ssl_config.add_trust_ca(ssl_cert_file_or_dir) if ssl_cert_file_or_dir
 
         # NOTE:
