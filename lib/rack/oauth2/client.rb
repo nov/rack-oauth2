@@ -109,7 +109,8 @@ module Rack
           )
         when :mtls
           params.merge!(
-            client_id: identifier
+            client_id: identifier,
+            client_secret: secret
           )
           http_client.ssl_config.client_key = private_key
           http_client.ssl_config.client_cert = certificate
