@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'httpclient'
   s.add_runtime_dependency 'activesupport'
   s.add_runtime_dependency 'attr_required'
-  s.add_runtime_dependency 'json-jwt', '>= 1.9.0'
+  s.add_runtime_dependency 'json-jwt', '>= 1.11.0'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'rspec'
