@@ -51,7 +51,7 @@ describe Rack::OAuth2::Server::Authorize::Code do
         error: :access_denied,
         error_description: Rack::OAuth2::Server::Authorize::ErrorMethods::DEFAULT_DESCRIPTION[:access_denied]
       }
-      response.location.should == "#{redirect_uri}?#{error_message.to_query}&state=state"
+      response.location.should == "#{redirect_uri}?#{error_message.to_query.gsub('+', '%20')}&state=state"
     end
   end
 end

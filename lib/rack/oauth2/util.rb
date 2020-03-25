@@ -35,11 +35,12 @@ module Rack
 
         def redirect_uri(base_uri, location, params)
           redirect_uri = parse_uri base_uri
+          encoded_response_params = Util.compact_hash(params).to_query.gsub('+', '%20')
           case location
           when :query
-            redirect_uri.query = [redirect_uri.query, Util.compact_hash(params).to_query].compact.join('&')
+            redirect_uri.query = [redirect_uri.query, encoded_response_params].compact.join('&')
           when :fragment
-            redirect_uri.fragment = Util.compact_hash(params).to_query
+            redirect_uri.fragment = encoded_response_params
           end
           redirect_uri.to_s
         end

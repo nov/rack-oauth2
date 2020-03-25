@@ -49,12 +49,12 @@ describe Rack::OAuth2::Client do
 
     context 'when response_type is an Array' do
       subject { client.authorization_uri(response_type: [:token, :code]) }
-      it { should include 'response_type=token+code' }
+      it { should include 'response_type=token%20code' }
     end
 
     context 'when scope is given' do
       subject { client.authorization_uri(scope: [:scope1, :scope2]) }
-      it { should include 'scope=scope1+scope2' }
+      it { should include 'scope=scope1%20scope2' }
     end
   end
 
