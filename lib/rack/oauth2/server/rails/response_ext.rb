@@ -5,7 +5,7 @@ module Rack
         module ResponseExt
           def redirect?
             ensure_finish do
-              @response.redirect?
+              super
             end
           end
 
@@ -17,7 +17,7 @@ module Rack
 
           def json
             ensure_finish do
-              @response.body
+              @body
             end
           end
 
@@ -39,7 +39,7 @@ module Rack
           end
 
           def ensure_finish
-            @status, @header, @response = finish unless finished?
+            @status, @header, @body = finish unless finished?
             yield
           end
         end

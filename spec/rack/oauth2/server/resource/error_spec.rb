@@ -10,7 +10,7 @@ describe Rack::OAuth2::Server::Resource::BadRequest do
       status, header, response = error.finish
       status.should == 400
       header['Content-Type'].should == 'application/json'
-      response.body.should == ['{"error":"invalid_request"}']
+      response.should == ['{"error":"invalid_request"}']
     end
   end
 end
@@ -44,7 +44,7 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
         status.should == 401
         header['Content-Type'].should == 'application/json'
         header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\", error=\"invalid_token\""
-        response.body.should == ['{"error":"invalid_token"}']
+        response.should == ['{"error":"invalid_token"}']
       end
 
       context 'when error_code is not invalid_token' do
@@ -53,7 +53,7 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
         it 'should have error_code in body but not in WWW-Authenticate header' do
           status, header, response = error_with_scheme.finish
           header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\""
-          response.body.first.should include '"error":"something"'
+          response.first.should include '"error":"something"'
         end
       end
 
@@ -63,7 +63,7 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
         it 'should have error_code in body but not in WWW-Authenticate header' do
           status, header, response = error_with_scheme.finish
           header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\""
-          response.body.first.should == '{"error":"unauthorized"}'
+          response.first.should == '{"error":"unauthorized"}'
         end
       end
 
@@ -74,7 +74,7 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
         it 'should use given realm' do
           status, header, response = error_with_scheme.finish
           header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\""
-          response.body.first.should include '"error":"something"'
+          response.first.should include '"error":"something"'
         end
       end
     end
@@ -91,7 +91,7 @@ describe Rack::OAuth2::Server::Resource::Forbidden do
       status, header, response = error.finish
       status.should == 403
       header['Content-Type'].should == 'application/json'
-      response.body.should == ['{"error":"insufficient_scope"}']
+      response.should == ['{"error":"insufficient_scope"}']
     end
   end
 
@@ -100,7 +100,7 @@ describe Rack::OAuth2::Server::Resource::Forbidden do
 
     it 'should have blank WWW-Authenticate header' do
       status, header, response = error.finish
-      response.body.first.should include '"scope":"scope1 scope2"'
+      response.first.should include '"scope":"scope1 scope2"'
     end
   end
 end
