@@ -30,7 +30,7 @@ describe Rack::OAuth2::Server::Token do
       it 'should fail with unsupported_grant_type' do
         status, header, response = app.call(env)
         status.should == 400
-        response.body.first.should include '"error":"invalid_request"'
+        response.first.should include '"error":"invalid_request"'
       end
     end
 

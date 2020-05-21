@@ -10,7 +10,7 @@ describe Rack::OAuth2::Server::Token::BadRequest do
       status, header, response = error.finish
       status.should == 400
       header['Content-Type'].should == 'application/json'
-      response.body.should == ['{"error":"invalid_request"}']
+      response.should == ['{"error":"invalid_request"}']
     end
   end
 end
@@ -26,7 +26,7 @@ describe Rack::OAuth2::Server::Token::Unauthorized do
       status.should == 401
       header['Content-Type'].should == 'application/json'
       header['WWW-Authenticate'].should == 'Basic realm="OAuth2 Token Endpoint"'
-      response.body.should == ['{"error":"invalid_request"}']
+      response.should == ['{"error":"invalid_request"}']
     end
   end
 end
