@@ -8,6 +8,10 @@ module Rack
           URI.encode(text, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
         end
 
+        def www_form_urlencode(text)
+          URI.encode_www_form_component(text)
+        end
+
         def base64_encode(text)
           Base64.encode64(text).delete("\n")
         end

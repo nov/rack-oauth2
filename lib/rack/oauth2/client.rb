@@ -83,7 +83,10 @@ module Rack
 
         case client_auth_method
         when :basic
-          cred = ["#{identifier}:#{secret}"].pack('m').tr("\n", '')
+          cred = Base64.strict_encode64 [
+            Util.www_form_urlencode(identifier),
+            Util.www_form_urlencode(secret)
+          ].join(':')
           headers.merge!(
             'Authorization' => "Basic #{cred}"
           )
