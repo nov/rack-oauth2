@@ -28,16 +28,10 @@ http://tools.ietf.org/html/draft-ietf-oauth-v2-http-mac-01
 
 === Bearer
 
-Running on Heroku
-https://rack-oauth2-sample.heroku.com
-
 Source on GitHub
 https://github.com/nov/rack-oauth2-sample
 
 === MAC
-
-Running on Heroku
-https://rack-oauth2-sample-mac.heroku.com
 
 Source on GitHub
 https://github.com/nov/rack-oauth2-sample-mac
