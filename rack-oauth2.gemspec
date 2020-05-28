@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.add_runtime_dependency 'rack', '>= 2.1.0'
   s.add_runtime_dependency 'httpclient'
-  s.add_runtime_dependency 'activesupport'
+  s.add_runtime_dependency 'activesupport', '>= 6.0.3.1'
   s.add_runtime_dependency 'attr_required'
   s.add_runtime_dependency 'json-jwt', '>= 1.11.0'
   s.add_development_dependency 'rake'
