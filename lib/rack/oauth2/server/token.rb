@@ -49,7 +49,10 @@ module Rack
           def initialize(env)
             auth = Rack::Auth::Basic::Request.new(env)
             if auth.provided? && auth.basic?
-              @client_id, @client_secret = auth.credentials
+              @client_id, @client_secret = auth.credentials.map do |cred|
+                CGI.unescape cred
+              end
+
               super
             else
               super
