@@ -50,9 +50,8 @@ module Rack
             auth = Rack::Auth::Basic::Request.new(env)
             if auth.provided? && auth.basic?
               @client_id, @client_secret = auth.credentials.map do |cred|
-                CGI.unescape cred
+                Util.www_form_url_decode cred
               end
-
               super
             else
               super

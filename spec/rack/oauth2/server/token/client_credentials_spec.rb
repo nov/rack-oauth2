@@ -32,8 +32,8 @@ describe Rack::OAuth2::Server::Token::ClientCredentials do
     end
     let(:encoded_creds) do
       Base64.strict_encode64([
-        CGI.escape(client_id),
-        CGI.escape(client_secret)
+        Rack::OAuth2::Util.www_form_url_encode(client_id),
+        Rack::OAuth2::Util.www_form_url_encode(client_secret)
       ].join(':'))
     end
     subject do

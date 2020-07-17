@@ -14,9 +14,14 @@ describe Rack::OAuth2::Util do
     it { should == '%3D%2B%20.-%2F' }
   end
 
-  describe '.www_form_urlencode' do
-    subject { util.www_form_urlencode '=+ .-/' }
+  describe '.www_form_url_encode' do
+    subject { util.www_form_url_encode '=+ .-/' }
     it { should == '%3D%2B+.-%2F' }
+  end
+
+  describe '.www_form_urldecode' do
+    subject { util.www_form_url_decode '%3D%2B+.-%2F' }
+    it { should == '=+ .-/' }
   end
 
   describe '.base64_encode' do
