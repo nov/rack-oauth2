@@ -87,6 +87,19 @@ describe Rack::OAuth2::Client do
           client.authorization_code = 'code'
         end
 
+        it "should include custom headers" do
+          mock_response(
+            :post,
+            'https://server.example.com/oauth2/token',
+            'tokens/bearer.json',
+            request_header: {
+              'Authorization' => 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=',
+              'X-Foo' => 'bar'
+            }
+          )
+          client.access_token! headers: {'X-Foo' => 'bar'}
+        end
+
         it 'should be Basic auth as default' do
           mock_response(
             :post,
