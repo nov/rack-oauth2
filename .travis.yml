@@ -5,3 +5,6 @@ rvm:
   - 2.5.8
   - 2.6.6
   - 2.7.1
+  - truffleruby-head
+allow_failures:
+  rvm: truffleruby-head
