@@ -9,11 +9,6 @@ describe Rack::OAuth2::Util do
     'http://client.example.com/callback'
   end
 
-  describe '.rfc3986_encode' do
-    subject { util.rfc3986_encode '=+ .-/' }
-    it { should == '%3D%2B%20.-%2F' }
-  end
-
   describe '.www_form_url_encode' do
     subject { util.www_form_url_encode '=+ .-/' }
     it { should == '%3D%2B+.-%2F' }
