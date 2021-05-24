@@ -117,6 +117,24 @@ describe Rack::OAuth2::Client do
           end
         end
 
+        context 'when basic_without_www_form_urlencode method is used' do
+          context 'when client_id is a url' do
+             let(:client_id) { 'https://client.example.com'}
+
+             it 'should be encoded in "application/x-www-form-urlencoded"' do
+               mock_response(
+                 :post,
+                 'https://server.example.com/oauth2/token',
+                 'tokens/bearer.json',
+                 request_header: {
+                   'Authorization' => 'Basic aHR0cHM6Ly9jbGllbnQuZXhhbXBsZS5jb206Y2xpZW50X3NlY3JldA=='
+                 }
+               )
+               client.access_token! :basic_without_www_form_urlencode
+             end
+           end
+        end
+
         context 'when jwt_bearer auth method specified' do
           context 'when client_secret is given' do
             it 'should be JWT bearer client assertion w/ auto-generated HS256-signed JWT assertion' do
