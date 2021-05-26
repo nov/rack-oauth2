@@ -90,6 +90,11 @@ module Rack
           headers.merge!(
             'Authorization' => "Basic #{cred}"
           )
+        when :basic_without_www_form_urlencode
+          cred = ["#{identifier}:#{secret}"].pack('m').tr("\n", '')
+          headers.merge!(
+            'Authorization' => "Basic #{cred}"
+          )
         when :jwt_bearer
           params.merge!(
             client_assertion_type: URN::ClientAssertionType::JWT_BEARER
