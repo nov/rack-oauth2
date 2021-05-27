@@ -78,6 +78,9 @@ module Rack
         options = args.extract_options!
         client_auth_method = args.first || options.delete(:client_auth_method).try(:to_sym) || :basic
 
+        custom_headers = options.delete(:headers)
+        headers.merge! custom_headers if custom_headers
+
         params[:scope] = Array(options.delete(:scope)).join(' ') if options[:scope].present?
         params.merge! options
 
