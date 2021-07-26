@@ -82,6 +82,15 @@ describe Rack::OAuth2::Server::Token do
       params.delete(:client_id)
     end
 
+    context 'when client_assertio is invalid JWT' do
+      before do
+        params[:client_assertion] = 'invalid-jwt'
+      end
+      its(:status)       { should == 400 }
+      its(:content_type) { should == 'application/json' }
+      its(:body)         { should include '"error":"invalid_request"' }
+    end
+
     context 'when client_assertion_type is missing' do
       before do
         params.delete(:client_assertion_type)

@@ -63,7 +63,7 @@ module Rack
                 @client_id = JSON::JWT.decode(
                   client_assertion,
                   :skip_verification
-                )[:iss]
+                )[:iss] rescue nil
               end
             end
             @grant_type = params['grant_type'].to_s
