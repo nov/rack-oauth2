@@ -44,7 +44,7 @@ module Rack
 
         class Request < Abstract::Request
           attr_required :grant_type
-          attr_optional :client_secret
+          attr_optional :client_secret, :client_assertion, :client_assertion_type
 
           def initialize(env)
             auth = Rack::Auth::Basic::Request.new(env)
@@ -56,6 +56,15 @@ module Rack
             else
               super
               @client_secret = params['client_secret']
+              @client_assertion = params['client_assertion']
+              @client_assertion_type = params['client_assertion_type']
+              if client_assertion.present? && client_assertion_type == URN::ClientAssertionType::JWT_BEARER
+                require 'json/jwt'
+                @client_id = JSON::JWT.decode(
+                  client_assertion,
+                  :skip_verification
+                )[:iss]
+              end
             end
             @grant_type = params['grant_type'].to_s
           end
