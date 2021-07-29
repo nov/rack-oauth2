@@ -75,14 +75,14 @@ describe Rack::OAuth2::Server::Token do
     before do
       require 'json/jwt'
       params[:client_assertion] = JSON::JWT.new(
-        iss: params[:client_id]
+        sub: params[:client_id]
         # NOTE: actual client_assertion should have more claims.
       ).sign('client_secret').to_s
       params[:client_assertion_type] = Rack::OAuth2::URN::ClientAssertionType::JWT_BEARER
       params.delete(:client_id)
     end
 
-    context 'when client_assertio is invalid JWT' do
+    context 'when client_assertion is invalid JWT' do
       before do
         params[:client_assertion] = 'invalid-jwt'
       end
