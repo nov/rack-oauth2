@@ -141,7 +141,22 @@ describe Rack::OAuth2::Server::Token do
       its(:content_type) { should == 'application/json' }
       its(:body)         { should include "\"error\":\"#{error}\"" }
       its(:body)         { should include "\"error_description\":\"#{default_message}\"" }
+      if error == :invalid_client
+        its(:headers)    { should include 'WWW-Authenticate' }
+      end
     end
+  end
+
+  context 'when skip_www_authenticate option is specified on invalid_client' do
+    let(:app) do
+      Rack::OAuth2::Server::Token.new do |request, response|
+        request.invalid_client!(
+          Rack::OAuth2::Server::Token::ErrorMethods::DEFAULT_DESCRIPTION[:invalid_client],
+          skip_www_authenticate: true
+        )
+      end
+    end
+    its(:headers) { should_not include 'WWW-Authenticate' }
   end
 
   context 'when responding' do

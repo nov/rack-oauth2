@@ -8,7 +8,9 @@ module Rack
         class Unauthorized < Abstract::Unauthorized
           def finish
             super do |response|
-              response.header['WWW-Authenticate'] = 'Basic realm="OAuth2 Token Endpoint"'
+              unless @skip_www_authenticate
+                response.header['WWW-Authenticate'] = 'Basic realm="OAuth2 Token Endpoint"'
+              end
             end
           end
         end
