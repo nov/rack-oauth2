@@ -42,6 +42,7 @@ module Rack
 
         class Unauthorized < Error
           def initialize(error = :unauthorized, description = nil, options = {})
+            @skip_www_authenticate = options[:skip_www_authenticate]
             super 401, error, description, options
           end
         end

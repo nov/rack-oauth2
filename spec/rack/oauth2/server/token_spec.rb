@@ -71,6 +71,60 @@ describe Rack::OAuth2::Server::Token do
     end
   end
 
+  context 'when client_id is given via JWT client assertion' do
+    before do
+      require 'json/jwt'
+      params[:client_assertion] = JSON::JWT.new(
+        sub: params[:client_id]
+        # NOTE: actual client_assertion should have more claims.
+      ).sign('client_secret').to_s
+      params[:client_assertion_type] = Rack::OAuth2::URN::ClientAssertionType::JWT_BEARER
+      params.delete(:client_id)
+    end
+
+    context 'when client_assertion is invalid JWT' do
+      before do
+        params[:client_assertion] = 'invalid-jwt'
+      end
+      its(:status)       { should == 400 }
+      its(:content_type) { should == 'application/json' }
+      its(:body)         { should include '"error":"invalid_request"' }
+    end
+
+    context 'when client_assertion_type is missing' do
+      before do
+        params.delete(:client_assertion_type)
+      end
+      its(:status)       { should == 400 }
+      its(:content_type) { should == 'application/json' }
+      its(:body)         { should include '"error":"invalid_request"' }
+    end
+
+    context 'when client_assertion_type is unknown' do
+      before do
+        params[:client_assertion_type] = 'unknown'
+      end
+      its(:status)       { should == 400 }
+      its(:content_type) { should == 'application/json' }
+      its(:body)         { should include '"error":"invalid_request"' }
+    end
+
+    context 'when client_assertion issuer is different from client_id' do
+      before do
+        params[:client_id] = 'another_client_id'
+      end
+      its(:status)       { should == 400 }
+      its(:content_type) { should == 'application/json' }
+      its(:body)         { should include '"error":"invalid_request"' }
+    end
+
+    context 'otherwise' do
+      its(:status)       { should == 200 }
+      its(:content_type) { should == 'application/json' }
+      its(:body)         { should include '"access_token":"access_token"' }
+    end
+  end
+
   Rack::OAuth2::Server::Token::ErrorMethods::DEFAULT_DESCRIPTION.each do |error, default_message|
     status = if error == :invalid_client
       401
@@ -87,7 +141,22 @@ describe Rack::OAuth2::Server::Token do
       its(:content_type) { should == 'application/json' }
       its(:body)         { should include "\"error\":\"#{error}\"" }
       its(:body)         { should include "\"error_description\":\"#{default_message}\"" }
+      if error == :invalid_client
+        its(:headers)    { should include 'WWW-Authenticate' }
+      end
     end
+  end
+
+  context 'when skip_www_authenticate option is specified on invalid_client' do
+    let(:app) do
+      Rack::OAuth2::Server::Token.new do |request, response|
+        request.invalid_client!(
+          Rack::OAuth2::Server::Token::ErrorMethods::DEFAULT_DESCRIPTION[:invalid_client],
+          skip_www_authenticate: true
+        )
+      end
+    end
+    its(:headers) { should_not include 'WWW-Authenticate' }
   end
 
   context 'when responding' do
