@@ -43,6 +43,11 @@ module Rack
       _http_client_ = HTTPClient.new(
         agent_name: agent_name
       )
+
+      # NOTE: httpclient gem seems stopped maintaining root certtificate set, use OS default.
+      _http_client_.ssl_config.clear_cert_store
+      _http_client_.ssl_config.cert_store.set_default_paths
+
       http_config.try(:call, _http_client_)
       local_http_config.try(:call, _http_client_) unless local_http_config.nil?
       _http_client_.request_filter << Debugger::RequestFilter.new if debugging?
