@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.email = 'nov@matake.jp'
   s.extra_rdoc_files = ['LICENSE', 'README.rdoc']
   s.rdoc_options = ['--charset=UTF-8']
-  s.homepage = 'http://github.com/nov/rack-oauth2'
+  s.homepage = 'https://github.com/nov/rack-oauth2'
   s.license = 'MIT'
   s.require_paths = ['lib']
   s.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
