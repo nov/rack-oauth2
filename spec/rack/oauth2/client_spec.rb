@@ -8,7 +8,8 @@ describe Rack::OAuth2::Client do
       identifier: client_id,
       secret: client_secret,
       host: 'server.example.com',
-      redirect_uri: 'https://client.example.com/callback'
+      redirect_uri: 'https://client.example.com/callback',
+      revocation_endpoint: '/oauth2/revoke'
     )
   end
   subject { client }
@@ -17,6 +18,7 @@ describe Rack::OAuth2::Client do
   its(:secret)     { should == 'client_secret' }
   its(:authorization_endpoint) { should == '/oauth2/authorize' }
   its(:token_endpoint)         { should == '/oauth2/token' }
+  its(:revocation_endpoint)    { should == '/oauth2/revoke' }
 
   context 'when identifier is missing' do
     it do
