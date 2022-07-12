@@ -69,7 +69,65 @@ module Rack
       end
 
       def access_token!(*args)
-        headers, params = {}, @grant.as_json
+        headers, params, http_client, options = authenticated_context_from(*args)
+        params[:scope] = Array(options.delete(:scope)).join(' ') if options[:scope].present?
+        params.merge! @grant.as_json
+        params.merge! options
+        handle_response do
+          http_client.post(
+            absolute_uri_for(token_endpoint),
+            Util.compact_hash(params),
+            headers
+          )
+        end
+      end
+
+      def revoke!(*args)
+        headers, params, http_client, options = authenticated_context_from(*args)
+
+        params.merge! case
+        when access_token = options.delete(:access_token)
+          {
+            token: access_token,
+            token_type_hint: :access_token
+          }
+        when refresh_token = options.delete(:refresh_token)
+          {
+            token: refresh_token,
+            token_type_hint: :refresh_token
+          }
+        when @grant.is_a?(Grant::RefreshToken)
+          {
+            token: @grant.refresh_token,
+            token_type_hint: :refresh_token
+          }
+        when options[:token].blank?
+          raise AttrRequired::AttrMissing, 'One of "token", "access_token" and "refresh_token" is required'
+        end
+        params.merge! options
+
+        handle_revocation_response do
+          http_client.post(
+            absolute_uri_for(revocation_endpoint),
+            Util.compact_hash(params),
+            headers
+          )
+        end
+      end
+
+      private
+
+      def absolute_uri_for(endpoint)
+        _endpoint_ = Util.parse_uri endpoint
+        _endpoint_.scheme ||= self.scheme || 'https'
+        _endpoint_.host ||= self.host
+        _endpoint_.port ||= self.port
+        raise 'No Host Info' unless _endpoint_.host
+        _endpoint_.to_s
+      end
+
+      def authenticated_context_from(*args)
+        headers, params = {}, {}
         http_client = Rack::OAuth2.http_client
 
         # NOTE:
@@ -77,9 +135,6 @@ module Rack
         #  Until v1.0.5, the first argument was 'client_auth_method' in scalar.
         options = args.extract_options!
         client_auth_method = args.first || options.delete(:client_auth_method).try(:to_sym) || :basic
-
-        params[:scope] = Array(options.delete(:scope)).join(' ') if options[:scope].present?
-        params.merge! options
 
         case client_auth_method
         when :basic
@@ -100,9 +155,11 @@ module Rack
             client_assertion_type: URN::ClientAssertionType::JWT_BEARER
           )
           # NOTE: optionally auto-generate client_assertion.
-          if params[:client_assertion].blank?
+          params[:client_assertion] = if options[:client_assertion].present?
+            options.delete(:client_assertion)
+          else
             require 'json/jwt'
-            params[:client_assertion] = JSON::JWT.new(
+            JSON::JWT.new(
               iss: identifier,
               sub: identifier,
               aud: absolute_uri_for(token_endpoint),
@@ -127,24 +184,8 @@ module Rack
             client_secret: secret
           )
         end
-        handle_response do
-          http_client.post(
-            absolute_uri_for(token_endpoint),
-            Util.compact_hash(params),
-            headers
-          )
-        end
-      end
 
-      private
-
-      def absolute_uri_for(endpoint)
-        _endpoint_ = Util.parse_uri endpoint
-        _endpoint_.scheme ||= self.scheme || 'https'
-        _endpoint_.host ||= self.host
-        _endpoint_.port ||= self.port
-        raise 'No Host Info' unless _endpoint_.host
-        _endpoint_.to_s
+        [headers, params, http_client, options]
       end
 
       def handle_response
@@ -154,6 +195,16 @@ module Rack
           handle_success_response response
         else
           handle_error_response response
+        end
+      end
+
+      def handle_revocation_response
+        response = yield
+        case response.status
+        when 200..201
+          :success
+        else
+          handle_error_response handle_error_response
         end
       end
 
