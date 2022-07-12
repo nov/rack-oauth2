@@ -204,7 +204,7 @@ module Rack
         when 200..201
           :success
         else
-          handle_error_response handle_error_response
+          handle_error_response response
         end
       end
 
