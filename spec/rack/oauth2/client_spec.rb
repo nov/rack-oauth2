@@ -448,12 +448,86 @@ describe Rack::OAuth2::Client do
     end
   end
 
+  describe '#revoke!' do
+    context 'when access_token given' do
+      before do
+        mock_response(
+          :post,
+          'https://server.example.com/oauth2/revoke',
+          'blank',
+          status: 200,
+          body: {
+            token: 'access_token',
+            token_type_hint: 'access_token'
+          }
+        )
+      end
+      it do
+        client.revoke!(access_token: 'access_token').should == :success
+      end
+    end
+
+    context 'when refresh_token given' do
+      before do
+        mock_response(
+          :post,
+          'https://server.example.com/oauth2/revoke',
+          'blank',
+          status: 200,
+          body: {
+            token: 'refresh_token',
+            token_type_hint: 'refresh_token'
+          }
+        )
+      end
+
+      context 'as argument' do
+        it do
+          client.revoke!(refresh_token: 'refresh_token').should == :success
+        end
+      end
+
+      context 'as grant' do
+        it do
+          client.refresh_token = 'refresh_token'
+          client.revoke!
+        end
+      end
+    end
+
+    context 'when error response given' do
+      before do
+        mock_response(
+          :post,
+          'https://server.example.com/oauth2/revoke',
+          'errors/invalid_request.json',
+          status: 400
+        )
+      end
+
+      it do
+        expect do
+          client.revoke! access_token: 'access_token'
+        end.to raise_error Rack::OAuth2::Client::Error
+      end
+    end
+
+    context 'when no token given' do
+      it do
+        expect do
+          client.revoke!
+        end.to raise_error ArgumentError
+      end
+    end
+  end
+
   context 'when no host info' do
     let :client do
       Rack::OAuth2::Client.new(
         identifier: 'client_id',
         secret: 'client_secret',
-        redirect_uri: 'https://client.example.com/callback'
+        redirect_uri: 'https://client.example.com/callback',
+        revocation_endpoint: '/oauth2/revoke'
       )
     end
 
@@ -466,6 +540,12 @@ describe Rack::OAuth2::Client do
     describe '#access_token!' do
       it do
         expect { client.access_token! }.to raise_error 'No Host Info'
+      end
+    end
+
+    describe '#revoke!' do
+      it do
+        expect { client.revoke! access_token: 'access_token' }.to raise_error 'No Host Info'
       end
     end
   end

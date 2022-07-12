@@ -102,7 +102,7 @@ module Rack
             token_type_hint: :refresh_token
           }
         when options[:token].blank?
-          raise AttrRequired::AttrMissing, 'One of "token", "access_token" and "refresh_token" is required'
+          raise ArgumentError, 'One of "token", "access_token" and "refresh_token" is required'
         end
         params.merge! options
 
