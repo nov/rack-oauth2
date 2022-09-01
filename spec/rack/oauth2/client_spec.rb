@@ -188,7 +188,7 @@ describe Rack::OAuth2::Client do
               let :client do
                 Rack::OAuth2::Client.new(
                   identifier: 'client_id',
-                  private_key: OpenSSL::PKey::EC.new('prime256v1').generate_key,
+                  private_key: OpenSSL::PKey::EC.generate('prime256v1'),
                   host: 'server.example.com',
                   redirect_uri: 'https://client.example.com/callback'
                 )
