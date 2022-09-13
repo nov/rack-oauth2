@@ -7,9 +7,9 @@ describe Rack::OAuth2::Server::Token::BadRequest do
 
   describe '#finish' do
     it 'should respond in JSON' do
-      status, header, response = error.finish
+      status, headers, response = error.finish
       status.should == 400
-      header['Content-Type'].should == 'application/json'
+      headers['Content-Type'].should == 'application/json'
       response.should == ['{"error":"invalid_request"}']
     end
   end
@@ -22,10 +22,10 @@ describe Rack::OAuth2::Server::Token::Unauthorized do
 
   describe '#finish' do
     it 'should respond in JSON' do
-      status, header, response = error.finish
+      status, headers, response = error.finish
       status.should == 401
-      header['Content-Type'].should == 'application/json'
-      header['WWW-Authenticate'].should == 'Basic realm="OAuth2 Token Endpoint"'
+      headers['Content-Type'].should == 'application/json'
+      headers['WWW-Authenticate'].should == 'Basic realm="OAuth2 Token Endpoint"'
       response.should == ['{"error":"invalid_request"}']
     end
   end

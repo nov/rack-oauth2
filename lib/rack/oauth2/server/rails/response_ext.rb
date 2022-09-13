@@ -21,9 +21,9 @@ module Rack
             end
           end
 
-          def header
+          def headers
             ensure_finish do
-              @header
+              @headers
             end
           end
 
@@ -39,7 +39,7 @@ module Rack
           end
 
           def ensure_finish
-            @status, @header, @body = finish unless finished?
+            @status, @headers, @body = finish unless finished?
             yield
           end
         end

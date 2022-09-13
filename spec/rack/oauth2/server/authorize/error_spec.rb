@@ -23,27 +23,27 @@ describe Rack::OAuth2::Server::Authorize::BadRequest do
       context 'when protocol_params_location = :query' do
         before { error.protocol_params_location = :query }
         it 'should redirect with error in query' do
-          state, header, response = error.finish
+          state, headers, response = error.finish
           state.should == 302
-          header["Location"].should == "#{redirect_uri}?error=invalid_request"
+          headers["Location"].should == "#{redirect_uri}?error=invalid_request"
         end
       end
 
       context 'when protocol_params_location = :fragment' do
         before { error.protocol_params_location = :fragment }
         it 'should redirect with error in fragment' do
-          state, header, response = error.finish
+          state, headers, response = error.finish
           state.should == 302
-          header["Location"].should == "#{redirect_uri}#error=invalid_request"
+          headers["Location"].should == "#{redirect_uri}#error=invalid_request"
         end
       end
 
       context 'otherwise' do
         before { error.protocol_params_location = :other }
         it 'should redirect without error' do
-          state, header, response = error.finish
+          state, headers, response = error.finish
           state.should == 302
-          header["Location"].should == redirect_uri
+          headers["Location"].should == redirect_uri
         end
       end
     end

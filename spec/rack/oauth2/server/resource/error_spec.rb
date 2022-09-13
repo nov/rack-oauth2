@@ -7,9 +7,9 @@ describe Rack::OAuth2::Server::Resource::BadRequest do
 
   describe '#finish' do
     it 'should respond in JSON' do
-      status, header, response = error.finish
+      status, headers, response = error.finish
       status.should == 400
-      header['Content-Type'].should == 'application/json'
+      headers['Content-Type'].should == 'application/json'
       response.should == ['{"error":"invalid_request"}']
     end
   end
@@ -40,10 +40,10 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
 
     describe '#finish' do
       it 'should respond in JSON' do
-        status, header, response = error_with_scheme.finish
+        status, headers, response = error_with_scheme.finish
         status.should == 401
-        header['Content-Type'].should == 'application/json'
-        header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\", error=\"invalid_token\""
+        headers['Content-Type'].should == 'application/json'
+        headers['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\", error=\"invalid_token\""
         response.should == ['{"error":"invalid_token"}']
       end
 
@@ -51,8 +51,8 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
         let(:error) { Rack::OAuth2::Server::Resource::Unauthorized.new(:something) }
 
         it 'should have error_code in body but not in WWW-Authenticate header' do
-          status, header, response = error_with_scheme.finish
-          header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\""
+          status, headers, response = error_with_scheme.finish
+          headers['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\""
           response.first.should include '"error":"something"'
         end
       end
@@ -61,8 +61,8 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
         let(:error) { Rack::OAuth2::Server::Resource::Unauthorized.new }
 
         it 'should have error_code in body but not in WWW-Authenticate header' do
-          status, header, response = error_with_scheme.finish
-          header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\""
+          status, headers, response = error_with_scheme.finish
+          headers['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\""
           response.first.should == '{"error":"unauthorized"}'
         end
       end
@@ -72,8 +72,8 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
         let(:error) { Rack::OAuth2::Server::Resource::Bearer::Unauthorized.new(:something, nil, realm: realm) }
 
         it 'should use given realm' do
-          status, header, response = error_with_scheme.finish
-          header['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\""
+          status, headers, response = error_with_scheme.finish
+          headers['WWW-Authenticate'].should == "Scheme realm=\"#{realm}\""
           response.first.should include '"error":"something"'
         end
       end
@@ -88,9 +88,9 @@ describe Rack::OAuth2::Server::Resource::Forbidden do
 
   describe '#finish' do
     it 'should respond in JSON' do
-      status, header, response = error.finish
+      status, headers, response = error.finish
       status.should == 403
-      header['Content-Type'].should == 'application/json'
+      headers['Content-Type'].should == 'application/json'
       response.should == ['{"error":"insufficient_scope"}']
     end
   end
@@ -99,7 +99,7 @@ describe Rack::OAuth2::Server::Resource::Forbidden do
     let(:error) { Rack::OAuth2::Server::Resource::Bearer::Forbidden.new(:insufficient_scope, 'Desc', scope: [:scope1, :scope2]) }
 
     it 'should have blank WWW-Authenticate header' do
-      status, header, response = error.finish
+      status, headers, response = error.finish
       response.first.should include '"scope":"scope1 scope2"'
     end
   end

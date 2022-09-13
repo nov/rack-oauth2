@@ -29,29 +29,29 @@ describe Rack::OAuth2::Server::Resource::MAC do
 
   shared_examples_for :non_mac_request do
     it 'should skip OAuth 2.0 authentication' do
-      status, header, response = request
+      status, headers, response = request
       status.should == 200
       access_token.should be_nil
     end
   end
   shared_examples_for :authenticated_mac_request do
     it 'should be authenticated' do
-      status, header, response = request
+      status, headers, response = request
       status.should == 200
       access_token.should == mac_token
     end
   end
   shared_examples_for :unauthorized_mac_request do
     it 'should be unauthorized' do
-      status, header, response = request
+      status, headers, response = request
       status.should == 401
-      header['WWW-Authenticate'].should include 'MAC'
+      headers['WWW-Authenticate'].should include 'MAC'
       access_token.should be_nil
     end
   end
   shared_examples_for :bad_mac_request do
     it 'should be unauthorized' do
-      status, header, response = request
+      status, headers, response = request
       status.should == 400
       access_token.should be_nil
     end
@@ -60,7 +60,7 @@ describe Rack::OAuth2::Server::Resource::MAC do
   context 'when no access token is given' do
     let(:env) { Rack::MockRequest.env_for('/protected_resource') }
     it 'should skip OAuth 2.0 authentication' do
-      status, header, response = request
+      status, headers, response = request
       status.should == 200
       access_token.should be_nil
     end
@@ -103,15 +103,15 @@ describe Rack::OAuth2::Server::Resource::MAC do
           end
         end
         it 'should use specified realm' do
-          status, header, response = request
-          header['WWW-Authenticate'].should include "MAC realm=\"#{realm}\""
+          status, headers, response = request
+          headers['WWW-Authenticate'].should include "MAC realm=\"#{realm}\""
         end
       end
 
       context 'otherwize' do
         it 'should use default realm' do
-          status, header, response = request
-          header['WWW-Authenticate'].should include "MAC realm=\"#{Rack::OAuth2::Server::Resource::DEFAULT_REALM}\""
+          status, headers, response = request
+          headers['WWW-Authenticate'].should include "MAC realm=\"#{Rack::OAuth2::Server::Resource::DEFAULT_REALM}\""
         end
       end
     end

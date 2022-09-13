@@ -12,8 +12,8 @@ describe Rack::OAuth2::Server::Resource::MAC::Unauthorized do
 
   describe '#finish' do
     it 'should use MAC scheme' do
-      status, header, response = error.finish
-      header['WWW-Authenticate'].should =~ /^MAC /
+      status, headers, response = error.finish
+      headers['WWW-Authenticate'].should =~ /^MAC /
     end
   end
 end

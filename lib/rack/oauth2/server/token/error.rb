@@ -9,7 +9,7 @@ module Rack
           def finish
             super do |response|
               unless @skip_www_authenticate
-                response.header['WWW-Authenticate'] = 'Basic realm="OAuth2 Token Endpoint"'
+                response.headers['WWW-Authenticate'] = 'Basic realm="OAuth2 Token Endpoint"'
               end
             end
           end

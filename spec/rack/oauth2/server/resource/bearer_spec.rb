@@ -22,29 +22,29 @@ describe Rack::OAuth2::Server::Resource::Bearer do
 
   shared_examples_for :authenticated_bearer_request do
     it 'should be authenticated' do
-      status, header, response = request
+      status, headers, response = request
       status.should == 200
       access_token.should == bearer_token
     end
   end
   shared_examples_for :unauthorized_bearer_request do
     it 'should be unauthorized' do
-      status, header, response = request
+      status, headers, response = request
       status.should == 401
-      header['WWW-Authenticate'].should include 'Bearer'
+      headers['WWW-Authenticate'].should include 'Bearer'
       access_token.should be_nil
     end
   end
   shared_examples_for :bad_bearer_request do
     it 'should be bad_request' do
-      status, header, response = request
+      status, headers, response = request
       status.should == 400
       access_token.should be_nil
     end
   end
   shared_examples_for :skipped_authentication_request do
     it 'should skip OAuth 2.0 authentication' do
-      status, header, response = request
+      status, headers, response = request
       status.should == 200
       access_token.should be_nil
     end
@@ -94,15 +94,15 @@ describe Rack::OAuth2::Server::Resource::Bearer do
           end
         end
         it 'should use specified realm' do
-          status, header, response = request
-          header['WWW-Authenticate'].should include "Bearer realm=\"#{realm}\""
+          status, headers, response = request
+          headers['WWW-Authenticate'].should include "Bearer realm=\"#{realm}\""
         end
       end
 
       context 'otherwize' do
         it 'should use default realm' do
-          status, header, response = request
-          header['WWW-Authenticate'].should include "Bearer realm=\"#{Rack::OAuth2::Server::Resource::Bearer::DEFAULT_REALM}\""
+          status, headers, response = request
+          headers['WWW-Authenticate'].should include "Bearer realm=\"#{Rack::OAuth2::Server::Resource::Bearer::DEFAULT_REALM}\""
         end
       end
     end
