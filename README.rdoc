@@ -3,8 +3,6 @@
 OAuth 2.0 Server & Client Library.
 Both Bearer and MAC token type are supported.
 
-{<img src="https://secure.travis-ci.org/nov/rack-oauth2.png" />}[http://travis-ci.org/nov/rack-oauth2]
-
 The OAuth 2.0 Authorization Framework (RFC 6749)
 http://www.rfc-editor.org/rfc/rfc6749.txt
 
