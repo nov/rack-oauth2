@@ -172,8 +172,8 @@ module Rack
           params.merge!(
             client_id: identifier
           )
-          http_client.ssl_config.client_key = private_key
-          http_client.ssl_config.client_cert = certificate
+          http_client.ssl.client_key = private_key
+          http_client.ssl.client_cert = certificate
         else
           params.merge!(
             client_id: identifier,
