@@ -1,5 +1,6 @@
 require 'rack'
-require 'httpclient'
+require 'faraday'
+require 'faraday/follow_redirects'
 require 'logger'
 require 'active_support'
 require 'active_support/core_ext'
@@ -40,18 +41,12 @@ module Rack
     self.debugging = false
 
     def self.http_client(agent_name = "Rack::OAuth2 (#{VERSION})", &local_http_config)
-      _http_client_ = HTTPClient.new(
-        agent_name: agent_name
-      )
-
-      # NOTE: httpclient gem seems stopped maintaining root certtificate set, use OS default.
-      _http_client_.ssl_config.clear_cert_store
-      _http_client_.ssl_config.cert_store.set_default_paths
-
-      http_config.try(:call, _http_client_)
-      local_http_config.try(:call, _http_client_) unless local_http_config.nil?
-      _http_client_.request_filter << Debugger::RequestFilter.new if debugging?
-      _http_client_
+      Faraday.new(headers: {user_agent: agent_name}) do |faraday|
+        faraday.response :logger, Rack::OAuth2.logger if debugging?
+        faraday.adapter Faraday.default_adapter
+        local_http_config&.call(faraday)
+        http_config&.call(faraday)
+      end
     end
 
     def self.http_config(&block)
@@ -70,4 +65,3 @@ require 'rack/oauth2/util'
 require 'rack/oauth2/server'
 require 'rack/oauth2/client'
 require 'rack/oauth2/access_token'
-require 'rack/oauth2/debugger'

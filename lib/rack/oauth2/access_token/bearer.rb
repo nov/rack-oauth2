@@ -3,7 +3,7 @@ module Rack
     class AccessToken
       class Bearer < AccessToken
         def authenticate(request)
-          request.header["Authorization"] = "Bearer #{access_token}"
+          request.headers["Authorization"] = "Bearer #{access_token}"
         end
 
         def to_mtls(attributes = {})

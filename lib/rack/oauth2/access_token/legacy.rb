@@ -11,7 +11,7 @@ module Rack
         end
 
         def authenticate(request)
-          request.header["Authorization"] = "OAuth #{access_token}"
+          request.headers["Authorization"] = "OAuth #{access_token}"
         end
       end
     end

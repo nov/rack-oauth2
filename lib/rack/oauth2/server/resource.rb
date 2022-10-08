@@ -52,4 +52,3 @@ end
 
 require 'rack/oauth2/server/resource/error'
 require 'rack/oauth2/server/resource/bearer'
-require 'rack/oauth2/server/resource/mac'
