@@ -338,22 +338,6 @@ describe Rack::OAuth2::Client do
       end
     end
 
-    context 'when mac token is given' do
-      before do
-        client.authorization_code = 'code'
-        mock_response(
-          :post,
-          'https://server.example.com/oauth2/token',
-          'tokens/mac.json'
-        )
-      end
-      it { should be_instance_of Rack::OAuth2::AccessToken::MAC }
-      its(:token_type) { should == :mac }
-      its(:access_token) { should == 'access_token' }
-      its(:refresh_token) { should == 'refresh_token' }
-      its(:expires_in) { should == 3600 }
-    end
-
     context 'when no-type token is given (JSON)' do
       before do
         client.authorization_code = 'code'

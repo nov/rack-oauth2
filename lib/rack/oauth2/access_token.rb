@@ -19,8 +19,8 @@ module Rack
       end
 
       def httpclient
-        @httpclient ||= Rack::OAuth2.http_client("#{self.class} (#{VERSION})") do |config|
-          config.request_filter << Authenticator.new(self)
+        @httpclient ||= Rack::OAuth2.http_client("#{self.class} (#{VERSION})") do |faraday|
+          Authenticator.new(self).authenticate(faraday)
         end
       end
 
@@ -39,6 +39,5 @@ end
 
 require 'rack/oauth2/access_token/authenticator'
 require 'rack/oauth2/access_token/bearer'
-require 'rack/oauth2/access_token/mac'
 require 'rack/oauth2/access_token/legacy'
 require 'rack/oauth2/access_token/mtls'

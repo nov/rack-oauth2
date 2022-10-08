@@ -76,7 +76,7 @@ module Rack
         handle_response do
           http_client.post(
             absolute_uri_for(token_endpoint),
-            Util.compact_hash(params),
+            Util.compact_hash(params).to_query,
             headers
           )
         end
@@ -213,8 +213,6 @@ module Rack
         case (@forced_token_type || token_hash[:token_type]).try(:downcase)
         when 'bearer'
           AccessToken::Bearer.new(token_hash)
-        when 'mac'
-          AccessToken::MAC.new(token_hash)
         when nil
           AccessToken::Legacy.new(token_hash)
         else
