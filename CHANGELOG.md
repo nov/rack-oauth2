@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [2.0.1] - 2022-10-09
+
+### Fixed
+
+- changes for mTLS on faraday by @nov in https://github.com/nov/rack-oauth2/pull/92
+
 ## [2.0.0] - 2022-10-09
 
 ### Added
