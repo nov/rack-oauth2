@@ -74,11 +74,7 @@ module Rack
         params.merge! @grant.as_json
         params.merge! options
         handle_response do
-          http_client.post(
-            absolute_uri_for(token_endpoint),
-            Util.compact_hash(params).to_query,
-            headers
-          )
+          http_client.post(absolute_uri_for(token_endpoint), Util.compact_hash(params), headers)
         end
       end
 
