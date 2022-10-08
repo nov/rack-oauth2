@@ -42,8 +42,8 @@ module Rack
 
     def self.http_client(agent_name = "Rack::OAuth2 (#{VERSION})", &local_http_config)
       Faraday.new(headers: {user_agent: agent_name}) do |faraday|
-        faraday.request :json
         faraday.request :url_encoded
+        faraday.request :json
         faraday.response :logger, Rack::OAuth2.logger if debugging?
         faraday.adapter Faraday.default_adapter
         local_http_config&.call(faraday)
@@ -58,7 +58,6 @@ module Rack
     def self.reset_http_config!
       @@http_config = nil
     end
-
   end
 end
 
