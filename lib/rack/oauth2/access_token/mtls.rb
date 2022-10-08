@@ -7,8 +7,8 @@ module Rack
         def initialize(attributes = {})
           super
           self.token_type = :bearer
-          httpclient.ssl_config.client_key = private_key
-          httpclient.ssl_config.client_cert = certificate
+          httpclient.ssl.client_key = private_key
+          httpclient.ssl.client_cert = certificate
         end
       end
     end
