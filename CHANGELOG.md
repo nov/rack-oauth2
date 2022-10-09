@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [2.1.0] - 2022-10-10
+
+### Added
+
+- accept local_http_config on Rack::OAuth2::Client#access_token! & revoke!  to support custom headers etc. by @nov in https://github.com/nov/rack-oauth2/pull/93
+
 ## [2.0.1] - 2022-10-09
 
 ### Fixed
