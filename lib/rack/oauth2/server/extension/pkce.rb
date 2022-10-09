@@ -27,7 +27,7 @@ module Rack
 
             def verify_code_verifier!(code_challenge, code_challenge_method = :S256)
               if code_verifier.present? || code_challenge.present?
-                case code_challenge_method.try(:to_sym)
+                case code_challenge_method&.to_sym
                 when :S256
                   code_challenge == Util.urlsafe_base64_encode(
                     OpenSSL::Digest::SHA256.digest(code_verifier.to_s)

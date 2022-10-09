@@ -74,7 +74,11 @@ module Rack
         params.merge! @grant.as_json
         params.merge! options
         handle_response do
-          http_client.post(absolute_uri_for(token_endpoint), Util.compact_hash(params), headers)
+          http_client.post(
+            absolute_uri_for(token_endpoint),
+            Util.compact_hash(params),
+            headers
+          )
         end
       end
 
@@ -130,7 +134,7 @@ module Rack
         #  Using Array#extract_options! for backward compatibility.
         #  Until v1.0.5, the first argument was 'client_auth_method' in scalar.
         options = args.extract_options!
-        client_auth_method = args.first || options.delete(:client_auth_method).try(:to_sym) || :basic
+        client_auth_method = args.first || options.delete(:client_auth_method)&.to_sym || :basic
 
         case client_auth_method
         when :basic
@@ -206,7 +210,7 @@ module Rack
 
       def handle_success_response(response)
         token_hash = JSON.parse(response.body).with_indifferent_access
-        case (@forced_token_type || token_hash[:token_type]).try(:downcase)
+        case (@forced_token_type || token_hash[:token_type])&.downcase
         when 'bearer'
           AccessToken::Bearer.new(token_hash)
         when nil
