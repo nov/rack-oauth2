@@ -321,7 +321,7 @@ describe Rack::OAuth2::Client do
           }
         )
         client.access_token! do |request|
-          request.headers.merge! 'X-Foo' => 'bar'
+          request.headers['X-Foo'] = 'bar'
         end
       end
     end
@@ -467,7 +467,7 @@ describe Rack::OAuth2::Client do
           }
         )
         client.revoke!(access_token: 'access_token') do |request|
-          request.headers.merge! 'X-Foo' => 'bar'
+          request.headers['X-Foo'] = 'bar'
         end
       end
     end
