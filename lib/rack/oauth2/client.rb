@@ -68,8 +68,8 @@ module Rack
         @forced_token_type = token_type.to_s
       end
 
-      def access_token!(*args, &local_http_config)
-        headers, params, http_client, options = authenticated_context_from(*args, &local_http_config)
+      def access_token!(*args)
+        headers, params, http_client, options = authenticated_context_from(*args)
         params[:scope] = Array(options.delete(:scope)).join(' ') if options[:scope].present?
         params.merge! @grant.as_json
         params.merge! options
@@ -78,12 +78,14 @@ module Rack
             absolute_uri_for(token_endpoint),
             Util.compact_hash(params),
             headers
-          )
+          ) do |req|
+            yield req if block_given?
+          end
         end
       end
 
-      def revoke!(*args, &local_http_config)
-        headers, params, http_client, options = authenticated_context_from(*args, &local_http_config)
+      def revoke!(*args)
+        headers, params, http_client, options = authenticated_context_from(*args)
 
         params.merge! case
         when access_token = options.delete(:access_token)
@@ -111,7 +113,9 @@ module Rack
             absolute_uri_for(revocation_endpoint),
             Util.compact_hash(params),
             headers
-          )
+          ) do |req|
+            yield req if block_given?
+          end
         end
       end
 
@@ -126,9 +130,9 @@ module Rack
         _endpoint_.to_s
       end
 
-      def authenticated_context_from(*args, &local_http_config)
+      def authenticated_context_from(*args)
         headers, params = {}, {}
-        http_client = Rack::OAuth2.http_client(&local_http_config)
+        http_client = Rack::OAuth2.http_client
 
         # NOTE:
         #  Using Array#extract_options! for backward compatibility.
