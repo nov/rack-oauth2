@@ -309,6 +309,23 @@ describe Rack::OAuth2::Client do
       end
     end
 
+    context 'local_http_config handling' do
+      it do
+        mock_response(
+          :post,
+          'https://server.example.com/oauth2/token',
+          'tokens/bearer.json',
+          request_header: {
+            'Authorization' => 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=',
+            'X-Foo' => 'bar'
+          }
+        )
+        client.access_token! do |request|
+          request.headers.merge! 'X-Foo' => 'bar'
+        end
+      end
+    end
+
     context 'when bearer token is given' do
       before do
         client.authorization_code = 'code'
@@ -433,6 +450,28 @@ describe Rack::OAuth2::Client do
   end
 
   describe '#revoke!' do
+    context 'local_http_config handling' do
+      it do
+        mock_response(
+          :post,
+          'https://server.example.com/oauth2/revoke',
+          'blank',
+          status: 200,
+          body: {
+            token: 'access_token',
+            token_type_hint: 'access_token'
+          },
+          request_header: {
+            'Authorization' => 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=',
+            'X-Foo' => 'bar'
+          }
+        )
+        client.revoke!(access_token: 'access_token') do |request|
+          request.headers.merge! 'X-Foo' => 'bar'
+        end
+      end
+    end
+
     context 'when access_token given' do
       before do
         mock_response(

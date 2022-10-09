@@ -68,8 +68,8 @@ module Rack
         @forced_token_type = token_type.to_s
       end
 
-      def access_token!(*args)
-        headers, params, http_client, options = authenticated_context_from(*args)
+      def access_token!(*args, &local_http_config)
+        headers, params, http_client, options = authenticated_context_from(*args, &local_http_config)
         params[:scope] = Array(options.delete(:scope)).join(' ') if options[:scope].present?
         params.merge! @grant.as_json
         params.merge! options
@@ -82,8 +82,8 @@ module Rack
         end
       end
 
-      def revoke!(*args)
-        headers, params, http_client, options = authenticated_context_from(*args)
+      def revoke!(*args, &local_http_config)
+        headers, params, http_client, options = authenticated_context_from(*args, &local_http_config)
 
         params.merge! case
         when access_token = options.delete(:access_token)
@@ -126,9 +126,9 @@ module Rack
         _endpoint_.to_s
       end
 
-      def authenticated_context_from(*args)
+      def authenticated_context_from(*args, &local_http_config)
         headers, params = {}, {}
-        http_client = Rack::OAuth2.http_client
+        http_client = Rack::OAuth2.http_client(&local_http_config)
 
         # NOTE:
         #  Using Array#extract_options! for backward compatibility.

@@ -5,7 +5,7 @@ module Rack
       attr_required :access_token, :token_type
       attr_optional :refresh_token, :expires_in, :scope
       attr_accessor :raw_attributes
-      delegate :get, :patch, :post, :put, :delete, to: :httpclient
+      delegate :get, :patch, :post, :put, :delete, to: :http_client
 
       alias_method :to_s, :access_token
 
@@ -18,8 +18,8 @@ module Rack
         attr_missing!
       end
 
-      def httpclient
-        @httpclient ||= Rack::OAuth2.http_client("#{self.class} (#{VERSION})") do |faraday|
+      def http_client
+        @http_client ||= Rack::OAuth2.http_client("#{self.class} (#{VERSION})") do |faraday|
           Authenticator.new(self).authenticate(faraday)
         end
       end
