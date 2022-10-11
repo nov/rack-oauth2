@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [2.2.0] - 2022-10-11
+
+### Changed
+
+- automatic json response decoding, and remove legacy token support by @nov in https://github.com/nov/rack-oauth2/pull/95
+
 ## [2.1.0] - 2022-10-10
 
 ### Added
