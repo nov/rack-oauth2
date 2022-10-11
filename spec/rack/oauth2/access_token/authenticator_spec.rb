@@ -12,15 +12,6 @@ describe Rack::OAuth2::AccessToken::Authenticator do
     end
   end
 
-  context 'when Legacy token is given' do
-    let(:token) do
-      Rack::OAuth2::AccessToken::Legacy.new(
-        access_token: 'access_token'
-      )
-    end
-    it_behaves_like :authenticator
-  end
-
   context 'when Bearer token is given' do
     let(:token) do
       Rack::OAuth2::AccessToken::Bearer.new(
