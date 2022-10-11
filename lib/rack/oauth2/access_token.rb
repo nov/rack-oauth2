@@ -39,5 +39,4 @@ end
 
 require 'rack/oauth2/access_token/authenticator'
 require 'rack/oauth2/access_token/bearer'
-require 'rack/oauth2/access_token/legacy'
 require 'rack/oauth2/access_token/mtls'

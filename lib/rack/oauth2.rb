@@ -44,6 +44,7 @@ module Rack
       Faraday.new(headers: {user_agent: agent_name}) do |faraday|
         faraday.request :url_encoded
         faraday.request :json
+        faraday.response :json
         faraday.response :logger, Rack::OAuth2.logger, {bodies: true} if debugging?
         faraday.adapter Faraday.default_adapter
         local_http_config&.call(faraday)

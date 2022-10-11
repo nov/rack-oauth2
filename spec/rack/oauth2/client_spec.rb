@@ -93,7 +93,7 @@ describe Rack::OAuth2::Client do
           mock_response(
             :post,
             'https://server.example.com/oauth2/token',
-            'tokens/bearer.json',
+            'tokens/bearer',
             request_header: {
               'Authorization' => 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ='
             }
@@ -109,7 +109,7 @@ describe Rack::OAuth2::Client do
               mock_response(
                 :post,
                 'https://server.example.com/oauth2/token',
-                'tokens/bearer.json',
+                'tokens/bearer',
                 request_header: {
                   'Authorization' => 'Basic aHR0cHMlM0ElMkYlMkZjbGllbnQuZXhhbXBsZS5jb206Y2xpZW50X3NlY3JldA=='
                 }
@@ -127,7 +127,7 @@ describe Rack::OAuth2::Client do
                mock_response(
                  :post,
                  'https://server.example.com/oauth2/token',
-                 'tokens/bearer.json',
+                 'tokens/bearer',
                  request_header: {
                    'Authorization' => 'Basic aHR0cHM6Ly9jbGllbnQuZXhhbXBsZS5jb206Y2xpZW50X3NlY3JldA=='
                  }
@@ -143,7 +143,7 @@ describe Rack::OAuth2::Client do
               mock_response(
                 :post,
                 'https://server.example.com/oauth2/token',
-                'tokens/bearer.json',
+                'tokens/bearer',
                 params: {
                   client_assertion: /^eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9\..+/, # NOTE: HS256
                   client_assertion_type: Rack::OAuth2::URN::ClientAssertionType::JWT_BEARER,
@@ -171,7 +171,7 @@ describe Rack::OAuth2::Client do
                 mock_response(
                   :post,
                   'https://server.example.com/oauth2/token',
-                  'tokens/bearer.json',
+                  'tokens/bearer',
                   params: {
                     client_assertion: /^eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9\..+/, # NOTE: RS256
                     client_assertion_type: Rack::OAuth2::URN::ClientAssertionType::JWT_BEARER,
@@ -198,7 +198,7 @@ describe Rack::OAuth2::Client do
                 mock_response(
                   :post,
                   'https://server.example.com/oauth2/token',
-                  'tokens/bearer.json',
+                  'tokens/bearer',
                   params: {
                     client_assertion: /^eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9\..+/, # NOTE: ES256
                     client_assertion_type: Rack::OAuth2::URN::ClientAssertionType::JWT_BEARER,
@@ -225,7 +225,7 @@ describe Rack::OAuth2::Client do
               mock_response(
                 :post,
                 'https://server.example.com/oauth2/token',
-                'tokens/bearer.json',
+                'tokens/bearer',
                 params: {
                   client_assertion: 'any.jwt.assertion',
                   client_assertion_type: Rack::OAuth2::URN::ClientAssertionType::JWT_BEARER,
@@ -244,7 +244,7 @@ describe Rack::OAuth2::Client do
             mock_response(
               :post,
               'https://server.example.com/oauth2/token',
-              'tokens/bearer.json',
+              'tokens/bearer',
               params: {
                 client_id: 'client_id',
                 client_secret: 'client_secret',
@@ -262,7 +262,7 @@ describe Rack::OAuth2::Client do
             mock_response(
               :post,
               'https://server.example.com/oauth2/token',
-              'tokens/bearer.json',
+              'tokens/bearer',
               params: {
                 client_id: 'client_id',
                 client_secret: 'client_secret',
@@ -282,7 +282,7 @@ describe Rack::OAuth2::Client do
             mock_response(
               :post,
               'https://server.example.com/oauth2/token',
-              'tokens/bearer.json',
+              'tokens/bearer',
               params: {
                 grant_type: 'client_credentials',
                 scope: 'a b'
@@ -298,7 +298,7 @@ describe Rack::OAuth2::Client do
           mock_response(
             :post,
             'https://server.example.com/oauth2/token',
-            'tokens/bearer.json',
+            'tokens/bearer',
             params: {
               grant_type: 'client_credentials',
               resource: 'something'
@@ -314,7 +314,7 @@ describe Rack::OAuth2::Client do
         mock_response(
           :post,
           'https://server.example.com/oauth2/token',
-          'tokens/bearer.json',
+          'tokens/bearer',
           request_header: {
             'Authorization' => 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=',
             'X-Foo' => 'bar'
@@ -332,7 +332,7 @@ describe Rack::OAuth2::Client do
         mock_response(
           :post,
           'https://server.example.com/oauth2/token',
-          'tokens/bearer.json'
+          'tokens/bearer'
         )
       end
       it { should be_instance_of Rack::OAuth2::AccessToken::Bearer }
@@ -347,60 +347,11 @@ describe Rack::OAuth2::Client do
           mock_response(
             :post,
             'https://server.example.com/oauth2/token',
-            'tokens/_Bearer.json'
+            'tokens/_Bearer'
           )
         end
         it { should be_instance_of Rack::OAuth2::AccessToken::Bearer }
         its(:token_type) { should == :bearer }
-      end
-    end
-
-    context 'when no-type token is given (JSON)' do
-      before do
-        client.authorization_code = 'code'
-        mock_response(
-          :post,
-          'https://server.example.com/oauth2/token',
-          'tokens/legacy.json'
-        )
-      end
-      it { should be_instance_of Rack::OAuth2::AccessToken::Legacy }
-      its(:token_type) { should == :legacy }
-      its(:access_token) { should == 'access_token' }
-      its(:refresh_token) { should == 'refresh_token' }
-      its(:expires_in) { should == 3600 }
-
-      context 'when token_type is forced' do
-        before do
-          client.force_token_type! :bearer
-        end
-        it { should be_instance_of Rack::OAuth2::AccessToken::Bearer }
-        its(:token_type) { should == :bearer }
-      end
-    end
-
-    context 'when no-type token is given (key-value)' do
-      before do
-        mock_response(
-          :post,
-          'https://server.example.com/oauth2/token',
-          'tokens/legacy.txt'
-        )
-      end
-      it { should be_instance_of Rack::OAuth2::AccessToken::Legacy }
-      its(:token_type) { should == :legacy }
-      its(:access_token) { should == 'access_token' }
-      its(:expires_in) { should == 3600 }
-
-      context 'when expires_in is not given' do
-        before do
-          mock_response(
-            :post,
-            'https://server.example.com/oauth2/token',
-            'tokens/legacy_without_expires_in.txt'
-          )
-        end
-        its(:expires_in) { should be_nil }
       end
     end
 
@@ -410,7 +361,7 @@ describe Rack::OAuth2::Client do
         mock_response(
           :post,
           'https://server.example.com/oauth2/token',
-          'tokens/unknown.json'
+          'tokens/unknown'
         )
       end
       it do
@@ -423,7 +374,7 @@ describe Rack::OAuth2::Client do
         mock_response(
           :post,
           'https://server.example.com/oauth2/token',
-          'errors/invalid_request.json',
+          'errors/invalid_request',
           status: 400
         )
       end
@@ -439,6 +390,7 @@ describe Rack::OAuth2::Client do
             :post,
             'https://server.example.com/oauth2/token',
             'blank',
+            format: 'txt',
             status: 400
           )
         end
@@ -456,6 +408,7 @@ describe Rack::OAuth2::Client do
           :post,
           'https://server.example.com/oauth2/revoke',
           'blank',
+          format: 'txt',
           status: 200,
           body: {
             token: 'access_token',
@@ -478,6 +431,7 @@ describe Rack::OAuth2::Client do
           :post,
           'https://server.example.com/oauth2/revoke',
           'blank',
+          format: 'txt',
           status: 200,
           body: {
             token: 'access_token',
@@ -496,6 +450,7 @@ describe Rack::OAuth2::Client do
           :post,
           'https://server.example.com/oauth2/revoke',
           'blank',
+          format: 'txt',
           status: 200,
           body: {
             token: 'refresh_token',
@@ -523,7 +478,7 @@ describe Rack::OAuth2::Client do
         mock_response(
           :post,
           'https://server.example.com/oauth2/revoke',
-          'errors/invalid_request.json',
+          'errors/invalid_request',
           status: 400
         )
       end
