@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rack', '>= 2.1.0'
   s.add_runtime_dependency 'faraday', '~> 2.0'
   s.add_runtime_dependency 'faraday-follow_redirects'
+  s.add_runtime_dependency 'faraday-jwt'
   s.add_runtime_dependency 'activesupport'
   s.add_runtime_dependency 'attr_required'
   s.add_runtime_dependency 'json-jwt', '>= 1.11.0'

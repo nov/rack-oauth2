@@ -45,10 +45,10 @@ module Rack
         faraday.request :url_encoded
         faraday.request :json
         faraday.response :json
-        faraday.response :logger, Rack::OAuth2.logger, {bodies: true} if debugging?
         faraday.adapter Faraday.default_adapter
         local_http_config&.call(faraday)
         http_config&.call(faraday)
+        faraday.response :logger, Rack::OAuth2.logger, bodies: true if debugging?
       end
     end
 
