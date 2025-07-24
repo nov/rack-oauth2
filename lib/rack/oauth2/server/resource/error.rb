@@ -19,6 +19,7 @@ module Rack
                 headers << ", error_description=\"#{description}\"" if description.present?
                 headers << ", error_uri=\"#{uri}\""                 if uri.present?
               end
+              headers << ", resource_metadata=\"#{resource_metadata}\"" if resource_metadata.present?
             end
           end
         end
