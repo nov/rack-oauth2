@@ -183,7 +183,10 @@ describe Rack::OAuth2::Server::Token do
       )
     end
     let(:request) { Rack::OAuth2::Server::Token::Request.new env }
-    its(:extensions) { should == [Rack::OAuth2::Server::Token::Extension::Example] }
+
+    it do
+      subject.send(:extensions).should == [Rack::OAuth2::Server::Token::Extension::Example]
+    end
 
     describe 'JWT assertion' do
       let(:params) do

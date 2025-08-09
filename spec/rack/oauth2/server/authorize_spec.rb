@@ -158,7 +158,10 @@ describe Rack::OAuth2::Server::Authorize do
       Rack::MockRequest.env_for("/authorize?response_type=#{response_type}&client_id=client")
     end
     let(:request) { Rack::OAuth2::Server::Authorize::Request.new env }
-    its(:extensions) { should == [Rack::OAuth2::Server::Authorize::Extension::CodeAndToken] }
+
+    it do
+      subject.send(:extensions).should == [Rack::OAuth2::Server::Authorize::Extension::CodeAndToken]
+    end
 
     describe 'code token' do
       let(:response_type) { 'code%20token' }
@@ -196,8 +199,8 @@ describe Rack::OAuth2::Server::Authorize do
         end
       end
 
-      its(:extensions) do
-        should == [
+      it do
+        subject.send(:extensions).should == [
           Rack::OAuth2::Server::Authorize::Extension::CodeAndToken,
           Rack::OAuth2::Server::Authorize::Extension::IdToken
         ]
