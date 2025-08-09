@@ -11,18 +11,20 @@ permissions:
 
 jobs:
   spec:
+    runs-on: ubuntu-latest
+    name: Ruby ${{ matrix.ruby }}
     strategy:
       matrix:
-        os: ['ubuntu-22.04', 'ubuntu-24.04']
-        ruby-version: ['3.2', '3.3', '3.4']
-    runs-on: ${{ matrix.os }}
-
+        ruby:
+          - '3.2'
+          - '3.3'
+          - '3.4'
     steps:
     - uses: actions/checkout@v3
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby-version }}
+        ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
     - name: Run Specs
       run: bundle exec rake spec
