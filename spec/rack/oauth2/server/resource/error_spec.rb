@@ -77,6 +77,17 @@ describe Rack::OAuth2::Server::Resource::Unauthorized do
           response.first.should include '"error":"something"'
         end
       end
+
+      context 'when resource_metadata is specified' do
+        let(:resource_metadata) { "https://resource.example.com/.well-known/oauth-protected-resource" }
+        let(:error) { Rack::OAuth2::Server::Resource::Bearer::Unauthorized.new(:something, nil, resource_metadata: resource_metadata) }
+
+        it 'should include resource_metadata in WWW-Authenticate header' do
+          _, headers, response = error_with_scheme.finish
+          headers['WWW-Authenticate'].should include %(resource_metadata="#{resource_metadata}")
+          response.first.should include '"error":"something"'
+        end
+      end
     end
   end
 end

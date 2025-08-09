@@ -3,7 +3,7 @@ module Rack
     module Server
       module Abstract
         class Error < StandardError
-          attr_accessor :status, :error, :description, :uri, :realm
+          attr_accessor :status, :error, :description, :uri, :realm, :resource_metadata
 
           def initialize(status, error, description = nil, options = {})
             @status      = status
@@ -11,6 +11,7 @@ module Rack
             @description = description
             @uri         = options[:uri]
             @realm       = options[:realm]
+            @resource_metadata = options[:resource_metadata]
             super [error, description].compact.join(' :: ')
           end
 
