@@ -182,6 +182,16 @@ module Rack
           )
           http_client.ssl.client_key = private_key
           http_client.ssl.client_cert = certificate
+        when :mtls_basic
+          http_client.ssl.client_key = private_key
+          http_client.ssl.client_cert = certificate
+          cred = Base64.strict_encode64 [
+            Util.www_form_url_encode(identifier),
+            Util.www_form_url_encode(secret)
+          ].join(':')
+          headers.merge!(
+            'Authorization' => "Basic #{cred}"
+          )
         else
           params.merge!(
             client_id: identifier,
