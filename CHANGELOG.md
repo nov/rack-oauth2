@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- add support for endpoints requiring mTLS with HTTP Basic Authentication
+
 ## [2.2.0] - 2022-10-11
 
 ### Changed
